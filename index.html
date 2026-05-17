@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="QuranBot - A production-ready Discord bot for Quran recitations, Islamic radio, automated azkar, prayer times, and advanced voice management. Free and open-source."
+        />
+        <title>QuranBot</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+        <link rel="stylesheet" href="./style.css" />
+    </head>
+
+    <body>
+        <header class="site-header">
+            <div class="header-container">
+                <div class="header-brand">
+                    <i class="fas fa-mosque"></i>
+                    <span>QuranBot</span>
+                </div>
+                <nav class="header-nav">
+                    <a href="#features" class="nav-link">Features</a>
+                    <a href="#commands" class="nav-link">Commands</a>
+                    <a href="#reciters" class="nav-link">Reciters</a>
+                    <a href="#radios" class="nav-link">Radio</a>
+                    <a href="#surahs" class="nav-link">Surahs</a>
+                    <a href="#faq" class="nav-link">FAQ</a>
+                    <a href="#setup" class="nav-link">Setup</a>
+                    <a target="_blank" href="./privacy.html" class="nav-link">Privacy</a>
+                    <a target="_blank" href="./terms.html" class="nav-link">Terms</a>
+                    <a href="https://github.com/mgv-hub/quranbot" target="_blank" class="nav-link"><i class="fab fa-github"></i></a>
+                </nav>
+                <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="hero-section">
+                <div class="hero-container">
+                    <div class="hero-badge">
+                        <i class="fas fa-star"></i>
+                        Open Source & Production Ready
+                    </div>
+                    <h1 class="hero-title">
+                        Advanced Quran & Islamic Companion<br />
+                        <span class="text-accent">Built for Stability</span>
+                    </h1>
+                    <p class="hero-description">
+                        Stream high-quality Quran recitations, manage Islamic radio, automate daily azkar, track prayer times, and maintain
+                        persistent voice states. Engineered with automatic recovery, memory optimization, and role-based controls.
+                    </p>
+                    <div class="hero-actions">
+                        <a
+                            href="https://discord.com/oauth2/authorize?client_id=1436018817988825138&permissions=8&integration_type=0&scope=bot+applications.commands"
+                            target="_blank"
+                            class="btn-primary"
+                        >
+                            <i class="fas fa-plus-circle"></i>
+                            Add to Discord
+                        </a>
+                        <a href="#features" class="btn-secondary">
+                            <i class="fas fa-list"></i>
+                            Explore Features
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="reciters-count">0</span>
+                            <span class="stat-label">Verified Reciters</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="radios-count">0</span>
+                            <span class="stat-label">Radio Stations</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">114</span>
+                            <span class="stat-label">Surahs Available</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-decoration"></div>
+            </section>
+
+            <section class="quran-video-section">
+                <div class="quran-video-container">
+                    <div class="video-header">
+                        <div class="video-title">
+                            <i class="fas fa-quran"></i>
+                            <span>Quran Recitation - Full Holy Quran</span>
+                        </div>
+                        <div class="video-meta">
+                            <span class="video-duration">Live Stream</span>
+                            <span class="video-quality">HD</span>
+                        </div>
+                    </div>
+                    <div class="video-player-wrapper">
+                        <div class="video-iframe-container">
+                            <iframe
+                                src="https://www.youtube.com/embed/lCeoYw3Y9zM?rel=0&modestbranding=1&playsinline=1"
+                                title="Quran Recitation - Full Holy Quran"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen
+                                loading="lazy"
+                            >
+                            </iframe>
+                        </div>
+                    </div>
+                    <div class="video-description">
+                        <p>24/7 Recitation Stream</p>
+                        <div class="video-tags">
+                            <span class="tag">Quran</span>
+                            <span class="tag">Recitation</span>
+                            <span class="tag">Islam</span>
+                            <span class="tag">Full Quran</span>
+                        </div>
+                        <a href="https://www.youtube.com/watch?v=lCeoYw3Y9zM" target="_blank" class="video-youtube-link">
+                            Watch on YouTube
+                        </a>
+                        <div class="video-attribution">
+                            <i class="fas fa-info-circle"></i>
+                            <p>Live Quran recitation stream sourced from YouTube All rights belong to the original creator</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="features" class="features-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-sparkles"></i>
+                        Complete Feature Set
+                    </h2>
+                    <p class="section-subtitle">Every tool your server needs for a seamless spiritual experience</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-quran"></i>
+                        </div>
+                        <h3 class="feature-title">Quran Recitations</h3>
+                        <p class="feature-description">
+                            Access 114 surahs from verified reciters with accurate duration tracking. Supports page-based navigation,
+                            reciter switching, and instant playback.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check"></i> 50+ verified reciters</li>
+                            <li><i class="fas fa-check"></i> Surah & ayah navigation</li>
+                            <li><i class="fas fa-check"></i> Duration preview & tracking</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-radio"></i>
+                        </div>
+                        <h3 class="feature-title">Islamic Radio Streams</h3>
+                        <p class="feature-description">
+                            Toggle between Quran mode and live Islamic radio. Built-in health checker automatically verifies stream
+                            availability and switches to fallback sources.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check"></i> 30+ verified radio stations</li>
+                            <li><i class="fas fa-check"></i> Auto health monitoring</li>
+                            <li><i class="fas fa-check"></i> Seamless mode switching</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-pray"></i>
+                        </div>
+                        <h3 class="feature-title">Automated Azkar System</h3>
+                        <p class="feature-description">
+                            Scheduled reminders every 30 minutes with audio/image support. Retry mechanisms, expiration tracking, and custom
+                            channel routing.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check"></i> Audio & visual azkar</li>
+                            <li><i class="fas fa-check"></i> Custom channel targeting</li>
+                            <li><i class="fas fa-check"></i> Expiry & retry handling</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3 class="feature-title">Prayer Times Integration</h3>
+                        <p class="feature-description">
+                            Accurate prayer times for 35+ countries and major cities. Supports 12h/24h formats, hijri calendar, and timezone
+                            awareness.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check"></i> 300+ cities worldwide</li>
+                            <li><i class="fas fa-check"></i> Hijri & Gregorian dates</li>
+                            <li><i class="fas fa-check"></i> Regional calculation methods</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h3 class="feature-title">Interactive Control Panel</h3>
+                        <p class="feature-description">
+                            Persistent embed dashboard with role-based access. Toggle between admin-only and public modes. Navigation,
+                            playback, and radio controls in one place.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check"></i> Role-based permissions</li>
+                            <li><i class="fas fa-check"></i> Persistent state saving</li>
+                            <li><i class="fas fa-check"></i> Instant UI updates</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Voice Stability & Recovery</h3>
+                        <p class="feature-description">
+                            Automatic reconnection on crashes, external disconnect handling, player state validation, and graceful fallback
+                            to working reciters.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check"></i> Auto-reconnect pipeline</li>
+                            <li><i class="fas fa-check"></i> External disconnect handling</li>
+                            <li><i class="fas fa-check"></i> Reciter fallback system</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3 class="feature-title">Persistent State Management</h3>
+                        <p class="feature-description">
+                            Firebase-backed state persistence ensures playback mode, reciter, surah index, and settings survive restarts and
+                            outages.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check"></i> Firebase Realtime DB</li>
+                            <li><i class="fas fa-check"></i> Auto-sync on interaction</li>
+                            <li><i class="fas fa-check"></i> Clean state restoration</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-cog"></i>
+                        </div>
+                        <h3 class="feature-title">Developer Admin Panel</h3>
+                        <p class="feature-description">
+                            Secure server-side verified panel for monitoring, messaging, server management, and complaint handling with
+                            audit logging.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check"></i> SPE_USER_ID verification</li>
+                            <li><i class="fas fa-check"></i> Server & voice monitoring</li>
+                            <li><i class="fas fa-check"></i> Direct user messaging</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-code-branch"></i>
+                        </div>
+                        <h3 class="feature-title">Open Source & Modular</h3>
+                        <p class="feature-description">
+                            Clean architecture, alias-based imports, environment switching, and comprehensive logging. Built for
+                            customization and scaling.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check"></i> Production-ready codebase</li>
+                            <li><i class="fas fa-check"></i> Dev/Prod env switching</li>
+                            <li><i class="fas fa-check"></i> Structured logging system</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="commands" class="commands-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-terminal"></i>
+                        Available Commands
+                    </h2>
+                    <p class="section-subtitle">Slash commands with precise permission handling and cooldown management</p>
+                </div>
+                <div class="commands-container">
+                    <div class="command-category">
+                        <h3 class="category-title">
+                            <i class="fas fa-quran"></i>
+                            Quran & Voice Commands
+                        </h3>
+                        <div class="command-list">
+                            <div class="command-item">
+                                <code class="command-name">/إعداد</code>
+                                <p class="command-desc">Setup Quran category with voice, text, and azkar channels (Admin)</p>
+                                <span class="command-perms">Permissions: Administrator</span>
+                            </div>
+                            <div class="command-item">
+                                <code class="command-name">/دخول</code>
+                                <p class="command-desc">Join the configured voice channel and start playback</p>
+                                <span class="command-perms">Permissions: Administrator</span>
+                            </div>
+                            <div class="command-item">
+                                <code class="command-name">/دخول_قناة</code>
+                                <p class="command-desc">Join a specific voice channel by selection</p>
+                                <span class="command-perms">Permissions: Administrator</span>
+                            </div>
+                            <div class="command-item">
+                                <code class="command-name">/خروج</code>
+                                <p class="command-desc">Disconnect from voice and clear playback state</p>
+                                <span class="command-perms">Permissions: Administrator</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="command-category">
+                        <h3 class="category-title">
+                            <i class="fas fa-sliders-h"></i>
+                            Control & Interface
+                        </h3>
+                        <div class="command-list">
+                            <div class="command-item">
+                                <code class="command-name">/تحكم</code>
+                                <p class="command-desc">Open interactive control panel with playback, reciter, and navigation controls</p>
+                                <span class="command-perms">Permissions: Configurable (Admin/Everyone)</span>
+                            </div>
+                            <div class="command-item">
+                                <code class="command-name">/دليل</code>
+                                <p class="command-desc">Display usage guide and command reference</p>
+                                <span class="command-perms">Permissions: Everyone</span>
+                            </div>
+                            <div class="command-item">
+                                <code class="command-name">/مصادر</code>
+                                <p class="command-desc">View official data sources and API references</p>
+                                <span class="command-perms">Permissions: Everyone</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="command-category">
+                        <h3 class="category-title">
+                            <i class="fas fa-globe"></i>
+                            Utilities & Monitoring
+                        </h3>
+                        <div class="command-list">
+                            <div class="command-item">
+                                <code class="command-name">/مواقيت_الصلاة</code>
+                                <p class="command-desc">Interactive prayer times selection by country and city</p>
+                                <span class="command-perms">Permissions: Everyone</span>
+                            </div>
+                            <div class="command-item">
+                                <code class="command-name">/ping</code>
+                                <p class="command-desc">Display bot latency, uptime, server count, and system metrics</p>
+                                <span class="command-perms">Permissions: Everyone</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="reciters" class="reciters-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-microphone-alt"></i>
+                        Featured Reciters
+                    </h2>
+                    <p class="section-subtitle">Browse verified Quran reciters with multiple riwayah options</p>
+                </div>
+                <div id="reciters-grid" class="reciters-grid">
+                    <div class="loading-placeholder">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading reciters...
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 32px">
+                    <button id="show-more-reciters" class="btn-outline" style="display: none">
+                        <i class="fas fa-plus"></i>
+                        Show More Reciters
+                    </button>
+                </div>
+            </section>
+
+            <section id="radios" class="radios-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-broadcast-tower"></i>
+                        Islamic Radio Stations
+                    </h2>
+                    <p class="section-subtitle">Stream live Islamic content from verified radio sources</p>
+                </div>
+                <div id="radios-grid" class="radios-grid">
+                    <div class="loading-placeholder">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading radio stations...
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 32px">
+                    <button id="show-more-radios" class="btn-outline" style="display: none">
+                        <i class="fas fa-plus"></i>
+                        Show More Stations
+                    </button>
+                </div>
+            </section>
+
+            <section id="surahs" class="surahs-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-book-quran"></i>
+                        Quran Surahs
+                    </h2>
+                    <p class="section-subtitle">All 114 surahs with page references and revelation type</p>
+                </div>
+                <div class="surahs-filter">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="makkia">Makki</button>
+                    <button class="filter-btn" data-filter="madania">Madani</button>
+                </div>
+                <div id="surahs-grid" class="surahs-grid">
+                    <div class="loading-placeholder">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading surahs...
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 32px">
+                    <button id="show-more-surahs" class="btn-outline" style="display: none">
+                        <i class="fas fa-plus"></i>
+                        Show More Surahs
+                    </button>
+                </div>
+            </section>
+
+            <section id="rewayah" class="rewayah-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-scroll"></i>
+                        Riwayah & Moshaf Types
+                    </h2>
+                    <p class="section-subtitle">Different recitation styles and Quran editions available</p>
+                </div>
+                <div id="rewayah-grid" class="rewayah-grid">
+                    <div class="loading-placeholder">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading riwayah data...
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 32px">
+                    <button id="show-more-rewayah" class="btn-outline" style="display: none">
+                        <i class="fas fa-plus"></i>
+                        Show More Types
+                    </button>
+                </div>
+            </section>
+
+            <section id="reliability" class="features-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-server"></i>
+                        Reliability & Infrastructure
+                    </h2>
+                    <p class="section-subtitle">Engineered for 24/7 operation with automatic recovery and resource management</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <h3 class="feature-title">Radio Health Checker</h3>
+                        <p class="feature-description">
+                            Continuous stream validation every 30 minutes. Detects dead links, switches to active fallbacks, and maintains
+                            playback continuity.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-memory"></i>
+                        </div>
+                        <h3 class="feature-title">Memory Optimization</h3>
+                        <p class="feature-description">
+                            Automatic cache cleanup, interaction TTL management, and aggressive GC triggers when heap usage exceeds
+                            thresholds.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3 class="feature-title">Rate Limiting & Cooldowns</h3>
+                        <p class="feature-description">
+                            User and server-level cooldowns prevent abuse. Global cooldowns and interaction deduplication ensure stability.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-hdd"></i>
+                        </div>
+                        <h3 class="feature-title">Local & Cloud Backups</h3>
+                        <p class="feature-description">
+                            Compressed JSON backups sent to Discord channels. Firebase sync ensures zero data loss during restarts.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="faq" class="faq-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-question-circle"></i>
+                        Frequently Asked Questions
+                    </h2>
+                    <p class="section-subtitle">Common questions about setup, features, and support</p>
+                </div>
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Is QuranBot free to use?</span>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>
+                                Yes, QuranBot is completely free and open-source. You can add it to your server without any subscription
+                                fees. The source code is available on GitHub for self-hosting.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>How do I set up the bot in my server?</span>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>
+                                After inviting the bot with Administrator permissions, simply use the
+                                <code>/إعداد</code> command in any text channel. The bot will automatically create a dedicated category with
+                                voice, text, and azkar channels. You can then use <code>/دخول</code> to start playing or
+                                <code>/تحكم</code> to open the control panel.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Can members use the bot without admin permissions?</span>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>
+                                Yes. The bot supports a "Everyone" mode that allows non-admins to navigate between surahs, select reciters,
+                                and toggle radio mode with a built-in cooldown to prevent abuse. Admins can toggle this mode using the
+                                control panel.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>What happens if the bot disconnects from voice?</span>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>
+                                QuranBot is built with automatic recovery. It monitors voice connections and attempts to reconnect on
+                                external disconnects. State persistence ensures that playback mode, reciter, and current position are saved,
+                                allowing seamless restoration after crashes or restarts.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Where does the bot get its Quran audio?</span>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p>
+                                Audio streams are sourced directly from
+                                <strong>mp3quran.net</strong> and other verified providers via API. Radio stations are also sourced from
+                                official Islamic radio URLs. The bot includes a health checker to ensure streams are active before playing.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="setup" class="setup-section">
+                <div class="setup-container">
+                    <div class="setup-content">
+                        <h2 class="setup-title">
+                            <i class="fas fa-rocket"></i>
+                            Quick Setup Guide
+                        </h2>
+                        <p class="setup-description">
+                            Deploy QuranBot in minutes. The bot handles channel creation, permission overwrites, and state initialization
+                            automatically.
+                        </p>
+                        <div class="setup-steps">
+                            <div class="setup-step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Invite & Authorize</h4>
+                                    <p>
+                                        Click the invite button. Ensure the bot has Administrator permissions during setup for channel
+                                        creation.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="setup-step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Run /إعداد</h4>
+                                    <p>
+                                        Execute in any text channel. The bot creates the Quran category, voice, text, and azkar channels
+                                        with secure overwrites.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="setup-step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Open Control Panel</h4>
+                                    <p>
+                                        Use /تحكم to access the interactive dashboard. Toggle between admin-only and public control modes.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="setup-step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h4>Join & Play</h4>
+                                    <p>
+                                        Click the join button or use /دخول. Playback starts automatically with a random reciter and surah.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="setup-cta">
+                            <a
+                                href="https://discord.com/oauth2/authorize?client_id=1436018817988825138&permissions=8&integration_type=0&scope=bot+applications.commands"
+                                target="_blank"
+                                class="btn-primary btn-large"
+                            >
+                                <i class="fab fa-discord"></i>
+                                Add QuranBot to Your Server
+                            </a>
+                            <p class="setup-note">
+                                <i class="fas fa-info-circle"></i>
+                                Requires Administrator for initial setup. Bot auto-optimizes voice bitrate to 64kbps for stability.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="setup-visual"></div>
+                </div>
+            </section>
+
+            <section class="cta-section">
+                <div class="cta-container">
+                    <h2 class="cta-title">Ready to Enhance Your Community?</h2>
+                    <p class="cta-description">
+                        Join thousands of servers using QuranBot for reliable Quran streaming, automated remembrance, and professional voice
+                        management. Fully open-source.
+                    </p>
+                    <div class="cta-actions">
+                        <a
+                            href="https://discord.com/oauth2/authorize?client_id=1436018817988825138&permissions=8&integration_type=0&scope=bot+applications.commands"
+                            target="_blank"
+                            class="btn-primary btn-large"
+                        >
+                            <i class="fas fa-plus-circle"></i>
+                            Add QuranBot Now
+                        </a>
+                        <a href="https://github.com/mgv-hub/quranbot" target="_blank" class="btn-outline btn-large">
+                            <i class="fab fa-github"></i>
+                            View Source Code
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="page-footer landing">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-brand-title">
+                        <i class="fas fa-mosque"></i>
+                        QuranBot
+                    </div>
+                    <p class="footer-brand-desc">
+                        Complete Islamic Discord bot for Quran recitations, radio, azkar, and prayer times. Open source and free for
+                        everyone.
+                    </p>
+                    <div class="footer-social">
+                        <a href="https://discord.gg/cgRMtuXkJf" target="_blank" class="social-btn discord" title="Discord Support">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                        <a href="https://github.com/mgv-hub/quranbot" target="_blank" class="social-btn github" title="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4><i class="fas fa-link"></i> Quick Links</h4>
+                    <div class="footer-links">
+                        <a href="./privacy.html" class="footer-link">
+                            <i class="fas fa-shield-alt"></i>
+                            Privacy Policy
+                        </a>
+                        <a href="./terms.html" class="footer-link">
+                            <i class="fas fa-file-contract"></i>
+                            Terms of Service
+                        </a>
+                        <a href="https://github.com/mgv-hub/quranbot" target="_blank" class="footer-link">
+                            <i class="fab fa-github"></i>
+                            View Source Code
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4><i class="fas fa-headset"></i> Support</h4>
+                    <div class="footer-links">
+                        <a href="https://discord.gg/cgRMtuXkJf" target="_blank" class="footer-link">
+                            <i class="fab fa-discord"></i>
+                            Discord Support Server
+                        </a>
+                        <a href="https://github.com/mgv-hub/quranbot/issues" class="footer-link">
+                            <i class="fas fa-bug"></i>
+                            Report an Issue
+                        </a>
+                        <a href="https://github.com/mgv-hub/quranbot/issues" class="footer-link">
+                            <i class="fas fa-lightbulb"></i>
+                            Feature Request
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">&copy; 2026 QuranBot. All rights reserved. Independent open-source project</p>
+            </div>
+        </footer>
+
+        <button class="scroll-top-btn" aria-label="Scroll to top">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        <script src="./scripts.js"></script>
+    </body>
+</html>
