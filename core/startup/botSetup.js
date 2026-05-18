@@ -5,6 +5,7 @@ const pathlra = require('path');
 const { Mutex } = require('async-mutex');
 const logger = require('@logger');
 require('@cooldown-core_state');
+require('@redis/index');
 const { getBrowserHeaders, TimeoutRequest } = require('@http');
 global.logger = logger;
 const mutex = new Mutex();

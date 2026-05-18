@@ -13,22 +13,22 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/mgv-hub/quranbot"
+        "url": "https://github.com/cortexhqcore/Cortex-QuranBot"
     },
     "bugs": {
-        "url": "https://github.com/mgv-hub/quranbot/issues"
+        "url": "https://github.com/cortexhqcore/Cortex-QuranBot/issues"
     },
     "support": {
-        "discord": "https://discord.gg/cgRMtuXkJf"
+        "discord": "https://discord.gg/5qYXAucMpc"
     },
     "author": {
-        "name": "mgv-hub"
+        "name": "mgv150 | Powered By Cortex HQ"
     },
-    "homepage": "https://mgv-hub.github.io/quranbot/",
+    "homepage": "https://quran.cortexhq.net",
     "license": "MIT",
     "contributors": [
         {
-            "name": "mgv-hub"
+            "name": "mgv150 | Powered By Cortex HQ"
         }
     ],
     "features": [
@@ -215,7 +215,10 @@
         "@firebase-controlIds-core_utils": "./core/database/firebase/services/controlIds.service.js",
         "@firebase-cache-core_utils": "./core/database/firebase/services/cache.service.js",
         "@firebase-trackedGuilds-core_utils": "./core/database/firebase/services/trackedGuilds.service.js",
-        "@firebase-backup-core_utils": "./core/database/firebase/services/backup.service.js"
+        "@firebase-backup-core_utils": "./core/database/firebase/services/backup.service.js",
+        "@redis/index": "./core/database/redis",
+        "@redis": "./core/database/redis/",
+        "@redis-client-core_utils": "./core/database/redis/client.js"
     },
     "_moduleDirectories": [
         "node_modules",
