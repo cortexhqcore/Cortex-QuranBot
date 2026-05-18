@@ -1,233 +1,112 @@
-# QuranBot
+# Cortex QuranBot 🕌
 
-## Overview
+Cortex QuranBot is a production-grade, highly optimized Discord bot engineered to deliver a seamless, high-fidelity Quran listening experience. Built with a decentralized state-synchronized architecture, it supports live Islamic radio streams, automated Azkar reminders, precise localized prayer times, and advanced role-based controls.
 
-QuranBot is a production-ready Discord bot engineered to deliver a seamless, high-fidelity Quran listening experience. It integrates automated Azkar reminders, precise prayer time calculations, and live Islamic radio streaming within a robust, state-synchronized architecture.
-
-## Key Features
-
-- **Comprehensive Quran Playback:** Full access to 114 surahs with multiple verified reciters, seamless surah navigation, and continuous playback.
-- **Islamic Radio Streaming:** Direct integration with official Quran radio stations, including health monitoring and automatic fallback.
-- **Automated Azkar System:** Scheduled dhikr delivery with optional audio playback, image support, and configurable intervals.
-- **Global Prayer Times:** Accurate daily prayer schedules for 35+ countries and major cities, powered by the Aladhan API with localized time formats.
-- **Interactive Control Panel:** Dynamic embed-based interface featuring playback controls, reciter/surah selection, radio mode toggling, and permission management.
-- **State Persistence & Recovery:** Dual-layer state management (runtime memory + Firebase synchronization) with automatic voice reconnection and crash recovery.
-- **Optimized Architecture:** Memory management, interaction rate limiting, duplicate detection, retry logic, and multi-guild concurrent support.
-
-## Commands
-
-| Command          | Description                                                  |
-| ---------------- | ------------------------------------------------------------ |
-| `/إعداد`         | Initialize Quran category and required text/voice channels   |
-| `/دخول`          | Join the pre-configured Quran voice channel                  |
-| `/دخول_قناة`     | Join a specific voice channel provided as an argument        |
-| `/خروج`          | Disconnect from the active voice channel                     |
-| `/تحكم`          | Open the interactive control panel for playback and settings |
-| `/مواقيت_الصلاة` | Display prayer times for selected countries and cities       |
-| `/دليل`          | View comprehensive usage guide and feature overview          |
-| `/مصادر`         | List official data sources and API references                |
-| `/سرعة`          | Check bot latency, uptime, server count, and system metrics  |
-
-## Technology Stack
-
-- **Runtime:** [Node.js v22](https://nodejs.org/en/download) **(Required - Other versions not supported)**
-- **Framework:** [Discord.js v14](https://discord.js.org/docs/packages/discord.js/14.26.2)
-- **Audio Engine:** @discordjs/voice, FFmpeg, Opus
-- **Database:** [Firebase Realtime Database](https://firebase.google.com/)
-- **Utilities:** Custom environment manager, path aliasing, health check endpoints, automated backup system
-
-## System Requirements
-
-> **Node.js Version Requirement**
->
-> This project requires **Node.js v22.x** exclusively. Other versions (v18, v20, v23+) are not supported and may cause runtime errors, compatibility issues, or unexpected behavior.
->
-> ```bash
-> # Verify your Node.js version
-> node -v
-> # Expected output: v22.x.x
-> ```
->
-> To install Node.js v22:
->
-> - **Windows/macOS:** Download from [nodejs.org](https://nodejs.org/en/download)
-> - **Linux (nvm):** `nvm install 22 && nvm use 22`
-> - **Linux (apt):** Follow official NodeSource setup for v22
-
-## Installation & Deployment
-
-1. **Download the Repository**
-   Clone the repository to your local machine or server:
-
-    ```bash
-    git clone https://github.com/mgv-hub/quranbot.git
-    cd quranbot
-    ```
-
-2. **Verify Node.js Version**
-   Ensure you are running Node.js v22:
-
-    ```bash
-    node -v  # Must output v22.x.x
-    ```
-
-3. **Install Dependencies**
-   Install all required packages using pnpm:
-
-    ```bash
-    pnpm install
-    ```
-
-4. **Configure Environment Variables**
-    - Locate the example environment files in your project directory:
-        ```
-        .env.example
-        development.env.example
-        production.env.example
-        ```
-    - **Important:** You must rename these files by removing the `.example` extension before use:
-
-        ```bash
-        # For env
-        ren .env.example .env
-
-        # For development
-        ren development.env.example development.env
-
-        # For production
-        ren production.env.example production.env
-        ```
-
-    - Additionally, ensure the main `.env` file exists and is properly configured.
-    - Open the renamed file (`development.env` or `production.env`) and populate the required values:
-        - `DISCORD_TOKEN`: Your bot token from the Discord Developer Portal
-        - `CLIENT_ID`: Your application's client ID
-        - Firebase configuration credentials (`FIREBASE_API_KEY`, `FIREBASE_PROJECT_ID`, etc.)
-        - Optional: monitoring endpoints, backup channel IDs, and radio station URLs
-
-5. **Set the Environment Mode**
-    - The project automatically selects the environment file based on `NODE_ENV`:
-
-        ```env
-        NODE_ENV=development
-        ```
-
-        → loads `development.env`
-
-        ```env
-        NODE_ENV=production
-        ```
-
-        → loads `production.env`
-
-    - Make sure the correct file exists and is properly configured before starting the bot.
-
-6. **Start the Bot**
-   Launch the application using the appropriate script:
-    ```bash
-    node --trace-warnings --trace-deprecation --trace-uncaught --trace-exit --enable-source-maps .
-    ```
-
-> **Note:** The `.example` extension serves as a template indicator. The application will not load configuration from files retaining this extension. Always ensure the active environment file has the exact name expected by the runtime (`development.env`, `production.env`, or `.env`).
+Developed by **mgv150** and powered by the team at **Cortex HQ**, this bot is designed to handle thousands of servers with ultra-low latency, automated crash recovery, and high-performance Redis caching.
 
 ---
 
-## Firebase Configuration Guide
+## 🚀 Key Features
 
-### Getting Firebase Admin SDK Credentials (Service Account)
+*   **Comprehensive Quran Playback:** Play all 114 surahs with 50+ verified high-fidelity reciters, featuring continuous play, dynamic pagination, and surah navigation.
+*   **Decentralized State Caching:** Powered by **Redis**, ensuring sub-millisecond guild state caching, enabling seamless sharding and stateless horizontal scaling.
+*   **High-Resilience Audio Engine:** Features a dynamic byte-range seek calculator and exponential-backoff retry mechanisms. If a stream fails, it automatically falls back to alternative active reciters or surahs to prevent silence.
+*   **Live Islamic Radio:** Stream 30+ verified Quranic radio stations with an automated background health checker that monitors link stability.
+*   **Automated Azkar Reminders:** Scheduled morning, evening, and general dhikr reminders with both visual templates and optional audio playback.
+*   **Global Prayer Times:** Multi-regional prayer schedules for 300+ major cities worldwide, featuring timezone awareness, calculation method settings, and Gregorian/Hijri date overlays.
+*   **Interactive Controls:** Dynamic button and select-menu control panel ([/تحكم]) with instant UI state rendering and internal embed caching to minimize API rate limit overhead.
 
-The bot uses **Firebase Admin SDK** for server-side operations, which requires service account credentials instead of the public Client SDK keys.
+---
 
-#### Step-by-Step Instructions:
+## 🛠️ Technology Stack
 
-1. **Go to Firebase Console**
-    - Navigate to: https://console.firebase.google.com/
-    - Select your project
+*   **Runtime Environment:** Node.js v22 (Strictly required for voice stream compression compatibility)
+*   **Framework Library:** Discord.js v14
+*   **Database Tier:** Firebase Realtime Database (Cold persistence layer) & **Redis** (Hot state cache)
+*   **Audio Engine:** `@discordjs/voice`, custom HLS/MP3 transcoders, FFmpeg, and Opus audio codecs
+*   **Task Scheduling:** High-precision cron tasks and concurrent queue semaphores (preventing CPU thread exhaustion)
 
-2. **Access Service Accounts**
-    - Click the gear icon → **Project settings**
-    - Go to the **Service accounts** tab
-    - Under **Firebase Admin SDK**, click **Generate new private key**
+---
 
-3. **Download the JSON Key File**
-    - A warning will appear: "Keep this file secret!"
-    - Click **Generate key** to download the JSON key file
+## 📋 Slash Commands Reference
 
-4. **Extract Values for Environment Variables**
-   Open the downloaded JSON file and copy these values to your `development.env` or `production.env`:
+| Command | Description | Permission Requirement | Cooldown |
+| :--- | :--- | :--- | :--- |
+| **`/إعداد`** | Automated setup creating a secure Quran category, text channel, and active voice channel. | Administrator | 10 Seconds |
+| **`/دخول`** | Joins the pre-configured voice channel and initiates playback immediately. | Administrator / Configurable | 5 Seconds |
+| **`/دخول_قناة`** | Joins a specific voice channel chosen by the administrator. | Administrator | 5 Seconds |
+| **`/خروج`** | Gracefully leaves the active voice channel and saves the current surah index/reciter state. | Administrator / Configurable | 5 Seconds |
+| **`/تحكم`** | Spawns the interactive control panel with seek, pause, skip, and setting buttons. | Configurable (Admins/Everyone) | 3 Seconds |
+| **`/مواقيت_الصلاة`** | Interactive menu to choose country/city and query current Gregorian/Hijri prayer times. | Everyone | 5 Seconds |
+| **`/دليل`** | Displays a complete manual, command guide, and operational help. | Everyone | 2 Seconds |
+| **`/مصادر`** | Lists the official verified APIs, data sources, and audio stream providers. | Everyone | 2 Seconds |
+| **`/ping`** | Checks API response times, bot uptime, joined guild count, and active CPU/RAM usage. | Everyone | 3 Seconds |
 
-    ```env
-    # Firebase Admin SDK Service Account Credentials (EXAMPLE VALUES REPLACE WITH YOUR OWN)
-    FIREBASE_ADMIN_TYPE=service_account
-    FIREBASE_ADMIN_PROJECT_ID=your-project-id
-    FIREBASE_ADMIN_PRIVATE_KEY_ID=your_private_key_id_here
-    FIREBASE_ADMIN_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKc...\n-----END PRIVATE KEY-----\n"
-    FIREBASE_ADMIN_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-project-id.iam.gserviceaccount.com
-    FIREBASE_ADMIN_CLIENT_ID=your_client_id_here
-    FIREBASE_ADMIN_AUTH_URI=https://accounts.google.com/o/oauth2/auth
-    FIREBASE_ADMIN_TOKEN_URI=https://oauth2.googleapis.com/token
-    FIREBASE_ADMIN_AUTH_PROVIDER_X509_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
-    FIREBASE_ADMIN_CLIENT_X509_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-xxxxx%40your-project-id.iam.gserviceaccount.com
-    ```
+---
 
-    > **Important Notes:**
-    >
-    > - The `FIREBASE_ADMIN_PRIVATE_KEY` contains newlines (`\n`). Keep them escaped as shown above.
-    > - Wrap the private key value in double quotes to preserve formatting.
-    > - Never commit this file to version control. Add it to `.gitignore`:
-    >     ```bash
-    >     echo "*.json" >> .gitignore
-    >     echo "development.env" >> .gitignore
-    >     echo "production.env" >> .gitignore
-    >     ```
-    > - **Never share your private key or service account credentials with anyone.**
+## ⚙️ Quick Installation & Setup
 
-### Firebase Security Rules
+### 1. Prerequisite Checks
+Cortex QuranBot requires **Node.js v22** and a running **Redis** server:
+```bash
+# Verify Node.js version
+node -v # Expected output: v22.x.x
 
-The bot is designed to work with **strict security rules** that deny all public access. Only authenticated Admin SDK requests can read/write data.
-
-#### Current Recommended Rules:
-
-```json
-{
-    "rules": {
-        ".read": true,
-        ".write": true
-    }
-}
+# Verify Redis connection
+redis-cli ping # Expected output: PONG
 ```
 
-#### How to Apply These Rules:
+### 2. Download and Dependency Hooking
+Clone the repository to your environment and install packages using `pnpm`:
+```bash
+git clone https://github.com/cortexhqcore/Cortex-QuranBot.git
+cd Cortex-QuranBot
+pnpm install
+```
 
-1. Go to your Firebase Console → Realtime Database → Rules
-2. Replace the existing rules with the JSON above
-3. Click **Publish**
+### 3. Environment Variable Provisioning
+Rename the example environment configurations:
+```bash
+# Windows command shell
+ren .env.example .env
+ren production.env.example production.env
+ren development.env.example development.env
+```
 
-#### Why These Rules Work:
+Open the newly renamed files (`production.env` or `development.env`) and configure:
+*   `DISCORD_TOKEN`: Your bot application credential from the Discord Developer Portal.
+*   `CLIENT_ID`: The unique client snowflake ID of your bot application.
+*   `REDIS_URL`: Endpoint for your Redis database cache (e.g., `redis://localhost:6379`).
+*   Firebase Admin SDK service credentials (`FIREBASE_ADMIN_PRIVATE_KEY`, etc.).
 
-| Rule Setting    | Effect                                                    |
-| --------------- | --------------------------------------------------------- |
-| `.read: false`  | Denies all client-side read access                        |
-| `.write: false` | Denies all client-side write access                       |
-| Admin SDK       | Bypasses rules automatically (server-side authentication) |
+### 4. Running the Bot
+Launch the bot with dynamic warnings and source mapping:
+```bash
+# Production Launch
+NODE_ENV=production pnpm run start
 
-> The bot uses `firebase-admin` with service account credentials, which authenticates as a privileged server and bypasses these rules. Client apps (web/mobile) cannot access your data even if they have your public API keys.
+# Development Watcher
+NODE_ENV=development pnpm run dev
+```
 
 ---
 
-## Architecture Highlights
+## 🔒 Security & Scaling Best Practices
 
-- **State Management:** Synchronized runtime and persistent states with automatic recovery, manual disconnect flags, and scheduled Firebase sync.
-- **Interaction Pipeline:** Centralized processor enforcing cooldowns, rate limits, duplicate suppression, and role-based authorization.
-- **Audio Reliability:** Stream validation, byte-range calculation for seek operations, radio health checker with automatic fallback, and graceful error recovery.
-- **Data Synchronization:** Local caching, Firebase persistence, automated backups with Discord channel delivery, and cleanup routines for orphaned guild data.
+*   **Stateless Scaling:** Using Redis to cache runtime voice connections and guild states ensures that your bot can scale to multiple gateway shards without losing track of player states.
+*   **Database Isolation:** Firebase Realtime Database rules should be set to deny public reading/writing (`.read: false`, `.write: false`). The bot uses authenticated `firebase-admin` service accounts, allowing secure server-side queries that bypass client-side restrictions.
+*   **Spawning Semaphores:** The bot automatically limits concurrent audio stream generation via a semaphore (`maxConcurrent: 3` by default) to keep CPU loads predictable and prevent thread lockouts.
 
-## Contributing
+---
 
-Contributions are welcome. Please open an issue before submitting substantial pull requests to discuss implementation details. Maintain existing naming conventions, avoid unnecessary abstractions, and ensure all changes are production-tested.
+## 👥 Contributors & Support
 
-## License & Disclaimer
+Cortex QuranBot is created and maintained by **mgv150** and is backed by the team at **Cortex HQ**.
 
-This project is open-source and provided as-is. Quranic audio and prayer time data are sourced from official public APIs (mp3quran.net, aladhan.com). Users are advised to verify prayer times with local religious authorities.
+*   **Official Support Server:** Join our Discord for assistance, feature suggestions, and status updates: [Discord Support](https://discord.gg/5qYXAucMpc)
+*   **Home Website:** Explore details and landing features: [Cortex Quran Portal](https://quran.cortexhq.net)
+*   **GitHub Repository:** View source and open pull requests: [Cortex-QuranBot Repo](https://github.com/cortexhqcore/Cortex-QuranBot)
 
-> نسأل الله أن يكون هذا العمل خالصا لوجهه الكريم، وأن ينفع به الجميع، وأن يجعلنا وإياكم من الذين يستمعون القول فيتبعون أحسنه.
+---
+
+> نسأل الله أن يكون هذا العمل خالصاً لوجهه الكريم، وأن ينفع به الجميع، وأن يجعلنا وإياكم من الذين يستمعون القول فيتبعون أحسنه.
