@@ -69,7 +69,7 @@ module.exports = {
                 );
             const supportActions = new ActionRowBuilder().addComponents(
                 new ButtonBuilder().setCustomId('open_complaint_modal').setLabel('تقديم شكوى/اقتراح').setStyle(ButtonStyle.Secondary),
-                new ButtonBuilder().setLabel('سيرفر الدعم').setStyle(ButtonStyle.Link).setURL('https://discord.gg/cgRMtuXkJf'),
+                new ButtonBuilder().setLabel('سيرفر الدعم').setStyle(ButtonStyle.Link).setURL('https://discord.gg/Kf84XpD7u8'),
             );
             await interaction.reply({
                 embeds: [supportMenu],
