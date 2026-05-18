@@ -13,6 +13,7 @@ const allowed_when_not_in_voice = [
     'check_hafsat',
     'stop_webhook',
     'register_webhook',
+    'toggle_control_mode',
 ];
 /**
  function isBotInVoice(guildState) {
