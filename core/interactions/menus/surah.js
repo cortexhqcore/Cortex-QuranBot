@@ -16,6 +16,10 @@ module.exports = {
                 const { guildId, guildState } = resolveGuildState(interaction);
                 const authorized = await checkAuthorization(interaction, interaction.customId);
                 if (!authorized) return;
+                if (!guildState.player || guildState.player.destroyed) {
+                    await safeError(interaction, 'البوت غير متصل بأي روم صوتي');
+                    return;
+                }
 
                 if (guildState.playbackMode !== 'surah') {
                     await safeError(interaction, 'اختيار السورة غير متاح في وضع الراديو');
@@ -47,20 +51,26 @@ module.exports = {
                         return;
                     }
                     guildState.currentSurah = selectedSurahNum;
+                    guildState.disconnectAfterCurrentTrack = true;
                     try {
+                        if (guildState.player.playing || guildState.player.state?.status === 'playing') {
+                            guildState.player.stopPlaying();
+                        }
                         const audioResource = await createSurahResource(guildState, surahIndex);
-                        guildState.player.stop();
-                        guildState.player.play(audioResource);
-                        guildState.isPaused = false;
-                        guildState.pauseReason = null;
-                        persistentState.updateGuildState(guildId, {
-                            currentSurahIndex: guildState.currentSurah - 1,
-                            isPaused: false,
-                            pauseReason: null,
-                        });
+                        if (audioResource) {
+                            guildState.player.play({ track: audioResource });
+                            guildState.isPaused = false;
+                            guildState.pauseReason = null;
+                            persistentState.updateGuildState(guildId, {
+                                currentSurahIndex: guildState.currentSurah - 1,
+                                isPaused: false,
+                                pauseReason: null,
+                                disconnectAfterCurrentTrack: true,
+                            });
+                        }
                     } catch (err) {
                         logger.error('Error Playing Surah ' + selectedSurahNum + ' In Guild ' + guildId, err);
-                        await safeError(interaction, 'حدث خطأ اثناء تشغيل السورة ' + err.message);
+                        await safeError(interaction, 'Error playing surah ' + err.message);
                         return;
                     }
                 }

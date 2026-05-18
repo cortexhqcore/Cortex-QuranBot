@@ -3,7 +3,7 @@ require('pathlra-aliaser')();
 const logger = require('@logger');
 const voiceLogger = require('@voiceLogger');
 const { ChannelType } = require('discord.js');
-const { AudioPlayerStatus } = require('@discordjs/voice');
+// const { AudioPlayerStatus } = require('@discordjs/voice');
 const { getGuildStateById } = require('@guild-state-store-core_state');
 const persistentStateManager = require('@PersistentStateManager-core_state');
 const { initializeConnection, syncVoiceState } = require('@audio-core');
@@ -40,11 +40,14 @@ async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
         const guildState = getGuildStateById(guildId);
         const storedState = persistentStateManager.getGuildState(guildId);
         const wasManuallyDisconnected = storedState?.manualDisconnectFlag;
-        if (!guildState.connection || guildState.connection.destroyed) {
-            if (!wasManuallyDisconnected) {
+        const playerNeedsInit =
+            !guildState?.player || typeof guildState.player.destroy === 'function' || typeof guildState.player.play !== 'function';
+        if (playerNeedsInit) {
+            if (!wasManuallyDisconnected && storedState?.connectionStatus === true) {
                 voiceLogger.recovery(guildId, 'Attempting voice reconnection', {
                     manualDisconnect: wasManuallyDisconnected,
                     hasGuildState: !!guildState,
+                    connectionStatus: storedState?.connectionStatus,
                 });
                 try {
                     await initializeConnection(guildId, guildState, targetVoiceChannel, guild.voiceAdapterCreator);
@@ -58,23 +61,45 @@ async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
                     guildState.playedOffset = storedState?.playedOffset || 0;
                     guildState.playbackStartTime = Date.now();
                     guildState.lastActivity = Date.now();
+                    guildState.currentRadioIndex = storedState?.currentRadioIndex ?? 0;
+                    guildState.currentRadioUrl = storedState?.currentRadioUrl ?? null;
                     voiceLogger.recovery(guildId, 'Restored playback state', {
                         mode: guildState.playbackMode,
                         reciter: guildState.currentReciter,
                         surah: guildState.currentSurah,
                     });
                     try {
-                        const audioResource = await global.createSurahResource(guildState, guildState.currentSurah - 1);
-                        guildState.player.play(audioResource);
-                        guildState.isPaused = false;
-                        guildState.pauseReason = null;
-                        voiceLogger.recovery(guildId, 'Started playback after recovery');
-                        await new Promise((resolve) => setTimeout(resolve, 3000));
-                        if (guildState.player.state.status === AudioPlayerStatus.Idle) {
-                            voiceLogger.recovery(guildId, 'Player idle after recovery - retrying');
-                            const retryResource = await global.createSurahResource(guildState, guildState.currentSurah - 1);
-                            guildState.player.play(retryResource);
-                            voiceLogger.recovery(guildId, 'Playback retry completed');
+                        let trackToPlay = null;
+                        if (guildState.playbackMode === 'surah') {
+                            trackToPlay = await global.createSurahResource(guildState, guildState.currentSurah - 1);
+                        } else if (guildState.playbackMode === 'radio') {
+                            if (!guildState.currentRadioUrl && global.quranRadios?.length > 0) {
+                                guildState.currentRadioIndex = 0;
+                                guildState.currentRadioUrl = global.quranRadios[0].url;
+                            }
+                            if (guildState.currentRadioUrl) {
+                                trackToPlay = await global.createRadioResource(guildState.currentRadioUrl);
+                            }
+                            if (!trackToPlay) {
+                                voiceLogger.warn(guildId, 'Radio resource failed during recovery, falling back to surah');
+                                guildState.playbackMode = 'surah';
+                                trackToPlay = await global.createSurahResource(guildState, guildState.currentSurah - 1);
+                            }
+                        }
+                        if (trackToPlay) {
+                            guildState.player.play({ track: trackToPlay });
+                            guildState.isPaused = false;
+                            guildState.pauseReason = null;
+                            voiceLogger.recovery(guildId, 'Started playback after recovery');
+                            await new Promise((resolve) => setTimeout(resolve, 3000));
+                            if (guildState.player.state?.status === 'idle') {
+                                voiceLogger.recovery(guildId, 'Player idle after recovery - retrying');
+                                const retryResource = await global.createSurahResource(guildState, guildState.currentSurah - 1);
+                                if (retryResource) {
+                                    guildState.player.play({ track: retryResource });
+                                }
+                                voiceLogger.recovery(guildId, 'Playback retry completed');
+                            }
                         }
                     } catch (playbackError) {
                         voiceLogger.error(guildId, 'Failed to start playback after recovery', playbackError);
@@ -91,18 +116,26 @@ async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
                     logger.error(`Failed To Connect To Voice Channel For Guild ${guildId}`, connectionError);
                 }
             } else {
-                voiceLogger.recovery(guildId, 'Skipping recovery - manual disconnect flag set');
-                logger.info(`Skipping Voice Connection For Guild ${guildId} Manual Disconnect Flag Set`);
+                voiceLogger.recovery(guildId, 'Skipping recovery', {
+                    reason: wasManuallyDisconnected ? 'manual disconnect flag set' : 'connectionStatus not true',
+                    manualDisconnect: wasManuallyDisconnected,
+                    connectionStatus: storedState?.connectionStatus,
+                });
+                logger.info(
+                    `Skipping Voice Connection For Guild ${guildId}: manualDisconnect=${wasManuallyDisconnected}, connectionStatus=${storedState?.connectionStatus}`,
+                );
             }
         } else {
             voiceLogger.recovery(guildId, 'Connection already active - checking playback state', {
                 playerStatus: guildState.player?.state?.status,
             });
-            logger.info(`Guild ${guildId} Already Has Active Connection`);
-            if (guildState.player.state.status === AudioPlayerStatus.Idle) {
+            logger.info(`Guild ${guildId} Has Valid Player Connection`);
+            if (guildState.player.paused) {
                 try {
                     const audioResource = await global.createSurahResource(guildState, guildState.currentSurah - 1);
-                    guildState.player.play(audioResource);
+                    if (audioResource) {
+                        guildState.player.play({ track: audioResource });
+                    }
                     guildState.isPaused = false;
                     guildState.pauseReason = null;
                     voiceLogger.recovery(guildId, 'Started playback for idle player');
@@ -111,8 +144,6 @@ async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
                     logger.error(`Guild ${guildId} Playback Start Failed`, playbackError);
                 }
             }
-            guildState.connection.subscribe(guildState.player);
-            voiceLogger.recovery(guildId, 'Player subscribed to existing connection');
         }
     } else {
         voiceLogger.recovery(guildId, 'Voice channel not found or invalid type', {
@@ -123,8 +154,8 @@ async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
         logger.info(`Guild ${guildId} Voice Channel Not Found Or Invalid Type Skipping`);
         const guildState = getGuildStateById(guildId);
         const storedState = persistentStateManager.getGuildState(guildId);
-        guildState.channelId = null;
-        storedState.voiceChannelId = null;
+        if (guildState) guildState.channelId = null;
+        if (storedState) storedState.voiceChannelId = null;
     }
 }
 

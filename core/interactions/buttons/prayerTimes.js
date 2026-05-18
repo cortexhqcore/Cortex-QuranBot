@@ -14,6 +14,7 @@ const { getCountries, loadPrayerTimesData } = require('@data/prayerTimesData');
 const { calculatePagination, createPaginationRow } = require('@ui/pagination');
 // Import config for consistent pagination limits
 const { prayer_times_config } = require('@configConstants');
+const coreLoader = require('@loader-core_bootstrap');
 
 function truncateText(text, maxLength) {
     if (!text) return '';
@@ -28,6 +29,14 @@ module.exports = {
         await wrapInteraction(
             interaction,
             async () => {
+                const cdResult = coreLoader.checkCooldown(interaction.user.id, interaction.guildId, 'مواقيت_الصلاة');
+                if (!cdResult.allowed) {
+                    // Reply with appropriate cooldown message based on user/server type
+                    await safeError(interaction, coreLoader.getCooldownResponse(cdResult.remaining, cdResult.type));
+                    return;
+                }
+                // Set cooldown immediately to prevent rapid clicking while data loads
+                coreLoader.setCooldown(interaction.user.id, interaction.guildId, 'مواقيت_الصلاة');
                 await loadPrayerTimesData();
                 const availableCountries = getCountries();
                 if (!availableCountries || availableCountries.length === 0) {

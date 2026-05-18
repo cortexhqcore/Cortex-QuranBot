@@ -1,7 +1,8 @@
 const fs = require('fs').promises;
 const fsSync = require('fs');
 const pathlra = require('path');
-const archiver = require('archiver');
+const archiverModule = require('archiver'); // Only, Only, Only version archiver v5.3.2
+const archiver = archiverModule.default || archiverModule;
 
 let writeQueue = [];
 let isWriting = false;
@@ -239,7 +240,7 @@ async function writeToFile(file, level, msg, meta, ts) {
                     metaStr = ' Meta Serialization Failed';
                 }
             }
-            await fs.appendFile(file, `${ts} ${level.toUpperCase()} ${msg}${metaStr}\n`, 'utf8');
+            await fs.appendFile(file, `${ts} ${level.toUpperCase()} ${msg}${metaStr}`, 'utf8');
         } catch {
             try {
                 console._originalError?.('Failed To Write Log');

@@ -44,20 +44,24 @@ module.exports = {
                         guildState.currentSurah = fallbackIndex !== -1 ? fallbackIndex + 1 : 1;
                     }
                     if (guildState.connection && !guildState.connection.destroyed && guildState.channelId) {
-                        if (guildState.player.state.status === 'playing') guildState.player.stop();
+                        if (guildState.player && guildState.player.state?.status === 'playing') {
+                            guildState.player.stopPlaying();
+                        }
                         try {
-                            const audioResource = await createSurahResource(guildState, guildState.currentSurah - 1, 0, 0, false);
-                            guildState.player.play(audioResource);
-                            guildState.isPaused = false;
-                            guildState.pauseReason = null;
-                            persistentState.updateGuildState(guildId, {
-                                currentReciter: guildState.currentReciter,
-                                currentSurahIndex: guildState.currentSurah - 1,
-                                isPaused: false,
-                                pauseReason: null,
-                            });
-                            await rebuildAndSendControlPanel(interaction, guildState, guildId);
-                            return;
+                            const audioResource = await createSurahResource(guildState, guildState.currentSurah - 1);
+                            if (audioResource) {
+                                guildState.player.play({ track: audioResource });
+                                guildState.isPaused = false;
+                                guildState.pauseReason = null;
+                                persistentState.updateGuildState(guildId, {
+                                    currentReciter: guildState.currentReciter,
+                                    currentSurahIndex: guildState.currentSurah - 1,
+                                    isPaused: false,
+                                    pauseReason: null,
+                                });
+                                await rebuildAndSendControlPanel(interaction, guildState, guildId);
+                                return;
+                            }
                         } catch (err) {
                             logger.error('Error Playing Surah With New Reciter In Guild ' + guildId, err);
                             await safeError(interaction, 'حدث خطأ اثناء تشغيل السورة مع القارئ المحدد');

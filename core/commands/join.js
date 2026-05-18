@@ -76,7 +76,9 @@ module.exports = {
                 if (guildState.playbackMode === 'surah') {
                     voiceLogger.connection(guildId, 'Creating surah resource for playback');
                     const audioResource = await createSurahResource(guildState, guildState.currentSurah - 1);
-                    guildState.player.play(audioResource);
+                    if (audioResource) {
+                        guildState.player.play({ track: audioResource });
+                    }
                     voiceLogger.connection(guildId, 'Started surah playback');
                 } else if (guildState.currentRadioUrl) {
                     voiceLogger.connection(guildId, 'Creating radio resource for playback', {
@@ -85,7 +87,9 @@ module.exports = {
                     const streamUrl =
                         global.radioHealthChecker?.getActiveRadioUrl(guildState.currentRadioUrl) || guildState.currentRadioUrl;
                     const radioResource = await createRadioResource(streamUrl);
-                    guildState.player.play(radioResource);
+                    if (radioResource) {
+                        guildState.player.play({ track: radioResource });
+                    }
                     guildState.currentRadioUrl = streamUrl;
                     voiceLogger.connection(guildId, 'Started radio playback');
                 }

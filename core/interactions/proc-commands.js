@@ -4,9 +4,11 @@ const coreLoader = require('@loader-core_bootstrap');
 const { getErrorType } = require('@interactionErrors-core_interactions');
 // Categorize commands by access level and execution context
 const public_commands = ['مصادر', 'مواقيت_الصلاة', 'سرعة', 'دليل'];
-const admin_commands = ['خروج', 'دخول', 'دخول_قناة', 'إعداد'];
+// const admin_commands = ['خروج', 'دخول', 'دخول_قناة', 'إعداد'];
+const admin_commands = ['خروج', 'دخول', 'إعداد'];
 const control_commands = ['تحكم'];
-const guild_required_commands = ['تحكم', 'خروج', 'دخول', 'دخول_قناة', 'إعداد'];
+// const guild_required_commands = ['تحكم', 'خروج', 'دخول', 'دخول_قناة', 'إعداد'];
+const guild_required_commands = ['تحكم', 'خروج', 'دخول', 'إعداد'];
 
 function isPublicCommand(commandName) {
     return public_commands.includes(commandName);

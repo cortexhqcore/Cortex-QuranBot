@@ -12,7 +12,7 @@ const { createReciterRow, createRadioRow, createSelectRow, createButtonRow, crea
 const { createControlEmbed } = require('@embeds-core_ui');
 const { getGuildState, removeGuildState, isAuthorized } = require('./state/GuildStateManager');
 
-const { sendRandomAzkar, startAzkarTimerForGuild } = require('@AzkarManager-core_state');
+const { sendRandomAzkar, startAzkarTimerForGuild } = require('./state/azkarManager');
 const { registerCommands, applyCommandPermissions } = require('@commandregistry');
 const { checkCooldown, checkRateLimit, checkVoiceCooldown, COOLDOWN_TYPES } = require('@cooldown-core_state');
 

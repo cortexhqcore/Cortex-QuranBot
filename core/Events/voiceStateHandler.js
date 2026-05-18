@@ -1,7 +1,8 @@
 require('pathlra-aliaser')();
+
 const logger = require('@logger');
 const voiceLogger = require('@voiceLogger');
-const persistentState = require('@PersistentStateManager-core_state');
+// const persistentState = require('@PersistentStateManager-core_state');
 const botClient = require('@botSetup').client;
 
 // Monitor voice state changes to handle external bot disconnections
@@ -39,15 +40,14 @@ botClient.on('voiceStateUpdate', async (previousState, currentState) => {
             guildState.azkarTimer = null;
             voiceLogger.connection(guildId, 'Cleared azkar timer after external disconnect');
         }
-        // Sync the disconnection to persistent storage
-        const storedState = persistentState.getGuildState(guildId);
-        if (storedState) {
-            storedState.connectionStatus = false;
-            storedState.voiceChannelId = null;
-            storedState.manualDisconnectFlag = false;
-            persistentState.updateGuildState(guildId, storedState);
-            voiceLogger.connection(guildId, 'Persistent state updated after external disconnect');
-        }
+        // const storedState = persistentState.getGuildState(guildId);
+        // if (storedState) {
+        // storedState.connectionStatus = false;
+        // storedState.voiceChannelId = null;
+        // storedState.manualDisconnectFlag = false;
+        // persistentState.updateGuildState(guildId, storedState);
+        // voiceLogger.connection(guildId, 'Persistent state updated after external disconnect');
+        // }
         // Persist runtime changes if the save function is available
         if (typeof global.saveRuntimeStates === 'function') {
             await global.saveRuntimeStates();
@@ -59,5 +59,4 @@ botClient.on('voiceStateUpdate', async (previousState, currentState) => {
         voiceLogger.connection(guildId, 'Bot joined voice channel externally');
     }
 });
-
 module.exports = {};

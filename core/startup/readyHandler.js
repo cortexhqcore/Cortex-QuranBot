@@ -20,6 +20,13 @@ loadData()
         await initializeStats();
         databaseCleaner.initialize(client);
         client.once('clientReady', async () => {
+            try {
+                await client.lavalink.init(client.user);
+                logger.info('Lavalink Manager initialized successfully');
+            } catch (err) {
+                logger.error('Failed to initialize Lavalink Manager', err);
+            }
+
             const runtimeStates = require('@RuntimeState');
             await runtimeStates.restoreRuntimeStates(client);
             logger.info('Logged In As ' + client.user.tag + ' - ' + (global.surahNames?.length || 114) + ' Surahs Loaded');
@@ -68,9 +75,9 @@ loadData()
                 }, i * 500);
             }
 
-            const staleGuildIds = allSetupGuildIds.filter((gid) => !actualBotGuilds.has(gid));
-            if (staleGuildIds.length > 0) {
-            }
+            //const staleGuildIds = allSetupGuildIds.filter((gid) => !actualBotGuilds.has(gid));
+            //if (staleGuildIds.length > 0) {
+            //}
             await restoreGuildStates(client, actualBotGuilds);
             await registerAllCommands(client);
             startMemoryCleanup();

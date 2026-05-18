@@ -13,7 +13,7 @@ const { saveControlId } = require('@database/trackers/controlIds');
 
 let startAzkarTimerForGuild;
 try {
-    ({ startAzkarTimerForGuild } = require('@AzkarManager-core_state'));
+    ({ startAzkarTimerForGuild } = require('../state/azkarManager'));
 } catch (err) {
     logger.error('AzkarManager load failed — using fallback', err);
     startAzkarTimerForGuild = (gid, cid) => {

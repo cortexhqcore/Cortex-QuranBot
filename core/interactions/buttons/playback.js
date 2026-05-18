@@ -3,9 +3,9 @@ require('pathlra-aliaser')();
 const { wrapInteraction, safeError } = require('@deferReply');
 const { checkAuthorization, resolveGuildState } = require('@guard');
 const { rebuildAndSendControlPanel } = require('@controlPanelBuilder');
-const { createSurahResource, createRadioResource, stopPlayer } = require('@audio-core');
+// const { createSurahResource, createRadioResource, stopPlayer } = require('@audio-core');
+const { createSurahResource, createRadioResource } = require('@audio-core');
 const logger = require('@logger');
-const { AudioPlayerStatus } = require('@discordjs/voice');
 
 module.exports = {
     customId: 'playback',
@@ -30,11 +30,9 @@ module.exports = {
                     return;
                 }
 
-                const currentStatus = guildState.player.state.status;
-                if (currentStatus === AudioPlayerStatus.AutoPaused) {
-                    guildState.player.unpause();
-                }
-                guildState.connection.subscribe(guildState.player);
+                // Use player.paused boolean for reliable state checking instead of potentially undefined state.status
+                const isPaused = guildState.player.paused === true;
+                const isPlaying = !isPaused && (guildState.player.state?.status === 'playing' || guildState.player.playing === true);
 
                 if (interaction.customId === 'next' && guildState.playbackMode !== 'surah') {
                     await safeError(interaction, 'السورة التالية غير متاحة في وضع الراديو');
@@ -45,50 +43,54 @@ module.exports = {
                     return;
                 }
 
-                let targetSurah = guildState.currentSurah;
-                if (interaction.customId === 'next') {
-                    targetSurah = guildState.currentSurah < global.surahNames.length ? guildState.currentSurah + 1 : 1;
-                    guildState.currentSurah = targetSurah;
-                } else if (interaction.customId === 'prev') {
-                    targetSurah = guildState.currentSurah > 1 ? guildState.currentSurah - 1 : global.surahNames.length;
-                    guildState.currentSurah = targetSurah;
-                } else if (interaction.customId === 'pause' && currentStatus === 'playing') {
-                    guildState.player.pause();
-                    guildState.isPaused = true;
-                    guildState.pauseReason = 'manual';
-                    guildState.lastActivity = Date.now();
-                    global.saveRuntimeStates();
+                // Native pause: suspends stream without dropping track position
+                if (interaction.customId === 'pause') {
+                    if (isPlaying) {
+                        await guildState.player.pause(true);
+                        guildState.isPaused = true;
+                        guildState.pauseReason = 'manual';
+                        guildState.lastActivity = Date.now();
+                        if (typeof global.saveRuntimeStates === 'function') global.saveRuntimeStates();
+                    }
                     await rebuildAndSendControlPanel(interaction, guildState, guildId);
                     return;
-                } else if (interaction.customId === 'resume' && (currentStatus === 'paused' || currentStatus === 'idle')) {
-                    let audioResource;
-                    if (guildState.playbackMode === 'surah') {
-                        audioResource = await createSurahResource(guildState, guildState.currentSurah - 1);
-                    } else if (guildState.currentRadioUrl) {
-                        const validatedUrl =
-                            global.radioHealthChecker?.getActiveRadioUrl(guildState.currentRadioUrl) || guildState.currentRadioUrl;
-                        audioResource = await createRadioResource(validatedUrl);
-                    }
-                    if (audioResource) {
-                        guildState.player.play(audioResource);
+                }
+                // Native resume: continues from exact paused timestamp
+                if (interaction.customId === 'resume') {
+                    if (isPaused) {
+                        await guildState.player.resume();
                         guildState.isPaused = false;
                         guildState.pauseReason = null;
                         guildState.lastActivity = Date.now();
-                        global.saveRuntimeStates();
+                        if (typeof global.saveRuntimeStates === 'function') global.saveRuntimeStates();
                     }
                     await rebuildAndSendControlPanel(interaction, guildState, guildId);
                     return;
                 }
 
                 if (interaction.customId === 'next' || interaction.customId === 'prev') {
-                    guildState.player.stop();
-                    await new Promise((resolve) => setTimeout(resolve, 100));
+                    if (typeof guildState.player.stopPlaying === 'function') {
+                        guildState.player.stopPlaying();
+                    } else {
+                        guildState.player.stop();
+                    }
+                    await new Promise((resolve) => setTimeout(resolve, 150));
+
+                    let targetSurah = guildState.currentSurah;
+                    if (interaction.customId === 'next') {
+                        targetSurah = guildState.currentSurah < global.surahNames.length ? guildState.currentSurah + 1 : 1;
+                    } else {
+                        targetSurah = guildState.currentSurah > 1 ? guildState.currentSurah - 1 : global.surahNames.length;
+                    }
+                    guildState.currentSurah = targetSurah;
                     const audioResource = await createSurahResource(guildState, guildState.currentSurah - 1);
-                    guildState.player.play(audioResource);
+                    if (audioResource) {
+                        guildState.player.play({ track: audioResource });
+                    }
                     guildState.isPaused = false;
                     guildState.pauseReason = null;
                     guildState.lastActivity = Date.now();
-                    global.saveRuntimeStates();
+                    if (typeof global.saveRuntimeStates === 'function') global.saveRuntimeStates();
                 }
 
                 await rebuildAndSendControlPanel(interaction, guildState, guildId);

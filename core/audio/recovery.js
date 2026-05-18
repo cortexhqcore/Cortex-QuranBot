@@ -5,7 +5,11 @@ const persistentState = require('../state/PersistentStateManager');
 const { ChannelType } = require('discord.js');
 const logger = require('@logger');
 const { initializeConnection, syncVoiceState } = require('./connection');
-const { AudioPlayerStatus } = require('@discordjs/voice');
+// const { AudioPlayerStatus } = require('@discordjs/voice');
+const { time_constants } = require('@configConstants');
+
+const RECOVERY_DELAY_MS = time_constants.error_recovery_delay_ms || 7000;
+const RECONNECT_ATTEMPT_DELAY = 2000;
 
 async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
     if (!fixedSetupData.voiceChannelId) return;
@@ -32,13 +36,18 @@ async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
 
             try {
                 const resource = await global.createSurahResource(state, state.currentSurah - 1, 0, 0, false);
-                state.player.play(resource);
-                state.isPaused = false;
-                state.pauseReason = null;
+                if (resource) {
+                    state.player.play({ track: resource });
+                    state.isPaused = false;
+                    state.pauseReason = null;
+                }
+
                 await new Promise((r) => setTimeout(r, 3000));
-                if (state.player.state.status === 'idle') {
+                if (state.player?.state?.status === 'idle') {
                     const retry = await global.createSurahResource(state, state.currentSurah - 1, 0, 0, true);
-                    state.player.play(retry);
+                    if (retry) {
+                        state.player.play({ track: retry });
+                    }
                 }
             } catch {
                 state.isPaused = true;
@@ -52,15 +61,18 @@ async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
         } catch (error) {
             logger.error(`Guild ${guildId} Recovery Failed`, error);
         }
-    } else if (state.connection && !state.connection.destroyed && state.player.state.status === 'idle') {
+    } else if (state.connection && !state.connection.destroyed && state.player?.state?.status === 'idle') {
         try {
             const resource = await global.createSurahResource(state, state.currentSurah - 1, 0, 0, false);
-            state.player.play(resource);
-            state.isPaused = false;
-            state.pauseReason = null;
-        } catch {
+            if (resource) {
+                state.player.play({ track: resource });
+                state.isPaused = false;
+                state.pauseReason = null;
+            }
+        } catch {}
+        if (state.connection?.subscribe) {
+            state.connection.subscribe(state.player);
         }
-        state.connection.subscribe(state.player);
     }
 }
 
@@ -77,7 +89,7 @@ async function restoreGuildStates(client, activeGuildIds) {
 
             const stored = allStored[guildId];
             const channel = guild.channels.cache.get(stored.voiceChannelId);
-            if (channel?.type === ChannelType.GuildVoice && channel.permissionsFor(guild.members.me).has('Connect')) {
+            if (channel?.type === ChannelType.GuildVoice && channel.permissionsFor(guild.members.me)?.has('Connect')) {
                 const state = getGuildStateById(guildId);
                 try {
                     await initializeConnection(guildId, state, channel, guild.voiceAdapterCreator);
@@ -90,10 +102,14 @@ async function restoreGuildStates(client, activeGuildIds) {
                     if (stored.playbackMode === 'surah') {
                         try {
                             const res = await global.createSurahResource(state, stored.currentSurahIndex, 0);
-                            state.player.play(res);
+                            if (res) {
+                                state.player.play({ track: res });
+                            }
                             await new Promise((r) => setTimeout(r, 3000));
-                            if (state.player.state.status === AudioPlayerStatus.Idle) {
-                                state.player.play(await global.createSurahResource(state, stored.currentSurahIndex, 0));
+                            if (state.player?.state?.status === 'idle') {
+                                state.player.play({
+                                    track: await global.createSurahResource(state, stored.currentSurahIndex, 0),
+                                });
                             }
                         } catch {
                             state.isPaused = true;
@@ -102,10 +118,9 @@ async function restoreGuildStates(client, activeGuildIds) {
 
                     persistentState.setManualDisconnect(guildId, false);
                     await syncVoiceState(guildId, state);
-                } catch {
-                }
+                } catch {}
             }
-        }, i * 500);
+        }, i * RECONNECT_ATTEMPT_DELAY);
     }
 }
 

@@ -10,13 +10,15 @@ async function registerCommands() {
             .setName('دخول')
             .setDescription('الانضمام إلى الروم الصوتي المعد من الإعداد')
             .setDefaultMemberPermissions('8'),
-        new SlashCommandBuilder()
+        /**
+            new SlashCommandBuilder()
             .setName('دخول_قناة')
             .setDescription('الانضمام إلى غرفة صوتية محددة')
             .addChannelOption((opt) =>
                 opt.setName('قناة').setDescription('اختر الغرفة الصوتية').addChannelTypes(ChannelType.GuildVoice).setRequired(true),
             )
             .setDefaultMemberPermissions('8'),
+              **/
         new SlashCommandBuilder().setName('خروج').setDescription('الخروج من الروم الصوتي').setDefaultMemberPermissions('8'),
         new SlashCommandBuilder().setName('تحكم').setDescription('لوحة التحكم للقرآن').setDefaultMemberPermissions('0'),
         new SlashCommandBuilder()
@@ -65,7 +67,7 @@ async function applyCommandPermissions(guild) {
 
             if (!permId) {
                 permId = guild.members.cache.find((m) => m.permissions.has(PermissionsBitField.Flags.Administrator))?.id;
-                permType = 2; // member
+                permType = 2;
             }
 
             if (permId) {

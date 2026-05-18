@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const { createAudioPlayer } = require('@discordjs/voice');
+// const { createAudioPlayer } = require('@discordjs/voice');
 const logger = require('@logger');
 let _store, _voice, _player, _events, _auth, _cleanup, _persistent;
 
@@ -118,21 +118,21 @@ setInterval(async () => {
                             try {
                                 if (state.playbackMode === 'surah') {
                                     const resource = await global.createSurahResource(state, state.currentSurah - 1, 0, 0, false);
-                                    state.player.play(resource);
+                                    state.player.play({ track: resource });
                                     state.isPaused = false;
                                     state.pauseReason = null;
                                 } else if (state.currentRadioUrl) {
                                     const resource = await global.createRadioResource(state.currentRadioUrl, 0);
-                                    state.player.play(resource);
+                                    state.player.play({ track: resource });
                                     state.isPaused = false;
                                     state.pauseReason = null;
                                 }
                             } catch (error) {
                                 logger.error('Guild ' + guildId + ' Auto Start Failed', error);
                             }
-                        }
-                        if (state.connection && !state.connection.destroyed) {
-                            state.connection.subscribe(state.player);
+                            //if (state.connection && !state.connection.destroyed) {
+                            //    state.connection.subscribe(state.player);
+                            //}
                         }
                     }
                 }

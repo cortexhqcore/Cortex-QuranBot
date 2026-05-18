@@ -62,8 +62,32 @@ async function handleButtonInteraction(interaction) {
         }
         return false;
     }
+
+    // Apply unified cooldown for voice control buttons to match slash commands
+    if (customId === 'join_vc' || customId === 'leave_vc') {
+        const cmdKey = customId === 'join_vc' ? 'join' : 'leave';
+        const userId = interaction.user.id;
+        const guildId = interaction.guildId;
+        const cdResult = coreLoader.checkCooldown(userId, guildId, cmdKey);
+        if (!cdResult.allowed) {
+            await interaction.deferUpdate().catch(() => {});
+            await interaction
+                .followUp({
+                    content: coreLoader.getCooldownResponse(cdResult.remaining, cdResult.type),
+                    flags: 64,
+                })
+                .catch(() => {});
+            return true;
+        }
+    }
+
     if (typeof handler.execute === 'function') {
-        await handler.execute(interaction);
+        const success = await handler.execute(interaction);
+        // Persist cooldown after successful execution to prevent rapid toggling
+        if ((customId === 'join_vc' || customId === 'leave_vc') && success !== false) {
+            const cmdKey = customId === 'join_vc' ? 'join' : 'leave';
+            coreLoader.setCooldown(interaction.user.id, interaction.guildId, cmdKey);
+        }
         return true;
     }
 

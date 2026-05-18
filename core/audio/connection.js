@@ -1,31 +1,42 @@
+// Advice: Do not modify this file and also + core/audio/player.js
 require('pathlra-aliaser')();
 
-const { joinVoiceChannel } = require('@discordjs/voice');
+// const { joinVoiceChannel } = require('@discordjs/voice');
 const persistentState = require('../state/PersistentStateManager');
 const logger = require('@logger');
 const voiceLogger = require('@voiceLogger');
+const { time_constants } = require('@configConstants');
 
 if (!global.activeVoiceConnections) {
     global.activeVoiceConnections = 0;
 }
 
+let lavalinkrequest = time_constants.request_timeout_ms_30s;
+let connection_time = 15000; // Later with @configConstants
+
 function canJoinVoice() {
-    if (!global.MAX_VOICE_CONNECTIONS_PER_SHARD) return true;
-    const canJoin = global.activeVoiceConnections < global.MAX_VOICE_CONNECTIONS_PER_SHARD;
-    voiceLogger.debug(
-        `Voice capacity check: ${global.activeVoiceConnections}/${global.MAX_VOICE_CONNECTIONS_PER_SHARD} - canJoin: ${canJoin}`,
-    );
+    if (!global.max_voice_connections_per_shard) {
+        voiceLogger.debug('Voice capacity check: no limit configured, allowing join');
+        return true;
+    }
+    const current = global.activeVoiceConnections || 0;
+    const canJoin = current < global.max_voice_connections_per_shard;
+    voiceLogger.debug(`Voice capacity check: ${current}/${global.max_voice_connections_per_shard} - canJoin: ${canJoin}`);
     return canJoin;
 }
 
 function incrementVoiceConnections() {
-    if (!global.activeVoiceConnections) global.activeVoiceConnections = 0;
+    if (!global.activeVoiceConnections) {
+        global.activeVoiceConnections = 0;
+    }
     global.activeVoiceConnections++;
     voiceLogger.debug(`Voice connections incremented to ${global.activeVoiceConnections}`);
 }
 
 function decrementVoiceConnections() {
-    if (!global.activeVoiceConnections) global.activeVoiceConnections = 0;
+    if (!global.activeVoiceConnections) {
+        global.activeVoiceConnections = 0;
+    }
     if (global.activeVoiceConnections > 0) {
         global.activeVoiceConnections--;
         voiceLogger.debug(`Voice connections decremented to ${global.activeVoiceConnections}`);
@@ -34,7 +45,7 @@ function decrementVoiceConnections() {
 
 async function teardownConnection(guildId, guildState) {
     voiceLogger.connection(guildId, 'Starting teardown', {
-        hasConnection: !!guildState?.connection,
+        hasPlayer: !!guildState?.player,
         hasChannel: !!guildState?.channelId,
     });
     if (!guildState) {
@@ -49,17 +60,13 @@ async function teardownConnection(guildId, guildState) {
         voiceLogger.connection(guildId, 'Cleared azkar timer during teardown');
     }
 
-    if (guildState.connection && !guildState.connection.destroyed) {
+    if (guildState.player && !guildState.player.destroyed) {
         try {
-            guildState.connection.unsubscribe(guildState.player);
-            voiceLogger.connection(guildId, 'Unsubscribed player from connection');
-        } catch (err) {
-            voiceLogger.connection(guildId, 'Unsubscribe failed (expected during teardown)', {
-                error: err.message,
-            });
-        }
-        try {
-            guildState.connection.destroy();
+            if (typeof guildState.player.stopPlaying === 'function') {
+                guildState.player.stopPlaying();
+            }
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            guildState.player.destroy();
             voiceLogger.connection(guildId, 'Destroyed voice connection');
         } catch (err) {
             voiceLogger.connection(guildId, 'Destroy failed (expected during teardown)', {
@@ -67,8 +74,9 @@ async function teardownConnection(guildId, guildState) {
             });
         }
     }
-    guildState.connection = null;
-    guildState.channelId = null;
+    guildState.player = null; // 1
+    guildState.channelId = null; // 2
+    guildState.connection = null; // 3
     voiceLogger.connection(guildId, 'Teardown complete - state cleared');
 }
 
@@ -78,15 +86,18 @@ async function syncVoiceState(guildId, guildState) {
         playbackMode: guildState.playbackMode,
         reciter: guildState.currentReciter,
         surahIndex: guildState.currentSurah,
-        connectionStatus: !!guildState.connection && !guildState.connection?.destroyed,
+        // oid connectionStatus: !!guildState.connection && !guildState.connection?.destroyed,
+        connectionStatus: !!guildState.player && !guildState.player?.destroyed,
         isPaused: guildState.isPaused,
     });
+
     const storedState = persistentState.getGuildState(guildId);
     storedState.voiceChannelId = guildState.channelId;
     storedState.playbackMode = guildState.playbackMode;
     storedState.currentReciter = guildState.currentReciter;
     storedState.currentSurahIndex = guildState.currentSurah - 1;
-    storedState.connectionStatus = !!guildState.connection && !guildState.connection.destroyed;
+    // oid storedState.connectionStatus = !!guildState.connection && !guildState.connection.destroyed;
+    storedState.connectionStatus = !!guildState.player && !guildState.player?.destroyed;
     storedState.isPaused = guildState.isPaused;
     storedState.currentRadioIndex = guildState.currentRadioIndex;
     storedState.currentRadioPage = guildState.currentRadioPage;
@@ -100,38 +111,57 @@ async function syncVoiceState(guildId, guildState) {
 }
 
 async function initializeConnection(guildId, guildState, targetChannel, adapterCreator) {
-    voiceLogger.connection(guildId, 'Initializing voice connection', {
+    voiceLogger.connection(guildId, 'Initializing Lavalink player con', {
         channelId: targetChannel.id,
         guildName: targetChannel.guild?.name,
-        adapterAvailable: !!adapterCreator,
+        // adapterAvailable: !!adapterCreator,
     });
     await teardownConnection(guildId, guildState);
-    const { resetPlayer } = require('./player');
-    await resetPlayer(guildId, guildState);
+    //const { resetPlayer } = require('./player');
+    //await resetPlayer(guildId, guildState);
     try {
-        voiceLogger.connection(guildId, 'Calling joinVoiceChannel', { selfDeaf: true });
-        guildState.connection = await joinVoiceChannel({
-            channelId: targetChannel.id,
+        const client = require('@botSetup').client;
+        if (!client.lavalink) {
+            throw new Error('Lavalink manager not initialized');
+        }
+        voiceLogger.connection(guildId, 'Calling createPlayer', { selfDeaf: true });
+        guildState.player = await client.lavalink.createPlayer({
             guildId,
-            adapterCreator,
+            voiceChannelId: targetChannel.id,
+            textChannelId: targetChannel.isTextBased ? (targetChannel.isTextBased() ? targetChannel.id : null) : null,
             selfDeaf: true,
         });
-        voiceLogger.connection(guildId, 'Voice connection established successfully', {
-            connectionReady: !!guildState.connection,
-            connectionDestroyed: guildState.connection?.destroyed,
+        const connectPromise = guildState.player.connect();
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Voice connection timeout')), connection_time);
+        });
+        await Promise.race([connectPromise, timeoutPromise]);
+        voiceLogger.connection(guildId, 'Lavalink player connected to voice channel successfully', {
+            playerReady: !!guildState.player,
+            playerDestroyed: guildState.player?.destroyed,
         });
         guildState.channelId = targetChannel.id;
+        guildState.connection = guildState.player;
         persistentState.setManualDisconnect(guildId, false);
-        guildState.connection.subscribe(guildState.player);
+
         incrementVoiceConnections();
         logger.info(`Guild ${guildId} Voice Connection Established`);
-        voiceLogger.connection(guildId, 'Connection subscribed to player and counters updated');
-        return { success: true, connection: guildState.connection };
+        voiceLogger.connection(guildId, 'Player connected to channel and counters updated');
+        return { success: true, connection: guildState.player };
     } catch (err) {
-        voiceLogger.error(guildId, 'Failed to establish voice connection', err, {
+        voiceLogger.error(guildId, 'Failed Lavalink connection', err, {
             channelId: targetChannel.id,
-            hasAdapter: !!adapterCreator,
         });
+        if (guildState.player && !guildState.player.destroyed) {
+            try {
+                guildState.player.destroy();
+            } catch (cleanupErr) {
+                voiceLogger.debug(guildId, 'Cleanup after connection failure', { error: cleanupErr.message });
+            }
+        }
+        guildState.player = null;
+        guildState.channelId = null;
+        guildState.connection = null;
         throw err;
     }
 }

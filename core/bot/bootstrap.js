@@ -4,7 +4,7 @@
 require('pathlra-aliaser')();
 const pingCommand = require('@ping-core_commands');
 const joinCommand = require('@join-core_commands');
-const joinChannelCommand = require('@join_channel-core_commands');
+// const joinChannelCommand = require('@join_channel-core_commands');
 const leaveCommand = require('@leave-core_commands');
 const controlCommand = require('@control-core_commands');
 const setupCommand = require('@setup-core_commands');
@@ -65,7 +65,7 @@ const { saveControlId, readControlIds, removeControlId, saveDhikrMessageId } = r
 const { updateControlMessage } = require('@messageUpdater');
 const { createSurahResource, createRadioResource, getReciterLinks } = require('@audio-core');
 const { registerCommands, applyCommandPermissions } = require('@commandregistry');
-const { sendRandomAzkar, startAzkarTimerForGuild } = require('@AzkarManager-core_state');
+const { sendRandomAzkar, startAzkarTimerForGuild } = require('../state/azkarManager');
 const {
     EmbedBuilder,
     ChannelType,
@@ -99,7 +99,7 @@ const {
 const { incrementCommandStats, getStatisticsTracker } = require('@proc-stats-core_interactions');
 module.exports.pingCommand = pingCommand;
 module.exports.joinCommand = joinCommand;
-module.exports.joinChannelCommand = joinChannelCommand;
+// module.exports.joinChannelCommand = joinChannelCommand;
 module.exports.leaveCommand = leaveCommand;
 module.exports.controlCommand = controlCommand;
 module.exports.setupCommand = setupCommand;

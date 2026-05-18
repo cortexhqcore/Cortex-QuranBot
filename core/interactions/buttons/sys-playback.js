@@ -26,13 +26,16 @@ async function ensurePlaybackStarted(guildState, guildId) {
 
             if (guildState.playbackMode === 'surah') {
                 const audioResource = await createSurahResource(guildState, guildState.currentSurah - 1, 0, 0, false);
-                guildState.player.play(audioResource);
+                // guildState.player.play(audioResource);
+                if (!audioResource) throw new Error('Audio resource creation returned undefined');
+                guildState.player.play({ track: audioResource });
                 guildState.isPaused = false;
                 guildState.pauseReason = null;
             } else if (guildState.currentRadioUrl) {
                 const { createRadioResource } = require('@audioUtils-core_utils');
                 const radioResource = await createRadioResource(guildState.currentRadioUrl, 0);
-                guildState.player.play(radioResource);
+                if (!radioResource) throw new Error('Radio resource creation returned undefined');
+                guildState.player.play({ track: radioResource });
                 guildState.isPaused = false;
                 guildState.pauseReason = null;
             }
@@ -53,11 +56,18 @@ async function startPlayback(guildState, guildId) {
     try {
         if (guildState.playbackMode === 'surah') {
             const audioResource = await createSurahResource(guildState, guildState.currentSurah - 1, 0, 0, false);
-            guildState.player.play(audioResource);
+            if (!audioResource) {
+                throw new Error('Failed to fetch surah from Lavalin');
+            }
+
+            guildState.player.play({ track: audioResource });
         } else if (guildState.currentRadioUrl) {
             const { createRadioResource } = require('@audioUtils-core_utils');
             const radioResource = await createRadioResource(guildState.currentRadioUrl, 0);
-            guildState.player.play(radioResource);
+            if (!radioResource) {
+                throw new Error('Failed to fetch radio stream from Lavalink');
+            }
+            guildState.player.play({ track: radioResource });
         }
 
         guildState.isPaused = false;

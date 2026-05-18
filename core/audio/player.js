@@ -1,13 +1,15 @@
 require('pathlra-aliaser')();
 
-const { createAudioPlayer, AudioPlayerStatus } = require('@discordjs/voice');
+// const { createAudioPlayer, AudioPlayerStatus } = require('@discordjs/voice');
 const logger = require('@logger');
 const voiceLogger = require('@voiceLogger');
 const { voice_config } = require('@configConstants');
+const { getGuildStateById } = require('../state/guild-state-store');
 const MAX_ERROR_COUNT = voice_config.max_error_count;
-const error_recovery_delay_ms = voice_config.error_recovery_delay_ms;
-let _getGuildStateById;
+const ERROR_RECOVERY_DELAY_MS = voice_config.error_recovery_delay_ms;
+let errorRecoveryInProgress = false;
 
+/**
 function getGuildStateById(guildId) {
     if (!_getGuildStateById) {
         _getGuildStateById = require('@guild-state-store-core_state').getGuildStateById;
@@ -23,196 +25,176 @@ function createNewPlayer() {
         behaviors: { noSubscriberTimeout: 60000, maxMissedFrames: 500 },
     });
 }
+**/
+async function createNewPlayer() {
+    voiceLogger.player(null, 'Lavalink player creation delegated to connection manager', { maxErrorCount: MAX_ERROR_COUNT });
+    return null;
+}
 async function resetPlayer(guildId, guildState) {
     voiceLogger.player(guildId, 'Resetting player', {
         hasPlayer: !!guildState?.player,
-        status: guildState?.player?.state?.status,
+        // status: guildState?.player?.state?.status,
     });
-    if (!guildState?.player) {
-        voiceLogger.player(guildId, 'Reset skipped - no player instance');
-        return false;
-    }
+    if (!guildState?.player) return false;
     try {
-        guildState.player.stop();
-        guildState.player.removeAllListeners();
-        const freshPlayer = createNewPlayer();
-        guildState.player = freshPlayer;
+        if (typeof guildState.player.stopPlaying === 'function') guildState.player.stopPlaying();
         guildState.errorCount = 0;
         guildState.isPaused = true;
         guildState.pauseReason = 'player_reset';
-        attachPlayerEvents(guildId, freshPlayer);
+
         logger.info(`Guild ${guildId} Player Reset`);
         voiceLogger.player(guildId, 'Player reset completed successfully');
         return true;
     } catch (error) {
         voiceLogger.error(guildId, 'Player reset failed', error);
-        logger.error(`Guild ${guildId} Player Reset Failed`, error);
+
         return false;
     }
 }
+function stopPlayer(guildState) {
+    if (guildState?.player && !guildState.player.destroyed) {
+        voiceLogger.player(null, 'Stopping player', { status: guildState.player?.state });
+        if (typeof guildState.player.stopPlaying === 'function') guildState.player.stopPlaying();
+    }
+}
+/**
 function stopPlayer(guildState) {
     if (guildState?.player) {
         voiceLogger.player(null, 'Stopping player', { status: guildState.player.state?.status });
         guildState.player.stop();
     }
 }
-
+ */
 function attachPlayerEvents(guildId, player) {
     voiceLogger.player(guildId, 'Attaching player event listeners');
-    let idleHandled = false;
-    let errorRecoveryInProgress = false;
-    player.on(AudioPlayerStatus.Idle, async () => {
-        voiceLogger.player(guildId, 'Player entered Idle state', {
-            idleHandled,
-            isPaused: getGuildStateById(guildId)?.isPaused,
-        });
-        if (idleHandled) {
-            voiceLogger.player(guildId, 'Idle event ignored - already handled');
-            return;
-        }
-        idleHandled = true;
+    player.on('trackStart', async (track) => {
+        voiceLogger.player(guildId, 'Track started', { title: track.info?.title });
         const state = getGuildStateById(guildId);
-        if (!state || state.isPaused || !state.connection || state.connection.destroyed) {
-            voiceLogger.player(guildId, 'Idle handler skipped - paused or no connection', {
-                hasState: !!state,
-                isPaused: state?.isPaused,
-                hasConnection: !!state?.connection,
-                connectionDestroyed: state?.connection?.destroyed,
-            });
-            idleHandled = false;
-            return;
+        if (state) {
+            state.errorCount = 0;
+            state.isPaused = false;
+            state.pauseReason = null;
+            state.playbackStartTime = Date.now();
         }
+    });
+    player.on('trackEnd', async () => {
+        voiceLogger.player(guildId, 'Track ended - triggering sequential playback');
+        const state = getGuildStateById(guildId);
+        if (!state || state.isPaused || state.connectionStatus === false) return;
         try {
-            let resource;
+            if (state.playbackMode === 'surah' && state.disconnectAfterCurrentTrack === true) {
+                voiceLogger.player(guildId, 'Auto-disconnect enabled tearing down connection after track completion');
+                state.disconnectAfterCurrentTrack = false;
+                const { teardownConnection, syncVoiceState } = require('./connection');
+                const persistentState = require('../state/PersistentStateManager');
+                await teardownConnection(guildId, state);
+                persistentState.setManualDisconnect(guildId, true);
+                await syncVoiceState(guildId, state);
+                logger.info(`Guild ${guildId} Auto-disconnected after single surah playback`);
+                voiceLogger.player(guildId, 'Connection torn down successfully after single track');
+                return;
+            }
+            let track = null;
             if (state.playbackMode === 'surah') {
-                voiceLogger.player(guildId, 'Preparing next surah resource', {
-                    currentSurah: state.currentSurah,
-                    reciter: state.currentReciter,
-                });
-                state.currentSurah = ((state.currentSurah - 1) % 114) + 1;
-                state.playedOffset = 0;
-                state.playbackStartTime = Date.now();
-                try {
-                    resource = await global.createSurahResource(state, state.currentSurah - 1, 0, 0, false);
-                    voiceLogger.player(guildId, 'Surah resource created successfully');
-                } catch (surahError) {
-                    voiceLogger.player(guildId, 'Surah resource creation failed - attempting fallback', {
-                        error: surahError.message,
-                    });
-                    const { findWorkingReciter, findAvailableSurahForReciter } = require('./resource');
-                    const working = findWorkingReciter(state.currentReciter);
-                    if (working) {
-                        voiceLogger.player(guildId, 'Fallback: switching to working reciter', {
-                            newReciter: working,
-                        });
-                        state.currentReciter = working;
+                const reciterData = global.reciters?.[state.currentReciter];
+                const availableLinks = reciterData?.links || [];
+                const maxSurahs = availableLinks.filter((l) => l?.startsWith('http')).length || 114;
+                let attempts = 0;
+                let nextSurahIndex = state.currentSurah;
+                while (attempts < maxSurahs && !track) {
+                    nextSurahIndex = nextSurahIndex >= maxSurahs ? 1 : nextSurahIndex + 1;
+                    attempts++;
+                    const link = availableLinks[nextSurahIndex - 1];
+                    if (!link || typeof link !== 'string' || !link.startsWith('http')) {
+                        voiceLogger.debug(guildId, `Surah ${nextSurahIndex} missing for ${state.currentReciter}, skipping`);
+                        continue;
+                    }
+                    try {
+                        track = await global.createSurahResource(state, nextSurahIndex - 1);
+                    } catch (err) {
+                        voiceLogger.debug(guildId, `Surah ${nextSurahIndex} failed to load for ${state.currentReciter}, skipping`);
+                    }
+                }
+                if (!track) {
+                    const nextReciter = global.findWorkingReciter ? global.findWorkingReciter(state.currentReciter) : null;
+                    if (nextReciter) {
+                        state.currentReciter = nextReciter;
                         state.currentSurah = 1;
-                        state.playedOffset = 0;
-                        resource = await global.createSurahResource(state, 0, 0, 0, true);
-                    } else {
-                        const alt = findAvailableSurahForReciter(state, state.currentSurah - 1);
-                        if (alt !== -1) {
-                            voiceLogger.player(guildId, 'Fallback: using alternative surah', {
-                                newIndex: alt + 1,
-                            });
-                            state.currentSurah = alt + 1;
-                            resource = await global.createSurahResource(state, alt, 0, 0, true);
+                        voiceLogger.info(guildId, `Reciter exhausted, switching to ${nextReciter} and resetting to Surah 1`);
+                        const nextLink = global.reciters?.[nextReciter]?.links?.[0];
+                        if (nextLink?.startsWith('http')) {
+                            try {
+                                track = await global.createSurahResource(state, 0);
+                            } catch (switchErr) {
+                                voiceLogger.debug(guildId, 'Failed to load first surah for new reciter');
+                            }
                         }
                     }
                 }
-            } else if (state.currentRadioUrl) {
-                voiceLogger.player(guildId, 'Preparing radio resource', {
-                    url: state.currentRadioUrl,
-                });
-                const activeUrl = global.radioHealthChecker?.getActiveRadioUrl(state.currentRadioUrl) || state.currentRadioUrl;
-                state.currentRadioUrl = activeUrl;
-                resource = await global.createRadioResource(activeUrl, 0);
-                voiceLogger.player(guildId, 'Radio resource created');
+            } else if (state.playbackMode === 'radio' && state.currentRadioUrl) {
+                track = await global.createRadioResource(state.currentRadioUrl);
             }
-            if (resource) {
-                state.player.play(resource);
+            if (track) {
+                state.currentSurah = state.playbackMode === 'surah' ? nextSurahIndex : state.currentSurah;
+                state.playedOffset = 0;
+                await state.player.play({ track: track });
                 state.isPaused = false;
                 state.pauseReason = null;
                 state.errorCount = 0;
-                voiceLogger.player(guildId, 'Started playback after idle', {
-                    mode: state.playbackMode,
-                });
+                voiceLogger.player(guildId, `Sequential playback resumed: Surah ${state.currentSurah}`);
+                if (typeof global.saveRuntimeStates === 'function') {
+                    global.saveRuntimeStates();
+                }
             } else {
-                voiceLogger.player(guildId, 'No resource available - playback skipped');
+                state.isPaused = true;
+                state.pauseReason = 'sequential_exhausted';
+                voiceLogger.player(guildId, 'Playback paused: No valid tracks found. Voice connection preserved');
             }
         } catch (error) {
-            voiceLogger.error(guildId, 'Idle handler error', error);
-            state.errorCount++;
+            voiceLogger.error(guildId, 'Track end sequential handler failed', error);
+            state.errorCount = (state.errorCount || 0) + 1;
             if (state.errorCount >= MAX_ERROR_COUNT) {
                 state.isPaused = true;
                 state.pauseReason = 'auto_resume_failed';
-                voiceLogger.player(guildId, 'Auto-resume failed - max errors reached', {
-                    errorCount: state.errorCount,
-                });
+                voiceLogger.player(guildId, 'Player paused due to error threshold');
+                //errorCount: state.errorCount,
+                // });
             }
         }
-        setTimeout(() => {
-            idleHandled = false;
-            voiceLogger.player(guildId, 'Idle handler reset flag');
-        }, 1000);
     });
 
     player.on('error', async (error) => {
-        voiceLogger.error(guildId, 'Player error event', error, {
-            status: player.state?.status,
-            errorCount: getGuildStateById(guildId)?.errorCount,
-        });
-        logger.error(`Guild ${guildId} Player Error`, error.message);
+        voiceLogger.error(guildId, 'Player error event', error);
         const state = getGuildStateById(guildId);
         if (state) {
-            state.errorCount++;
+            state.errorCount = (state.errorCount || 0) + 1;
             if (state.errorCount >= MAX_ERROR_COUNT) {
                 state.isPaused = true;
                 state.pauseReason = 'player_error';
-                voiceLogger.player(guildId, 'Player paused due to error threshold', {
-                    errorCount: state.errorCount,
-                });
             }
             if (!errorRecoveryInProgress) {
                 errorRecoveryInProgress = true;
-                voiceLogger.player(guildId, 'Starting error recovery');
+                await new Promise((resolve) => setTimeout(resolve, ERROR_RECOVERY_DELAY_MS));
                 try {
-                    await new Promise((r) => setTimeout(r, error_recovery_delay_ms));
-                    if (state.connection && !state.connection.destroyed) {
-                        state.connection.subscribe(state.player);
-                        state.player.stop();
-                        if (state.playbackMode === 'surah') {
-                            const res = await global.createSurahResource(state, state.currentSurah - 1, 0, 0, true);
-                            state.player.play(res);
-                            state.isPaused = false;
-                            state.pauseReason = null;
-                            state.errorCount = 0;
-                            voiceLogger.player(guildId, 'Recovery: playback resumed');
-                        } // TODO consider auto-switching to radio mode if surah playback repeatedly fails and radio is available
-                        else if (state.playbackMode === 'radio' && state.currentRadioUrl) {
-                            const activeUrl = global.radioHealthChecker?.getActiveRadioUrl(state.currentRadioUrl) || state.currentRadioUrl;
-                            state.currentRadioUrl = activeUrl;
-                            voiceLogger.player(guildId, 'Recovery: attempting radio stream restart', { url: activeUrl });
-                            const radioRes = await global.createRadioResource(activeUrl, 0);
-                            state.player.play(radioRes);
-                            state.isPaused = false;
-                            state.pauseReason = null;
-                            state.errorCount = 0;
-                            voiceLogger.player(guildId, 'Recovery: radio playback resumed');
-                        }
-                    } else {
-                        voiceLogger.player(guildId, 'Recovery skipped');
+                    if (typeof state.player.stopPlaying === 'function') state.player.stopPlaying();
+                    if (state.playbackMode === 'surah') {
+                        const res = await global.createSurahResource(state, state.currentSurah - 1);
+                        if (res) state.player.play({ track: res });
+                    } else if (state.playbackMode === 'radio' && state.currentRadioUrl) {
+                        const res = await global.createRadioResource(state.currentRadioUrl);
+                        if (res) state.player.play({ track: res });
                     }
+                    state.isPaused = false;
+                    state.errorCount = 0;
                 } catch (recoveryErr) {
                     voiceLogger.error(guildId, 'Error recovery failed', recoveryErr);
                 } finally {
                     errorRecoveryInProgress = false;
-                    voiceLogger.player(guildId, 'Error recovery flag cleared');
                 }
             }
         }
     });
-
+    /**
     player.on(AudioPlayerStatus.Playing, () => {
         const state = getGuildStateById(guildId);
         voiceLogger.player(guildId, 'Player entered Playing state', {
@@ -235,6 +217,7 @@ function attachPlayerEvents(guildId, player) {
     player.on(AudioPlayerStatus.Buffering, () => {
         voiceLogger.player(guildId, 'Player entered Buffering state');
     });
+   **/
     voiceLogger.player(guildId, 'All player event listeners attached');
 }
 module.exports.createNewPlayer = createNewPlayer;

@@ -27,6 +27,7 @@ function createDefaultState() {
         pauseReason: 'initial',
         playbackStartTime: 0,
         playedOffset: 0,
+        disconnectAfterCurrentTrack: false,
     };
 }
 

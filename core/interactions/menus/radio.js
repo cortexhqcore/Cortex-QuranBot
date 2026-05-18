@@ -58,6 +58,89 @@ module.exports = {
 
                 // Use the radio URL directly without health check validation
                 const radioUrl = guildState.currentRadioUrl;
+                /**
+                  if (!radioUrl) {
+                     // Fallback to surah mode if radio URL is invalid
+                     guildState.playbackMode = 'surah';
+                     const surahAudio = await createSurahResource(guildState, guildState.currentSurah - 1);
+                     guildState.player.play(surahAudio);
+                     guildState.isPaused = false;
+                     guildState.pauseReason = null;
+                  }
+               **/
+                if (!radioUrl) {
+                    // Fallback to surah mode if radio URL is invalid
+                    guildState.playbackMode = 'surah';
+                    const surahAudio = await createSurahResource(guildState, guildState.currentSurah - 1);
+                    if (surahAudio) guildState.player.play({ track: surahAudio });
+                } else {
+                    try {
+                        guildState.player.stopPlaying();
+                        const radioAudio = await createRadioResource(radioUrl);
+                        if (radioAudio) {
+                            guildState.player.play({ track: radioAudio });
+                            guildState.isPaused = false;
+                            guildState.pauseReason = null;
+                        }
+                    } catch (radioErr) {
+                        logger.warn(`Radio Stream Failed Guild ${guildId}: ${radioErr.message}`);
+                        const fallbackRadio = global.quranRadios.find((r) => r.url && r.url !== radioUrl);
+                        if (fallbackRadio?.url) {
+                            try {
+                                const fallbackAudio = await createRadioResource(fallbackRadio.url);
+                                guildState.currentRadioUrl = fallbackRadio.url;
+                                guildState.currentRadioIndex = global.quranRadios.indexOf(fallbackRadio);
+                                guildState.player.play({ track: fallbackAudio });
+                            } catch (fallbackErr) {
+                                logger.warn('Fallback Radio Also Failed Switching To Surah Mode');
+                                guildState.playbackMode = 'surah';
+
+                                const surahAudio = await createSurahResource(guildState, guildState.currentSurah - 1);
+                                if (surahAudio) guildState.player.play({ track: surahAudio });
+                            }
+                        } else {
+                            guildState.playbackMode = 'surah';
+                            const surahAudio = await createSurahResource(guildState, guildState.currentSurah - 1);
+                            if (surahAudio) guildState.player.play({ track: surahAudio });
+                        }
+                    }
+                }
+
+                await global.saveRuntimeStates();
+            }
+            const refreshedEmbed = createControlEmbed(guildState, guildId);
+            const uiComponents = [];
+
+            uiComponents.push(createRadioRow(guildState));
+            uiComponents.push(createButtonRow(guildState));
+            uiComponents.push(...createNavigationRow(guildState, guildId));
+
+            await updateControlMessage(interaction, refreshedEmbed, uiComponents);
+            await saveControlId(guildId, interaction.channelId, interaction.message.id);
+        } catch (error) {
+            logger.error('Error' + guildId, error);
+            try {
+                if (!interaction.replied && !interaction.deferred) {
+                    await interaction.deferUpdate();
+                }
+                await interaction.editReply({
+                    content: 'حدث خطأ',
+                    flags: 64,
+                });
+            } catch (replyErr) {
+                logger.error('Error Sending Error Reply', replyErr);
+            }
+        }
+    },
+};
+
+/** ?
+            if (radioIndex >= 0 && radioIndex < global.quranRadios.length) {
+                guildState.currentRadioIndex = radioIndex;
+                guildState.currentRadioUrl = global.quranRadios[radioIndex].url;
+
+                // Use the radio URL directly without health check validation
+                const radioUrl = guildState.currentRadioUrl;
 
                 if (!radioUrl) {
                     // Fallback to surah mode if radio URL is invalid
@@ -120,32 +203,4 @@ module.exports = {
                 // Persist state changes
                 await global.saveRuntimeStates();
             }
-
-            // Rebuild and update control panel UI
-            const refreshedEmbed = createControlEmbed(guildState, guildId);
-            const uiComponents = [];
-
-            uiComponents.push(createRadioRow(guildState));
-            uiComponents.push(createButtonRow(guildState));
-            uiComponents.push(...createNavigationRow(guildState, guildId));
-
-            await updateControlMessage(interaction, refreshedEmbed, uiComponents);
-            await saveControlId(guildId, interaction.channelId, interaction.message.id);
-        } catch (error) {
-            logger.error('Error Executing Action In Guild ' + guildId, error);
-
-            // Graceful error fallback
-            try {
-                if (!interaction.replied && !interaction.deferred) {
-                    await interaction.deferUpdate();
-                }
-                await interaction.editReply({
-                    content: 'حدث خطأ',
-                    flags: 64,
-                });
-            } catch (replyErr) {
-                logger.error('Error Sending Error Reply', replyErr);
-            }
-        }
-    },
-};
+**/

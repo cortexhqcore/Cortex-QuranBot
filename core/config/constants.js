@@ -9,9 +9,10 @@ const time_constants = {
     azkar_retry_delay_ms: 2000,
 
     // HTTP request timeouts used via http.js TimeoutRequest
-    stream_timeout_ms: 15000,
-    request_timeout_ms: 30000,
-    head_request_timeout_ms: 8000,
+    stream_timeout_ms: 25000,
+    request_timeout_ms: 45000,
+    request_timeout_ms_30s: 30000,
+    head_request_timeout_ms: 12000,
 
     // Rate limiting and cooldowns
     rate_limit_window_ms: 60000,

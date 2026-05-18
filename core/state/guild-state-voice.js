@@ -4,15 +4,15 @@ const voiceLogger = require('@voiceLogger');
 
 // Check if bot can join another voice channel based on shard limit
 function canJoinVoice() {
-    if (!global.MAX_VOICE_CONNECTIONS_PER_SHARD) {
+    if (!global.max_voice_connections_per_shard) {
         voiceLogger.trace(null, 'Voice capacity check - no limit configured, allowing join');
         return true;
     }
     if (!global.activeVoiceConnections) global.activeVoiceConnections = 0;
-    const canJoin = global.activeVoiceConnections < global.MAX_VOICE_CONNECTIONS_PER_SHARD;
+    const canJoin = global.activeVoiceConnections < global.max_voice_connections_per_shard;
     voiceLogger.trace(null, 'Voice capacity check', {
         current: global.activeVoiceConnections,
-        max: global.MAX_VOICE_CONNECTIONS_PER_SHARD,
+        max: global.max_voice_connections_per_shard,
         canJoin,
     });
     return canJoin;

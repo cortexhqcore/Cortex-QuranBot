@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
 const logger = require('@logger');
-const { startAzkarTimerForGuild } = require('@AzkarManager-core_state');
+const { startAzkarTimerForGuild } = require('../state/azkarManager');
 const { getGuildState } = require('../state/GuildStateManager');
 const persistentStateManager = require('@PersistentStateManager-core_state');
 

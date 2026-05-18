@@ -14,6 +14,7 @@ const COMMAND_COOLDOWNS = {
     leave: { duration: 15000, type: 'user' },
     ping: { duration: 30000, type: 'user' },
     prayerTimes: { duration: 50000, type: 'user' },
+    prayerTimesButton: { duration: 15000, type: 'user' }, // Button
     setup: { duration: 60000, type: 'server' },
     sources: { duration: 10000, type: 'user' },
 };
@@ -26,6 +27,7 @@ const CMD_MAP = {
     خروج: 'leave',
     سرعة: 'ping',
     مواقيت_الصلاة: 'prayerTimes',
+    prayer_times: 'prayerTimesButton',
     إعداد: 'setup',
     مصادر: 'sources',
 };

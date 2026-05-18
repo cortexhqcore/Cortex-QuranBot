@@ -14,7 +14,7 @@ async function get(key) {
     } catch (error) {
         logger.error(`Redis resilient get failed for key "${key}"`, error.message || error);
     }
-    
+
     logger.debug(`Redis offline: falling back to memory fetch for key "${key}"`);
     return memoryFallbackMap.get(key) || null;
 }
@@ -34,7 +34,7 @@ async function set(key, value, options = {}) {
     } catch (error) {
         logger.error(`Redis resilient set failed for key "${key}"`, error.message || error);
     }
-    
+
     logger.debug(`Redis offline: falling back to memory store for key "${key}"`);
     memoryFallbackMap.set(key, value);
     return true;
@@ -51,7 +51,7 @@ async function del(key) {
     } catch (error) {
         logger.error(`Redis resilient del failed for key "${key}"`, error.message || error);
     }
-    
+
     memoryFallbackMap.delete(key);
     return true;
 }
@@ -65,7 +65,7 @@ async function keys(pattern) {
     } catch (error) {
         logger.error(`Redis resilient keys failed for pattern "${pattern}"`, error.message || error);
     }
-    
+
     const matchedKeys = [];
     const regexPattern = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$');
     for (const key of memoryFallbackMap.keys()) {

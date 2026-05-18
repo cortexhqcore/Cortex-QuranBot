@@ -14,8 +14,23 @@ const allowed_when_not_in_voice = [
     'stop_webhook',
     'register_webhook',
 ];
-function isBotInVoice(guildState) {
+/**
+ function isBotInVoice(guildState) {
+     return !!
+     (guildState?.connection &&
+     !guildState.connection.destroyed &&
+     guildState.channelId);
+ }
+ old:
+ function isBotInVoice(guildState) {
     return !!(guildState?.connection && !guildState.connection.destroyed && guildState.channelId);
+}
+ */
+function isBotInVoice(guildState) {
+    const hasConnection = guildState?.connection && !guildState.connection.destroyed;
+    const hasPlayer = guildState?.player && !guildState.player.destroyed;
+    const hasChannel = guildState?.channelId;
+    return (hasConnection || hasPlayer) && hasChannel;
 }
 
 // Check if an interaction type is permitted without an active voice connection

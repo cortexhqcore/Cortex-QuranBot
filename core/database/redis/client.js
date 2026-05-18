@@ -14,7 +14,7 @@ async function initializeRedis() {
     if (_isRedisReady && client) {
         return true;
     }
-    
+
     logger.info('Initializing Redis Connection...');
     try {
         client = createClient({
@@ -26,8 +26,8 @@ async function initializeRedis() {
                         return new Error('Max reconnect retries reached');
                     }
                     return Math.min(retries * 200, 3000);
-                }
-            }
+                },
+            },
         });
 
         client.on('error', (error) => {
@@ -54,7 +54,7 @@ async function initializeRedis() {
     } catch (error) {
         connectionAttempts++;
         logger.error(`Redis connection failed (Attempt ${connectionAttempts}/${max_connection_attempts})`, error.message || error);
-        
+
         if (connectionAttempts < max_connection_attempts) {
             await new Promise((resolve) => setTimeout(resolve, 2000 * connectionAttempts));
             return await initializeRedis();

@@ -1,0 +1,284 @@
+import type { LavalinkFilterData } from "./Filters";
+import type { LavalinkTrack } from "./Track";
+
+export type NodeLinkEventTypes =
+    | "PlayerCreatedEvent"
+    | "PlayerDestroyedEvent"
+    | "PlayerConnectedEvent"
+    | "PlayerReconnectingEvent"
+    | "VolumeChangedEvent"
+    | "FiltersChangedEvent"
+    | "SeekEvent"
+    | "PauseEvent"
+    | "ConnectionStatusEvent"
+    | "MixStartedEvent"
+    | "MixEndedEvent"
+    | "LyricsFoundEvent"
+    | "LyricsLineEvent"
+    | "LyricsNotFoundEvent";
+
+export interface NodeLinkBaseEvent {
+    op: "event";
+    type: NodeLinkEventTypes;
+    guildId: string;
+}
+
+export interface PlayerCreatedEvent extends NodeLinkBaseEvent {
+    type: "PlayerCreatedEvent";
+}
+
+export interface PlayerDestroyedEvent extends NodeLinkBaseEvent {
+    type: "PlayerDestroyedEvent";
+}
+
+export interface PlayerConnectedEvent extends NodeLinkBaseEvent {
+    type: "PlayerConnectedEvent";
+}
+
+export interface PlayerReconnectingEvent extends NodeLinkBaseEvent {
+    type: "PlayerReconnectingEvent";
+}
+
+export interface VolumeChangedEvent extends NodeLinkBaseEvent {
+    type: "VolumeChangedEvent";
+    /** New volume level (0-1000) */
+    volume: number;
+}
+
+export interface FiltersChangedEvent extends NodeLinkBaseEvent {
+    type: "FiltersChangedEvent";
+    filters: LavalinkFilterData;
+}
+
+export interface SeekEvent extends NodeLinkBaseEvent {
+    type: "SeekEvent";
+    /** New position in milliseconds */
+    position: number;
+}
+
+export interface PauseEvent extends NodeLinkBaseEvent {
+    type: "PauseEvent";
+    /** Whether playback is now paused (true) or resumed (false) */
+    paused: boolean;
+}
+
+export interface ConnectionStatusEvent extends NodeLinkBaseEvent {
+    type: "ConnectionStatusEvent";
+    /** Current connection status */
+    connected: boolean;
+}
+
+export interface MixStartedEvent extends NodeLinkBaseEvent {
+    type: "MixStartedEvent";
+    /** Unique identifier for the mix layer */
+    mixId: string;
+    /** Full track information of the mixed layer */
+    track: LavalinkTrack;
+    /** Volume of the mixed layer (0.0 to 1.0) */
+    volume: number;
+}
+
+export interface MixEndedEvent extends NodeLinkBaseEvent {
+    type: "MixEndedEvent";
+    /** Unique identifier for the mix layer */
+    mixId: string;
+    /** Reason the mix layer ended (FINISHED, REMOVED, ERROR, MAIN_ENDED) */
+    reason: "FINISHED" | "REMOVED" | "ERROR" | "MAIN_ENDED" | string;
+}
+
+export type NodeLinkEventPayload<T extends NodeLinkEventTypes> = T extends "PlayerCreatedEvent"
+    ? PlayerCreatedEvent
+    : T extends "PlayerDestroyedEvent"
+      ? PlayerDestroyedEvent
+      : T extends "PlayerConnectedEvent"
+        ? PlayerConnectedEvent
+        : T extends "PlayerReconnectingEvent"
+          ? PlayerReconnectingEvent
+          : T extends "VolumeChangedEvent"
+            ? VolumeChangedEvent
+            : T extends "FiltersChangedEvent"
+              ? FiltersChangedEvent
+              : T extends "SeekEvent"
+                ? SeekEvent
+                : T extends "PauseEvent"
+                  ? PauseEvent
+                  : T extends "ConnectionStatusEvent"
+                    ? ConnectionStatusEvent
+                    : T extends "MixStartedEvent"
+                      ? MixStartedEvent
+                      : T extends "MixEndedEvent"
+                        ? MixEndedEvent
+                        : never;
+
+export type HealthStatusThreshold = { excellent: number; good: number; fair: number; poor: number };
+export type HealthStatusThresholdOptions = {
+    cpu: Partial<HealthStatusThreshold>;
+    memory: Partial<HealthStatusThreshold>;
+    ping: Partial<HealthStatusThreshold>;
+};
+export type NodeMetricSummary = {
+    cpuLoad: number;
+    systemLoad: number;
+    memoryUsage: number;
+    players: number;
+    playingPlayers: number;
+    uptime: number;
+    ping: number;
+    frameDeficit: number;
+};
+export type HealthStatusObject = {
+    status: HealthStatusKeys;
+    performance: HealthPerformanceKeys;
+    isOverloaded: boolean;
+    needsRestart: boolean;
+    penaltyScore: number;
+    estimatedRemainingCapacity: number;
+    recommendations: string[];
+    metrics: {
+        cpuLoad: number;
+        memoryUsage: number;
+        players: number;
+        playingPlayers: number;
+        uptime: number;
+        ping: number;
+        frameDeficit: number;
+    };
+};
+
+export type HealthPerformanceKeys = "excellent" | "good" | "fair" | "poor";
+export type HealthStatusKeys = "healthy" | "degraded" | "critical" | "offline";
+
+export type AddMixerLayerResponse = {
+    id: string;
+    track: LavalinkTrack;
+    volume: number;
+};
+
+export type ListMixerLayersResponse = {
+    mixes: {
+        id: string;
+        track: LavalinkTrack;
+        volume: number;
+        position: number;
+        startTime: number;
+    }[];
+};
+
+export type ConnectionMetricsResponse = {
+    status: string;
+    metrics: {
+        speed: {
+            bps: number;
+            kbps: number;
+            mbps: number;
+        };
+        downloadedBytes: number;
+        durationSeconds: number;
+        timestamp: number;
+    };
+};
+
+export type NodeLinkLyricsSynced = {
+    loadType: string;
+    data: {
+        synced: true;
+        lang: string;
+        source: string;
+        lines: [
+            {
+                text: string;
+                time: number;
+                duration: number;
+            },
+            {
+                text: string;
+                time: number;
+                duration: number;
+            },
+            {
+                text: string;
+                time: number;
+                duration: number;
+            },
+        ];
+    };
+};
+
+export type NodeLinkLyricsPlain = {
+    loadType: string;
+    data: {
+        synced: false;
+        lang: string;
+        source: string;
+        lines: [
+            {
+                text: string;
+                time: null;
+                duration: null;
+            },
+            {
+                text: string;
+                time: null;
+                duration: null;
+            },
+            {
+                text: string;
+                time: null;
+                duration: null;
+            },
+        ];
+    };
+};
+
+export type NodeLinkLyrics = NodeLinkLyricsSynced | NodeLinkLyricsPlain;
+
+export type NodeLinkNoLyrics = {
+    loadType: string;
+    data: {};
+};
+
+export type NodeLinkChapter = {
+    title: string;
+    startTime: number;
+    thumbnails: [
+        {
+            url: string;
+            width: number;
+            height: number;
+        },
+    ];
+    duration: number;
+    endTime: number;
+};
+
+export type DirectStreamResponse = {
+    url: string;
+    protocol: string;
+    format: string;
+    hlsUrl: string | null;
+    formats: {
+        itag: number;
+        mimeType: string;
+        qualityLabel: string;
+        bitrate: number;
+    }[];
+};
+
+export type YoutubeOAuthResponse = {
+    access_token: string;
+    expires_in: number;
+    scope: string;
+    token_type: string;
+};
+
+export type MeaningResponse = {
+    loadType: "meaning";
+    data: {
+        title: string;
+        description: string;
+        paragraphs: string[];
+        url: string;
+        provider: string;
+        type: string;
+    };
+};

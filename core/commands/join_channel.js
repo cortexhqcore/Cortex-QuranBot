@@ -1,3 +1,6 @@
+/**
+ * 
+/**
 require('pathlra-aliaser')();
 
 const { wrapInteraction, safeError, safeReply } = require('@responder');
@@ -82,3 +85,4 @@ module.exports = {
         );
     },
 };
+**/

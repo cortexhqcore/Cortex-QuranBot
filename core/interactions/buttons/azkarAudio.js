@@ -36,7 +36,7 @@ module.exports = {
                     return;
                 }
 
-                let audioInfo = require('@AzkarManager-core_state').getAzkarAudioUrl(buttonId);
+                let audioInfo = require('../../state/azkarManager').getAzkarAudioUrl(buttonId);
                 let dhikrDisplayText = 'ذكر';
                 let finalAudioUrl = null;
                 let finalFilename = 'dhikr';

@@ -29,6 +29,9 @@ async function joinVoiceChannelHandler(interaction, guildId, guildState) {
 
         guildState.playbackMode = 'surah';
         const availableReciters = Object.keys(global.reciters || {});
+        if (availableReciters.length === 0) {
+            throw new Error('No reciters loaded yet Please wait for data initialization');
+        }
         guildState.currentReciter = availableReciters[Math.floor(Math.random() * availableReciters.length)];
         guildState.currentSurah = Math.floor(Math.random() * 114) + 1;
 
@@ -43,7 +46,7 @@ async function joinVoiceChannelHandler(interaction, guildId, guildState) {
     } catch (err) {
         logger.error('Error Joining Via Button In Guild ' + guildId, err);
         await teardownConnection(guildId, guildState);
-        return { success: false, error: ERRORS.JOIN_FAILED + err.message };
+        return { success: false, error: ERRORS.JOIN_FAILED + ' ' + err.message };
     }
 }
 

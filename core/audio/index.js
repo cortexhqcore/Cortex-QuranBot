@@ -25,28 +25,28 @@ function getValidation() {
     if (!_validation) _validation = require('./validation');
     return _validation;
 }
-Object.defineProperties(global, {
-    createSurahResource: {
-        get: () => getResource().createSurahResource,
-        configurable: true,
-        enumerable: true,
-    },
-    createRadioResource: {
-        get: () => getResource().createRadioResource,
-        configurable: true,
-        enumerable: true,
-    },
-    findWorkingReciter: {
-        get: () => getResource().findWorkingReciter,
-        configurable: true,
-        enumerable: true,
-    },
-    findAvailableSurahForReciter: {
-        get: () => getResource().findAvailableSurahForReciter,
-        configurable: true,
-        enumerable: true,
-    },
-});
+//Object.defineProperties(global, {
+//    createSurahResource: {
+//        get: () => getResource().createSurahResource,
+//        configurable: true,
+//        enumerable: true,
+//    },
+//    createRadioResource: {
+//        get: () => getResource().createRadioResource,
+//        configurable: true,
+//        enumerable: true,
+//    },
+//    findWorkingReciter: {
+//        get: () => getResource().findWorkingReciter,
+//        configurable: true,
+//        enumerable: true,
+//    },
+//    findAvailableSurahForReciter: {
+//        get: () => getResource().findAvailableSurahForReciter,
+//        configurable: true,
+//        enumerable: true,
+//    },
+//});
 module.exports = {
     get connection() {
         return getConnection();
