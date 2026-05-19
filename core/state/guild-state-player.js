@@ -22,7 +22,7 @@ function validateAndResetPlayer(guildId, state) {
     if (isLongInactivity) {
         logger.info('Guild ' + guildId + ' Long Inactivity Detected Resetting Player');
         try {
-            player.stop();
+            if (typeof player.stopPlaying === 'function') player.stopPlaying();
             player.removeAllListeners();
             const newPlayer = createNewPlayer();
             state.player = newPlayer;
