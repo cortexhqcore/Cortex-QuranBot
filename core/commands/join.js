@@ -2,7 +2,7 @@ require('pathlra-aliaser')();
 
 const { wrapInteraction, safeError } = require('@deferReply');
 const { resolveGuildState } = require('@guard');
-const { establishVoiceConnection, persistVoiceStateToStorage } = require('@audio-core');
+const { initializeConnection, persistVoiceStateToStorage } = require('@audio-core');
 const { createSurahResource, createRadioResource } = require('@audio-core');
 const logger = require('@logger');
 const voiceLogger = require('@voiceLogger');
@@ -55,7 +55,7 @@ module.exports = {
                     return;
                 }
                 voiceLogger.connection(guildId, 'Initializing voice connection');
-                const joinResult = await establishVoiceConnection(guildId, guildState, voiceChannel, interaction.guild.voiceAdapterCreator);
+                const joinResult = await initializeConnection(guildId, guildState, voiceChannel, interaction.guild.voiceAdapterCreator);
                 if (!joinResult.success) {
                     voiceLogger.error(guildId, 'Connection initialization failed', null, {
                         joinResult,

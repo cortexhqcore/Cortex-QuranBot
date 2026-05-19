@@ -5,7 +5,7 @@ const logger = require('@logger');
 const { getGuildState } = require('../state/GuildStateManager');
 const persistentStateManager = require('@PersistentStateManager-core_state');
 // const voiceManager = require('@voice-connection');
-const { establishVoiceConnection, persistVoiceStateToStorage, createSurahResource, createRadioResource } = require('@audio-core');
+const { initializeConnection, syncVoiceState, createSurahResource, createRadioResource } = require('@audio-core');
 let restorationActive = false;
 
 async function restoreGuildStates(client, activeGuildIds) {

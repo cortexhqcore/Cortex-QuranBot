@@ -6,7 +6,7 @@ const { ChannelType } = require('discord.js');
 // const { AudioPlayerStatus } = require('@discordjs/voice');
 const { getGuildStateById } = require('@guild-state-store-core_state');
 const persistentStateManager = require('@PersistentStateManager-core_state');
-const { establishVoiceConnection, persistVoiceStateToStorage } = require('@audio-core');
+const { initializeConnection, syncVoiceState } = require('@audio-core');
 
 async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
     voiceLogger.recovery(guildId, 'Starting voice recovery', {
