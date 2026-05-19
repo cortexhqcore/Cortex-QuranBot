@@ -85,7 +85,6 @@ async function handlePublicInteraction(interaction) {
             return true;
         }
 
-        // Route general navigation interactions
         if (customId === 'more_features') {
             await coreLoader.moreFeaturesButton.execute(interaction);
             return true;
@@ -97,7 +96,6 @@ async function handlePublicInteraction(interaction) {
 
         return false;
     } catch (processingError) {
-        // Handle errors with centralized error handler for consistent user feedback
         await handleInteractionError(interaction, processingError, 'interactionProcessing');
         return true;
     }

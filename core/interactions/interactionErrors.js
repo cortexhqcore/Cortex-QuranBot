@@ -6,7 +6,6 @@ const coreLoader = require('@loader-core_bootstrap');
 function getErrorType(error) {
     if (!error) return 'UNKNOWN_ERROR';
 
-    // Interaction expired or already acknowledged errors
     if (
         error.message?.includes('Unknown interaction') ||
         error.message?.includes('10062') ||
@@ -16,7 +15,6 @@ function getErrorType(error) {
         return 'INTERACTION_EXPIRED';
     }
 
-    // Permission-related errors from Discord API
     if (
         error.message?.includes('Missing Permissions') ||
         error.message?.includes('50013') ||
@@ -26,12 +24,10 @@ function getErrorType(error) {
         return 'PERMISSION_DENIED';
     }
 
-    // Voice connection state errors
     if (error.message?.includes('VoiceConnection not available') || error.message?.includes('4004') || error.code === 4004) {
         return 'VOICE_CONNECTION_ERROR';
     }
 
-    // JavaScript runtime errors indicating state corruption
     if (
         error.message?.includes('Cannot read properties of undefined') ||
         error.message?.includes('Cannot destructure property') ||
@@ -40,21 +36,16 @@ function getErrorType(error) {
         return 'STATE_ERROR';
     }
 
-    // Message lookup failures
     if (error.message?.includes('Unknown Message') || error.message?.includes('10008') || error.code === 10008) {
         return 'MESSAGE_NOT_FOUND';
     }
 
-    // Network connectivity issues
     if (error.message?.includes('ETIMEDOUT') || error.message?.includes('ECONNRESET') || error.message?.includes('fetch failed')) {
         return 'NETWORK_ERROR';
     }
-
-    // Fallback for uncategorized errors
     return 'GENERAL_ERROR';
 }
 
-// Map error types to localized, user-friendly messages
 function getErrorMessage(errorType, originalMessage = '') {
     switch (errorType) {
         case 'INTERACTION_EXPIRED':
@@ -75,25 +66,20 @@ function getErrorMessage(errorType, originalMessage = '') {
     }
 }
 
-// Centralized error handler for all interaction failures with recovery attempts
 async function handleInteractionError(interaction, error, context) {
     try {
         const errorType = getErrorType(error);
-
-        // Skip user notification for expected expiration errors
         if (errorType === 'INTERACTION_EXPIRED' || errorType === 'MESSAGE_NOT_FOUND') {
             coreLoader.logger.debug(`Interaction Expired Or Message Not Found In ${context} Skipping Error Message`);
             return;
         }
 
-        // Log non-permission errors for monitoring
         if (errorType !== 'PERMISSION_DENIED') {
             coreLoader.logger.error(`Interaction Error ${context} ${errorType}`, error);
         }
 
         const userMessage = getErrorMessage(errorType, error.message);
 
-        // Attempt to send error message to user with appropriate interaction method
         try {
             if (!interaction.replied && !interaction.deferred) {
                 if (interaction.isCommand()) {
@@ -128,7 +114,6 @@ async function handleInteractionError(interaction, error, context) {
                     .catch(() => {});
             }
         } catch (replyError) {
-            // Handle secondary error if error message itself fails to send
             const replyErrorType = getErrorType(replyError);
             if (replyErrorType === 'INTERACTION_EXPIRED' || replyErrorType === 'MESSAGE_NOT_FOUND') {
                 coreLoader.logger.debug('Cannot Send Error Message Interaction Or Message Expired');
@@ -137,7 +122,6 @@ async function handleInteractionError(interaction, error, context) {
             coreLoader.logger.error('Failed To Send Error Message To User', replyError);
         }
 
-        // Attempt automatic recovery for state errors by refreshing control panel
         if (errorType === 'STATE_ERROR' && context === 'interactionHandler') {
             try {
                 const guildId = interaction.guildId;
@@ -151,7 +135,6 @@ async function handleInteractionError(interaction, error, context) {
             }
         }
     } catch (finalError) {
-        // Log critical failures in error handling itself
         coreLoader.logger.critical('Complete Failure In Handling Interaction Error', finalError);
     }
 }

@@ -20,7 +20,6 @@ module.exports = {
             const selectedCountryCode = interaction.values[0];
             const countryInfo = getCountryByCode(selectedCountryCode);
             const countryFlag = countryInfo?.flag || '';
-            // Get cities list for the selected country
             const availableCities = getCitiesForCountry(selectedCountryCode);
             if (availableCities.length === 0) {
                 return interaction.editReply({
@@ -53,7 +52,6 @@ module.exports = {
                     },
                     { name: 'عدد المدن', value: `${availableCities.length} مدينة`, inline: true },
                 );
-            // Update message with city selector and navigation
             await interaction.editReply({
                 embeds: [countryEmbed],
                 components: [cityRow, backRow],
@@ -61,7 +59,6 @@ module.exports = {
             });
         } catch (error) {
             logger.error('Error in country select', error);
-            // Graceful error fallback
             try {
                 await interaction.editReply({
                     content: 'حدث خطأ',

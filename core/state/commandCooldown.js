@@ -32,7 +32,6 @@ const CMD_MAP = {
     مصادر: 'sources',
 };
 
-// get internal command key
 function getCmdKey(name) {
     return CMD_MAP[name] || name;
 }

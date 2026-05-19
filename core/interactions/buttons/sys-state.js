@@ -9,7 +9,6 @@ async function saveGuildState(guildId, guildState) {
     await voiceManager.syncVoiceState(guildId, guildState);
 }
 
-// Retrieve the persistent state object for a guild
 function getPersistentState(guildId) {
     return persistentState.getGuildState(guildId);
 }

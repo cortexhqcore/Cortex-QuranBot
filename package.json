@@ -198,7 +198,7 @@
         "@data/prayerTimesData": "./core/data/prayerTimes/prayerTimesData.js",
         "@commandCooldown": "./core/state/commandCooldown.js",
         "@database/trackers/controlIds": "./core/database/trackers/controlIds.js",
-        "@storage/backup/localBackup": "./core/storage/backup/localBackup.js",
+        "@storage/backup/localBackup": "./core/database/local/localBackup.js",
         "@registry/core": "./core/registry.js",
         "@prayer-times-navigation": "./core/interactions/buttons/prayer-times-navigation.js",
         "@controlpanel": "./core/ui/controlpanel.js",

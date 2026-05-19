@@ -31,7 +31,6 @@ async function handleCommandInteraction(interaction, guildState) {
     const commandName = interaction.commandName;
     const guildId = interaction.guildId;
     const userId = interaction.user.id;
-    // Block guild-required commands if executed in DMs
     if (!interaction.guild && requiresGuild(commandName)) {
         try {
             if (!interaction.deferred && !interaction.replied) {

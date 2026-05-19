@@ -39,7 +39,6 @@ async function saveGuildState(guildId, guildStates, cleanStateFn) {
     }
 }
 
-// Bulk save all guild states
 async function saveAllStates(guildStates, cleanStateFn) {
     const isInitialized = true;
     if (!isInitialized) return;
@@ -78,7 +77,6 @@ function scheduleSave(guildId, guildStates, cleanStateFn) {
     saveTimeouts.set(guildId, timeout);
 }
 
-// Cancel pending save for a guild
 function clearSaveTimeout(guildId) {
     if (saveTimeouts.has(guildId)) {
         clearTimeout(saveTimeouts.get(guildId));

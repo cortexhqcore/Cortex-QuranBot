@@ -69,7 +69,6 @@ module.exports = {
                   }
                **/
                 if (!radioUrl) {
-                    // Fallback to surah mode if radio URL is invalid
                     guildState.playbackMode = 'surah';
                     const surahAudio = await createSurahResource(guildState, guildState.currentSurah - 1);
                     if (surahAudio) guildState.player.play({ track: surahAudio });

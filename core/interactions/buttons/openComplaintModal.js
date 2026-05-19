@@ -11,7 +11,7 @@ module.exports = {
             // Initialize the complaint/feedback submission modal
             const complaintModal = new ModalBuilder().setCustomId('complaint_modal').setTitle('تقديم شكوى او اقتراح');
 
-            // Primary reason for feedback (required)/
+            // Primary reason for feedback (required)
             const reasonField = new TextInputBuilder()
                 .setCustomId('complaint_reason')
                 .setLabel('سبب المشكلة أو اقتراحك')
@@ -42,12 +42,10 @@ module.exports = {
 
             complaintModal.addComponents(reasonRow, suggestionRow, experienceRow);
 
-            // Present the modal to the user
             await interaction.showModal(complaintModal);
         } catch (err) {
             logger.error('Error showing complaint modal', err);
 
-            // Fallback notification if modal fails to render
             try {
                 if (!interaction.replied && !interaction.deferred) {
                     await interaction.reply({

@@ -25,9 +25,6 @@ async function registerAllCommands(client) {
     }
 }
 
-module.exports.registerAllCommands = registerAllCommands;
-
-// Start periodic cleanup of destroyed voice connection states from memory
 function startMemoryCleanup() {
     setInterval(() => {
         let cleanedCount = 0;
@@ -45,4 +42,5 @@ function startMemoryCleanup() {
     }, 3600000);
 }
 
+module.exports.registerAllCommands = registerAllCommands;
 module.exports.startMemoryCleanup = startMemoryCleanup;

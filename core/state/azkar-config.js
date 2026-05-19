@@ -2,18 +2,15 @@ require('pathlra-aliaser')();
 
 const { time_constants, urls } = require('@configConstants');
 
-// base urls for adhkar resources
 const adhkar_base_url = urls.adhkar_base_url;
 const adhkar_images_base_url = urls.adhkar_images_base_url;
 
-// timing constants for scheduling + expiry
 const azkar_expiry_ms = time_constants.azkar_expiry_ms;
 const azkar_interval_ms = time_constants.azkar_interval_ms;
 const azkar_max_retry_attempts = time_constants.azkar_max_retry_attempts;
 const azkar_retry_delay_ms = time_constants.azkar_retry_delay_ms;
 const request_timeout_ms = time_constants.request_timeout_ms;
 
-// fallback data when remote load fails
 const fallback_azkar_data = [
     {
         id: 1,

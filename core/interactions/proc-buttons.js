@@ -25,28 +25,23 @@ const ROUTE_GROUPS = {
     backToMainButton: ['back_to_main'],
 };
 
-// Prefix mappings for dynamically generated button IDs
 const PREFIX_ROUTES = {
     admin_kick_bot_: 'adminKickBotButton',
     admin_confirm_kick_: 'adminConfirmKickButton',
 };
 
 function getButtonHandler(customId) {
-    // Step 1: Check exact matches within grouped arrays
     for (const [moduleKey, idArray] of Object.entries(ROUTE_GROUPS)) {
         if (Array.isArray(idArray) && idArray.includes(customId)) {
             return coreLoader[moduleKey];
         }
     }
 
-    // Step 2: Check prefix matches for dynamic IDs, admin_kick_bot_)
     for (const [prefix, moduleKey] of Object.entries(PREFIX_ROUTES)) {
         if (customId.startsWith(prefix)) {
             return coreLoader[moduleKey];
         }
     }
-
-    // No matching route found
     return null;
 }
 
@@ -83,7 +78,6 @@ async function handleButtonInteraction(interaction) {
 
     if (typeof handler.execute === 'function') {
         const success = await handler.execute(interaction);
-        // Persist cooldown after successful execution to prevent rapid toggling
         if ((customId === 'join_vc' || customId === 'leave_vc') && success !== false) {
             const cmdKey = customId === 'join_vc' ? 'join' : 'leave';
             coreLoader.setCooldown(interaction.user.id, interaction.guildId, cmdKey);

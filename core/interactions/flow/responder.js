@@ -36,7 +36,6 @@ async function safeReply(interaction, options, ctx = 'unknown') {
             if (result) return result;
         }
     } catch (primary) {
-        // Primary method threw - proceed to fallback
         logger.debug('Primary reply failed in ' + ctx + ': ' + primary.message);
     }
     // If we got here, primary methods failed or returned null - try channel fallback
@@ -77,14 +76,12 @@ function getFriendlyErrorMessage(error) {
     return 'حدث خطأ أثناء معالجة الطلب، يرجى المحاولة لاحقاً';
 }
 
-// handle interaction errors: log + notify user
 async function handleInteractionError(interaction, error, ctx = 'unknown') {
     logger.error(`Interaction Error [${ctx}]: ${error.message}`, error);
     const friendly = getFriendlyErrorMessage(error);
     await safeError(interaction, friendly, ctx);
 }
 
-// high-level wrapper: defer + exec + catch + fallback
 async function wrapInteraction(interaction, executor, opts = {}) {
     const { ephemeral = true, label = 'unknown' } = opts;
     await deferIfPending(interaction, ephemeral);

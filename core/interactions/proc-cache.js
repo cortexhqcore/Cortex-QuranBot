@@ -17,17 +17,13 @@ function checkDuplicateInteraction(interaction) {
 // Add interaction to cache with automatic expiration and size management
 function addToInteractionCache(interaction) {
     const interactionId = `${interaction.guildId}-${interaction.user.id}-${interaction.id}`;
-
-    // Evict oldest entry if cache is at capacity
     if (interactionCache.size >= max_interaction_cache_size) {
         const oldestKey = interactionCache.keys().next().value;
         interactionCache.delete(oldestKey);
     }
 
-    // Store interaction with current timestamp
     interactionCache.set(interactionId, Date.now());
 
-    // Schedule automatic removal after TTL expires
     setTimeout(() => {
         interactionCache.delete(interactionId);
     }, interaction_cache_ttl_ms);

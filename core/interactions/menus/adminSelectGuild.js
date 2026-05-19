@@ -7,7 +7,6 @@ module.exports = {
     customId: 'admin_select_guild',
 
     async execute(interaction) {
-        // Verify developer-level access before proceeding
         const requesterId = interaction.user.id;
         const hasDeveloperAccess = global.SPE_USER_IDS.includes(requesterId);
 
@@ -18,10 +17,8 @@ module.exports = {
             });
         }
 
-        // Acknowledge the interaction to prevent timeout
         await interaction.deferUpdate();
 
-        // Extract selected guild ID from dropdown values
         const selectedGuildId = interaction.values[0];
         const botClient = global.client;
         const targetGuild = botClient.guilds.cache.get(selectedGuildId);
@@ -33,28 +30,24 @@ module.exports = {
             });
         }
 
-        // Fetch guild owner info with fallback for unavailable data
         const guildOwner = await targetGuild.fetchOwner().catch(() => null);
         const setupData = global.setupGuilds?.[selectedGuildId];
         const hasStoredSetup = !!setupData && typeof setupData === 'object' && Object.keys(setupData).length > 0;
         const botStatusText = targetGuild ? 'Present in server' : 'Bot removed from server';
         let channelValidation = { voice: false, text: false, azkar: false };
         if (hasStoredSetup) {
-            // Check voice channel
             if (setupData.voiceChannelId) {
                 const voiceCh =
                     targetGuild.channels.cache.get(setupData.voiceChannelId) ||
                     (await targetGuild.channels.fetch(setupData.voiceChannelId).catch(() => null));
                 channelValidation.voice = voiceCh?.type === ChannelType.GuildVoice;
             }
-            // Check text channel for control panel
             if (setupData.textChannelId) {
                 const textCh =
                     targetGuild.channels.cache.get(setupData.textChannelId) ||
                     (await targetGuild.channels.fetch(setupData.textChannelId).catch(() => null));
                 channelValidation.text = textCh?.isTextBased?.();
             }
-            // Check azkar channel for automated messages
             if (setupData.azkarChannelId) {
                 const azkarCh =
                     targetGuild.channels.cache.get(setupData.azkarChannelId) ||
@@ -63,7 +56,6 @@ module.exports = {
             }
         }
 
-        // Build detailed setup status string based on actual channel existence
         const anyChannelExists = channelValidation.voice || channelValidation.text || channelValidation.azkar;
         let setupStatusText = hasStoredSetup && anyChannelExists ? 'Configured (setup system active)' : 'Not configured';
         let channelDetails = 'No channel data stored';
@@ -72,7 +64,6 @@ module.exports = {
         }
         const serverAgeDays = Math.floor((Date.now() - targetGuild.createdTimestamp) / 86400000);
 
-        // Build detailed guild information embed
         const guildInfoEmbed = new EmbedBuilder()
             .setColor(0x1e1f22)
             .setTitle(targetGuild.name)
@@ -97,7 +88,6 @@ module.exports = {
                 { name: 'Server Age', value: `${serverAgeDays} days`, inline: true },
             );
 
-        // Create action buttons for guild management
         const managementButtons = new ActionRowBuilder().addComponents(
             //new ButtonBuilder()
             //   .setCustomId(`admin_send_msg_${targetGuild.id}`)
@@ -108,7 +98,6 @@ module.exports = {
             new ButtonBuilder().setCustomId('admin_back_to_panel').setLabel('Control Panel').setStyle(ButtonStyle.Secondary),
         );
 
-        // Send ephemeral response with guild details and controls
         await interaction.followUp({
             embeds: [guildInfoEmbed],
             components: [managementButtons],

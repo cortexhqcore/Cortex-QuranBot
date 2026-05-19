@@ -6,7 +6,7 @@ const { ChannelType } = require('discord.js');
 // const { AudioPlayerStatus } = require('@discordjs/voice');
 const { getGuildStateById } = require('@guild-state-store-core_state');
 const persistentStateManager = require('@PersistentStateManager-core_state');
-const { initializeConnection, syncVoiceState } = require('@audio-core');
+const { establishVoiceConnection, persistVoiceStateToStorage } = require('@audio-core');
 
 async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
     voiceLogger.recovery(guildId, 'Starting voice recovery', {
@@ -50,7 +50,7 @@ async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
                     connectionStatus: storedState?.connectionStatus,
                 });
                 try {
-                    await initializeConnection(guildId, guildState, targetVoiceChannel, guild.voiceAdapterCreator);
+                    await establishVoiceConnection(guildId, guildState, targetVoiceChannel, guild.voiceAdapterCreator);
                     voiceLogger.recovery(guildId, 'Voice connection re-established');
                     guildState.playbackMode = storedState?.playbackMode || 'surah';
                     guildState.isPaused = false;
@@ -109,7 +109,7 @@ async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
                     storedState.connectionStatus = true;
                     storedState.voiceChannelId = targetVoiceChannel.id;
                     persistentStateManager.updateGuildState(guildId, storedState);
-                    await syncVoiceState(guildId, guildState);
+                    await persistVoiceStateToStorage(guildId, guildState);
                     voiceLogger.recovery(guildId, 'Voice recovery completed successfully');
                 } catch (connectionError) {
                     voiceLogger.error(guildId, 'Failed to reconnect voice channel', connectionError);

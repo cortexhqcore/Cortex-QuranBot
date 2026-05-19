@@ -15,14 +15,12 @@ const { getCountries, getCitiesForCountry, getCountryByCode, getTimeFormatForCou
 const { getBrowserHeaders, TimeoutRequest } = require('@http');
 const { prayer_times_config } = require('@configConstants');
 
-// Helper to safely truncate text for Discord field limits
 function truncateText(text, maxLength) {
     if (!text) return '';
     const str = String(text);
     return str.length > maxLength ? str.substring(0, maxLength) : str;
 }
 
-// Convert 24-hour time to formatted display based on country preference
 function formatTime(time24, countryCode) {
     if (!time24 || typeof time24 !== 'string') return 'غير متاح';
     const timeFormat = getTimeFormatForCountry(countryCode);
@@ -89,7 +87,6 @@ async function fetchPrayerTimes(lat, lng, cityName, countryCode) {
     }
 }
 
-// Build embed for country selection screen with pagination info
 function createCountrySelectionEmbed(currentPage, totalPages) {
     return new EmbedBuilder()
         .setColor(0x1e1f22)
@@ -144,13 +141,10 @@ module.exports = {
                     })
                     .catch(() => {});
             }
-            // Use centralized constant
             const ITEMS_PER_PAGE = prayer_times_config.cities_per_page; // 25
             const totalPages = Math.ceil(availableCountries.length / ITEMS_PER_PAGE);
             const actionId = interaction.customId;
-            // Route handling based on which button/menu was triggered
             if (actionId === 'home_prayer') {
-                // Return to country selection screen
                 const components = createCountryComponents(availableCountries, 0, totalPages);
                 const embed = createCountrySelectionEmbed(0, totalPages);
                 await interaction
@@ -161,7 +155,6 @@ module.exports = {
                     })
                     .catch(() => {});
             } else if (actionId === 'refresh_prayer') {
-                // Refresh prayer times for the currently displayed city
                 const currentEmbed = interaction.message.embeds[0];
                 if (!currentEmbed || !currentEmbed.description) {
                     return interaction
@@ -171,7 +164,7 @@ module.exports = {
                         })
                         .catch(() => {});
                 }
-                // Parse city and country from embed description
+
                 const description = currentEmbed.description;
                 const match = description.match(/\*\*(.+?) - (.+?)\*\*/);
                 if (!match) {
@@ -220,7 +213,7 @@ module.exports = {
                         })
                         .catch(() => {});
                 }
-                // Build refreshed embed with updated prayer times
+
                 const countryInfo = getCountryByCode(targetCountryCode);
                 const countryFlag = countryInfo?.flag || '';
                 const refreshedEmbed = new EmbedBuilder()
@@ -255,7 +248,6 @@ module.exports = {
                     })
                     .catch(() => {});
             } else if (actionId === 'back_country_prayer') {
-                // Navigate back to country selection
                 const components = createCountryComponents(availableCountries, 0, totalPages);
                 const embed = createCountrySelectionEmbed(0, totalPages);
                 await interaction
@@ -307,7 +299,6 @@ module.exports = {
             }
         } catch (error) {
             logger.error('Error in prayer navigation', error);
-            // Graceful error fallback
             try {
                 await interaction
                     .followUp({

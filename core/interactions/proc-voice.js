@@ -34,7 +34,6 @@ function isBotInVoice(guildState) {
     return (hasConnection || hasPlayer) && hasChannel;
 }
 
-// Check if an interaction type is permitted without an active voice connection
 function isAllowedWithoutVoice(interactionType) {
     return allowed_when_not_in_voice.includes(interactionType);
 }
@@ -43,7 +42,6 @@ function isAllowedWithoutVoice(interactionType) {
 async function checkVoiceState(interaction, guildState, interactionType) {
     const isActuallyInVoice = isBotInVoice(guildState);
 
-    // Block interactions that require voice connection if bot is not connected
     if (!isActuallyInVoice && !isAllowedWithoutVoice(interactionType)) {
         await interaction.deferUpdate().catch(() => {});
 

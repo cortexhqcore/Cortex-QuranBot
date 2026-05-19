@@ -17,7 +17,6 @@ async function validateAndFixSetupData(guild, setupData) {
             adhkarChannel = await guild.channels.fetch(setupData.azkarChannelId).catch(() => null);
         }
         if (!adhkarChannel || !adhkarChannel.isTextBased()) {
-            // Try to find fallback channel by name pattern
             const fallbackChannel = guild.channels.cache.find((c) => c.name === '🌙︱الأذكار' && c.type === ChannelType.GuildText);
             if (fallbackChannel) {
                 correctedData.azkarChannelId = fallbackChannel.id;
@@ -95,7 +94,6 @@ async function validateAndFixSetupData(guild, setupData) {
         }
     }
 
-    // Persist corrections to Firebase if any changes were made
     if (requiresUpdate) {
         global.setupGuilds[guildId] = correctedData;
         await saveSetupGuildsToFirebase(global.setupGuilds);

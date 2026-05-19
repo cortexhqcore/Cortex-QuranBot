@@ -22,7 +22,6 @@ function removeGuildState(guildId) {
     }
 }
 
-// More thorough cleanup that also destroys voice connections
 function cleanupGuildState(guildId) {
     const state = getGuildStateById(guildId);
     if (!state) return;
@@ -50,7 +49,6 @@ function cleanupGuildState(guildId) {
     }
 }
 
-// Scan all guilds and clean up any with destroyed or missing voice connections
 function cleanupDestroyedConnections() {
     const { getGuildStatesMap } = require('@guild-state-store-core_state');
     const guildStates = getGuildStatesMap();

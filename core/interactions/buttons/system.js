@@ -44,7 +44,6 @@ module.exports = {
                 await sendErrorReply(interaction, 'تم الخروج من الغرفة الصوتية بنجاح');
             }
 
-            // Refresh the control panel UI after any successful action
             await updateControlPanel(interaction, guildState, guildId);
         } catch (error) {
             await handleSystemError(interaction, guildId, error);

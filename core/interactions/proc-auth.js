@@ -9,7 +9,6 @@ function isExcludedFromAuth(interactionType) {
     return EXCLUDED_FROM_AUTH.includes(interactionType);
 }
 
-// Updated to use centralized public feature checker and auth wrapper
 async function checkAuthorization(interaction, guildState, interactionType) {
     if (isPublicFeature(interaction) || isExcludedFromAuth(interactionType)) {
         return true;

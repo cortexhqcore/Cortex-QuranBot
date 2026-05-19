@@ -3,9 +3,8 @@ require('pathlra-aliaser')();
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const logger = require('@logger');
 const { calculatePagination, createPaginationRow } = require('@ui/pagination');
-// Import pagination limits from centralized config
 const { pagination } = require('@configConstants');
-// Helper to parse page from footer, specific to Voice Channels logic
+
 function extractPageFromFooter(footerText) {
     if (!footerText) return 0;
     const match = footerText.match(/Page (\d+)\/(\d+)/);
@@ -45,7 +44,6 @@ module.exports = {
                     flags: 64,
                 });
             }
-            // Use centralized constant for voice channels specifically (10 items)
             const ITEMS_PER_PAGE = pagination.voice_channels_items;
             let currentPageIndex = 0;
             if (interaction.message?.embeds?.[0]?.footer?.text) {
@@ -79,13 +77,11 @@ module.exports = {
                 });
                 return { embeds: [voiceEmbed], components: [paginationRow] };
             };
-            // Handle button clicks if this is a pagination event
             if (interaction.customId === 'admin_prev_voice' || interaction.customId === 'admin_next_voice') {
                 const delta = interaction.customId === 'admin_prev_voice' ? -1 : 1;
                 const newPage = currentPageIndex + delta;
                 await interaction.editReply(renderList(newPage));
             } else {
-                // Initial render
                 await interaction.editReply(renderList(currentPageIndex));
             }
         } catch (error) {

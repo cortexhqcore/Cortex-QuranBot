@@ -5,7 +5,7 @@ const logger = require('@logger');
 const { getGuildState } = require('../state/GuildStateManager');
 const persistentStateManager = require('@PersistentStateManager-core_state');
 // const voiceManager = require('@voice-connection');
-const { initializeConnection, syncVoiceState, createSurahResource, createRadioResource } = require('@audio-core');
+const { establishVoiceConnection, persistVoiceStateToStorage, createSurahResource, createRadioResource } = require('@audio-core');
 let restorationActive = false;
 
 async function restoreGuildStates(client, activeGuildIds) {
@@ -37,7 +37,7 @@ async function restoreGuildStates(client, activeGuildIds) {
                             return;
                         }
                         logger.info(`Guild ${guildId} Re-establishing Lavalink Connection...`);
-                        const joinResult = await initializeConnection(
+                        const joinResult = await establishVoiceConnection(
                             guildId,
                             guildState,
                             restoreResult.channel,
@@ -58,7 +58,7 @@ async function restoreGuildStates(client, activeGuildIds) {
                     guildState.isPaused = false;
                     guildState.playedOffset = storedState.playedOffset || 0;
                     persistentStateManager.setManualDisconnect(guildId, false);
-                    await syncVoiceState(guildId, guildState);
+                    await persistVoiceStateToStorage(guildId, guildState);
                     if (guildState.playbackMode === 'surah') {
                         try {
                             const audioResource = await createSurahResource(guildState, guildState.currentSurah - 1);

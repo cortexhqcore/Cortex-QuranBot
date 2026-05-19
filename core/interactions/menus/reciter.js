@@ -16,7 +16,7 @@ module.exports = {
                 const { guildId, guildState } = resolveGuildState(interaction);
                 const authorized = await checkAuthorization(interaction, interaction.customId);
                 if (!authorized) return;
-                // If the user is switching from radio mode to surah mode, we need to stop the radio and prepare for surah playback.
+
                 if (guildState.playbackMode !== 'surah') {
                     guildState.playbackMode = 'surah';
                     guildState.currentRadioIndex = 0;

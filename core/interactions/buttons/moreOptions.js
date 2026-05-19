@@ -15,7 +15,6 @@ const { updateControlMessage, saveControlId } = require('@messageUpdater');
 const logger = require('@logger');
 const { EmbedBuilder } = require('discord.js');
 
-// Helper to send ephemeral-style error messages directly to the channel
 async function sendChannelError(interaction, errorMessage) {
     await interaction.deferUpdate().catch(() => {});
 
@@ -60,7 +59,6 @@ module.exports = {
         } catch (error) {
             logger.error('Error Executing More Options In Guild ' + guildId, error);
 
-            // Fallback error notification if the main update flow fails
             try {
                 await interaction.deferUpdate().catch(() => {});
                 await sendChannelError(interaction, 'حدث خطأ');

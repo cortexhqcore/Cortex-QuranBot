@@ -5,10 +5,8 @@ const logger = require('@logger');
 const { createSurahResource } = require('@audioUtils-core_utils');
 const { player_config } = require('@sys-config-core_interactions_buttons');
 
-// Ensure playback is active after a brief delay, handling edge cases
 async function ensurePlaybackStarted(guildState, guildId) {
     try {
-        // Small delay to allow voice connection to fully stabilize
         await new Promise((resolve) => setTimeout(resolve, player_config.PLAYBACK_START_DELAY_MS));
 
         if (!guildState.connection || guildState.connection.destroyed) {
@@ -16,11 +14,9 @@ async function ensurePlaybackStarted(guildState, guildId) {
             return false;
         }
 
-        // Re-subscribe player to connection to ensure audio routing
         guildState.connection.subscribe(guildState.player);
         logger.info('Guild ' + guildId + ' Player Subscribed To Connection');
 
-        // Start playback if player is idle
         if (guildState.player.state.status === AudioPlayerStatus.Idle) {
             logger.info('Guild ' + guildId + ' Player Idle After Join Starting Playback');
 
@@ -51,7 +47,6 @@ async function ensurePlaybackStarted(guildState, guildId) {
     }
 }
 
-// Start playback immediately based on current mode and state
 async function startPlayback(guildState, guildId) {
     try {
         if (guildState.playbackMode === 'surah') {

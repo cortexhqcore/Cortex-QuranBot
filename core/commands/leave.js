@@ -2,7 +2,7 @@ require('pathlra-aliaser')();
 
 const { wrapInteraction, safeError } = require('@deferReply');
 const { resolveGuildState } = require('@guard');
-const { teardownConnection, syncVoiceState, stopPlayer } = require('@audio-core');
+const { cleanupVoiceConnection, persistVoiceStateToStorage, stopAudioPlayback } = require('@audio-core');
 const persistentState = require('@PersistentStateManager-core_state');
 const logger = require('@logger');
 const voiceLogger = require('@voiceLogger');
@@ -22,14 +22,14 @@ module.exports = {
                 });
                 if (guildState.connection && !guildState.connection.destroyed) {
                     voiceLogger.connection(guildId, 'Stopping player before disconnect');
-                    stopPlayer(guildState);
+                    stopAudioPlayback(guildState);
                     guildState.isPaused = true;
                     guildState.pauseReason = 'manual_leave';
                     voiceLogger.connection(guildId, 'Tearing down voice connection');
-                    await teardownConnection(guildId, guildState);
+                    await cleanupVoiceConnection(guildId, guildState);
                     persistentState.setManualDisconnect(guildId, true);
                     voiceLogger.connection(guildId, 'Manual disconnect flag set');
-                    await syncVoiceState(guildId, guildState);
+                    await persistVoiceStateToStorage(guildId, guildState);
                     voiceLogger.connection(guildId, 'Voice state synced after leave');
                     await interaction.editReply({
                         content: 'تم الخروج من الغرفة الصوتية بنجاح',

@@ -26,7 +26,7 @@ async function checkAndArchive() {
     try {
         await ensureDir(LOG_DIR);
         await archiveAllOldLogs(LOG_DIR, 'logs');
-        await cleanupOldLogs(LOG_DIR, 60); // Keep logs for 60 days
+        await cleanupOldLogs(LOG_DIR, 60);
         initDone = true;
         scheduleNextArchive(LOG_DIR, 'logs');
     } catch (err) {

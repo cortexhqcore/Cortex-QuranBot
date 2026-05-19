@@ -31,7 +31,6 @@ async function fetchPrayerTimes(lat, lng, cityName, countryCode) {
     try {
         const currentDate = new Date();
         const unixTimestamp = Math.floor(currentDate.getTime() / 1000);
-        // Select calculation method based on country for accurate timings
         let calculationMethod = 2;
         if (countryCode === 'EG') {
             calculationMethod = 5;
@@ -98,7 +97,6 @@ module.exports = {
                 components: [],
                 flags: MessageFlags.Ephemeral,
             });
-            // Fetch fresh prayer times for the selected city
             const prayerInfo = await fetchPrayerTimes(selectedCity.lat, selectedCity.lng, selectedCity.name, targetCountryCode);
             if (!prayerInfo) {
                 return interaction.editReply({
@@ -107,7 +105,6 @@ module.exports = {
                 });
             }
             const prayerEmbed = createPrayerTimesDisplay(prayerInfo.cityName, prayerInfo.countryCode, prayerInfo);
-            // Create navigation buttons
             const homeBtn = new ButtonBuilder().setCustomId('home_prayer').setLabel('الرئيسية').setStyle(ButtonStyle.Secondary);
             const refreshBtn = new ButtonBuilder().setCustomId('refresh_prayer').setLabel('تحديث').setStyle(ButtonStyle.Secondary);
             const actionRow = new ActionRowBuilder().addComponents(homeBtn, refreshBtn);
@@ -119,7 +116,6 @@ module.exports = {
             });
         } catch (error) {
             logger.error('Error in city select', error);
-            // Graceful error fallback
             try {
                 await interaction.editReply({
                     content: 'حدث خطأ',

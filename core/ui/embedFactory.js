@@ -2,21 +2,17 @@ require('pathlra-aliaser')();
 
 const { EmbedBuilder } = require('discord.js');
 
-// ui constants for consistent styling
 const prayer_times_footer =
     'تحذير: هذه المعلومات من api.aladhan.com - يرجى التحقق من الموقع الرسمي لمواقيت الصلاة في بلدك للمواعيد الدقيقة المصدر https://aladhan.com/prayer-times';
 
-// standard embed with theme color
 function createStandardEmbed() {
     return new EmbedBuilder().setColor(0x1e1f22);
 }
 
-// loading embed (standard style)
 function createLoadingEmbed(desc) {
     return createStandardEmbed().setTitle('جاري التحميل').setDescription(desc);
 }
 
-// prayer times display embed
 function createPrayerTimesDisplay(city, country, data, flag = '') {
     return createStandardEmbed()
         .setTitle(`${flag} مواقيت الصلاة`)
@@ -34,7 +30,6 @@ function createPrayerTimesDisplay(city, country, data, flag = '') {
         .setFooter({ text: prayer_times_footer });
 }
 
-// country selection menu embed
 function createCountrySelectionEmbed(page, total) {
     return createStandardEmbed()
         .setTitle('مواقيت الصلاة')

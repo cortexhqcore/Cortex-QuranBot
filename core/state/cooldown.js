@@ -21,7 +21,6 @@ function isUserInGlobalCooldown(userId) {
     return false;
 }
 
-// Set a global cooldown for a user with automatic cleanup
 function setGlobalCooldown(userId, duration) {
     const cooldown = {
         start: Date.now(),
@@ -36,18 +35,15 @@ function setGlobalCooldown(userId, duration) {
     return cooldown;
 }
 
-// Log violations for monitoring and debugging
 function registerViolation(userId, reason) {
     logger.warn(`Violation registered for user ${userId}: ${reason}`);
 }
 
-// Placeholder for command-specific cooldown checks
 function checkCooldown(userId, type = COOLDOWN_TYPES.COMMAND, key = null) {
     const identifier = key ? `${userId}:${key}` : userId;
     return { valid: true, message: '' };
 }
 
-// Sliding window rate limiter per user/guild combination
 function checkRateLimit(userId, guildId, maxActions = 100, windowMs = 60000) {
     const now = Date.now();
     const key = `${userId}:${guildId}`;
@@ -79,7 +75,6 @@ function checkRateLimit(userId, guildId, maxActions = 100, windowMs = 60000) {
     return { valid: true, count: tracker.count, limit: maxActions };
 }
 
-// Initialize periodic cleanup of expired cooldowns
 async function init() {
     logger.info('Cooldown System Initialized');
     setInterval(() => {
@@ -97,7 +92,6 @@ async function init() {
     }, 30000);
 }
 
-// Expose functions globally for legacy module access
 global.isUserInGlobalCooldown = isUserInGlobalCooldown;
 global.setGlobalCooldown = setGlobalCooldown;
 global.registerViolation = registerViolation;

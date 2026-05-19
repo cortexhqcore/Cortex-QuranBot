@@ -29,13 +29,11 @@ async function updateControlMessage(interaction, embed, components) {
             return null;
         }
 
-        // message was deleted somehow
         if (error.code === 10008 || error.message?.includes('Unknown Message')) {
             logger.debug('Message Not Found Cannot Update');
             return null;
         }
 
-        // fallback: try to fetch and edit the message directly
         try {
             if (interaction.channel && interaction.message) {
                 const message = await interaction.channel.messages.fetch(interaction.message.id).catch(() => null);
@@ -53,7 +51,6 @@ async function updateControlMessage(interaction, embed, components) {
             logger.error('Error Fetching And Editing Message Directly', fetchError);
         }
 
-        // last resort: send a fresh message and clean up the old one if possible
         try {
             if (interaction.channel) {
                 const newMessage = await interaction.channel

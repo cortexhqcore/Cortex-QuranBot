@@ -36,7 +36,6 @@ module.exports = {
         const activeVoiceChannels = getActiveVoiceConnections();
         const formattedUptime = formatTimeDuration(botClient.uptime, 'en');
 
-        // Build the main admin dashboard embed using the factory
         const dashboardEmbed = createStandardEmbed()
             .setTitle('Developer Control Panel')
             .setDescription('**General Bot Statistics**')

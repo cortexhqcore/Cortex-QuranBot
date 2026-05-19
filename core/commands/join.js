@@ -2,7 +2,7 @@ require('pathlra-aliaser')();
 
 const { wrapInteraction, safeError } = require('@deferReply');
 const { resolveGuildState } = require('@guard');
-const { initializeConnection, syncVoiceState } = require('@audio-core');
+const { establishVoiceConnection, persistVoiceStateToStorage } = require('@audio-core');
 const { createSurahResource, createRadioResource } = require('@audio-core');
 const logger = require('@logger');
 const voiceLogger = require('@voiceLogger');
@@ -55,7 +55,7 @@ module.exports = {
                     return;
                 }
                 voiceLogger.connection(guildId, 'Initializing voice connection');
-                const joinResult = await initializeConnection(guildId, guildState, voiceChannel, interaction.guild.voiceAdapterCreator);
+                const joinResult = await establishVoiceConnection(guildId, guildState, voiceChannel, interaction.guild.voiceAdapterCreator);
                 if (!joinResult.success) {
                     voiceLogger.error(guildId, 'Connection initialization failed', null, {
                         joinResult,
@@ -93,7 +93,7 @@ module.exports = {
                     guildState.currentRadioUrl = streamUrl;
                     voiceLogger.connection(guildId, 'Started radio playback');
                 }
-                await syncVoiceState(guildId, guildState);
+                await persistVoiceStateToStorage(guildId, guildState);
                 voiceLogger.connection(guildId, 'Voice state synced after join');
                 await interaction.editReply({
                     content: 'تم الانضمام الى ' + voiceChannel.name + ' جاري التشغيل',

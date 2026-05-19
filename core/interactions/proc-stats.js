@@ -2,7 +2,6 @@ require('pathlra-aliaser')();
 
 const coreLoader = require('@loader-core_bootstrap');
 
-// Lazy-loaded reference to statistics tracking module
 let StatisticsTracker = null;
 
 // Get or initialize the statistics tracker module with error handling

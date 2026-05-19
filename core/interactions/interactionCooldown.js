@@ -5,11 +5,8 @@ const coreLoader = require('@loader-core_bootstrap');
 // Check if user interaction should be blocked due to global cooldown or rate limiting
 async function checkGlobalCooldown(interaction) {
     const userId = interaction.user.id;
-
-    // Check global cooldown first (applies to all users regardless of guild)
     if (coreLoader.isUserInGlobalCooldown(userId)) {
         try {
-            // Send appropriate ephemeral response based on interaction type
             if (!interaction.replied && !interaction.deferred) {
                 if (interaction.isCommand()) {
                     await interaction.reply({
@@ -32,7 +29,6 @@ async function checkGlobalCooldown(interaction) {
             coreLoader.logger.warn(`Blocked Interaction From User ${userId} Due To Global Cooldown`);
             return true;
         } catch (error) {
-            // Log but continue blocking if message send fails
             coreLoader.logger.debug('Failed To Send Cooldown Message To User');
             return true;
         }
@@ -68,8 +64,6 @@ async function checkGlobalCooldown(interaction) {
             return true;
         }
     }
-
-    // Interaction passed all cooldown checks
     return false;
 }
 

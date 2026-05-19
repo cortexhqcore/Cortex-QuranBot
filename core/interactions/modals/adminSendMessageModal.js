@@ -1,7 +1,6 @@
 require('pathlra-aliaser')();
 
 const logger = require('@logger');
-// Replaced inline global.SPE_USER_IDS check with centralized isSpecialUser helper
 const { isSpecialUser } = require('@authManager');
 const { createStandardEmbed } = require('@embedFactory');
 

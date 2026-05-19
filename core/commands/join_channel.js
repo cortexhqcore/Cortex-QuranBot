@@ -47,7 +47,7 @@ module.exports = {
                 }
 
                 // Replaced inline teardown & connection join with centralized voiceManager
-                await voiceManager.initializeConnection(guildId, guildState, targetChannel, interaction.guild.voiceAdapterCreator);
+                await voiceManager.establishVoiceConnection(guildId, guildState, targetChannel, interaction.guild.voiceAdapterCreator);
                 guildState.isPaused = false;
                 guildState.pauseReason = null;
                 guildState.playbackMode = guildState.playbackMode || 'surah';
@@ -70,8 +70,8 @@ module.exports = {
                 guildState.isPaused = false;
                 guildState.pauseReason = null;
 
-                // Replaced inline persistent state sync with centralized voiceManager.syncVoiceState
-                await voiceManager.syncVoiceState(guildId, guildState);
+                // Replaced inline persistent state sync with centralized voiceManager.persistVoiceStateToStorage
+                await voiceManager.persistVoiceStateToStorage(guildId, guildState);
 
                 // Replaced object literal with factory
                 const responseEmbed = createStandardEmbed()

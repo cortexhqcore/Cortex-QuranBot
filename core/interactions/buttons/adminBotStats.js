@@ -25,8 +25,6 @@ module.exports = {
 
         const botClient = global.client;
         const cachedGuilds = botClient.guilds.cache;
-
-        // Calculate aggregate member count across all guilds
         const aggregateMembers = cachedGuilds.reduce((total, guild) => total + guild.memberCount, 0);
 
         // Gather runtime diagnostics
@@ -35,7 +33,6 @@ module.exports = {
         const currentPlatform = os.platform();
         const runtimeVersion = process.version;
 
-        // Build the statistics embed with key metrics
         const statsEmbed = new EmbedBuilder()
             .setColor(0x1e1f22)
             .setTitle('Detailed Bot Statistics')
@@ -50,7 +47,6 @@ module.exports = {
                 },
                 { name: 'Platform', value: `${currentPlatform}`, inline: true },
                 { name: 'Node.js', value: `${runtimeVersion}`, inline: true },
-                // Replaced static top-level formattedUptime with dynamic calculation for accurate runtime value
                 {
                     name: 'Uptime',
                     value: formatTimeDuration(botClient.uptime, 'en'),
@@ -64,13 +60,11 @@ module.exports = {
                 { name: 'Protection System', value: 'Active', inline: true },
             );
 
-        // Create navigation buttons for the admin panel
         const actionRow = new ActionRowBuilder().addComponents(
             new ButtonBuilder().setCustomId('admin_back_to_panel').setLabel('Back to Panel').setStyle(ButtonStyle.Secondary),
             new ButtonBuilder().setCustomId('admin_refresh_stats').setLabel('Refresh').setStyle(ButtonStyle.Secondary),
         );
 
-        // Send the ephemeral response with embed and controls
         await interaction.followUp({
             embeds: [statsEmbed],
             components: [actionRow],
