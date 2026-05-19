@@ -86,6 +86,7 @@
         "@data-guilds-core_data": "./core/data/data-guilds.js",
         "@control-core_commands": "./core/commands/control.js",
         "@guide-core_commands": "./core/commands/guide.js",
+        "@changelog-core_commands": "./core/commands/changelog.js",
         "@join-core_commands": "./core/commands/join.js",
         "@join_channel-core_commands": "./core/commands/join_channel.js",
         "@leave-core_commands": "./core/commands/leave.js",

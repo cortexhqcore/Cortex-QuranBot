@@ -50,7 +50,7 @@ async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
                     connectionStatus: storedState?.connectionStatus,
                 });
                 try {
-                    await establishVoiceConnection(guildId, guildState, targetVoiceChannel, guild.voiceAdapterCreator);
+                    await initializeConnection(guildId, guildState, targetVoiceChannel, guild.voiceAdapterCreator);
                     voiceLogger.recovery(guildId, 'Voice connection re-established');
                     guildState.playbackMode = storedState?.playbackMode || 'surah';
                     guildState.isPaused = false;
@@ -109,7 +109,7 @@ async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
                     storedState.connectionStatus = true;
                     storedState.voiceChannelId = targetVoiceChannel.id;
                     persistentStateManager.updateGuildState(guildId, storedState);
-                    await persistVoiceStateToStorage(guildId, guildState);
+                    await syncVoiceState(guildId, guildState);
                     voiceLogger.recovery(guildId, 'Voice recovery completed successfully');
                 } catch (connectionError) {
                     voiceLogger.error(guildId, 'Failed to reconnect voice channel', connectionError);

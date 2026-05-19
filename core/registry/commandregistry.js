@@ -37,6 +37,10 @@ async function registerCommands() {
             .setName('مصادر')
             .setDescription('عرض مصادر المعلومات والروابط التي يستخدمها البوت')
             .setDefaultMemberPermissions('0'),
+        new SlashCommandBuilder()
+            .setName('تحديثات')
+            .setDescription('عرض سجل التحديثات الأخيرة والتغييرات المعمارية في البوت')
+            .setDefaultMemberPermissions('0'),
     ].map((c) => c.toJSON());
 
     const rest = new REST({ version: '10' }).setToken(global.token);

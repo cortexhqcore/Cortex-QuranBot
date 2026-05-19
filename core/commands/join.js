@@ -93,7 +93,7 @@ module.exports = {
                     guildState.currentRadioUrl = streamUrl;
                     voiceLogger.connection(guildId, 'Started radio playback');
                 }
-                await persistVoiceStateToStorage(guildId, guildState);
+                await syncVoiceState(guildId, guildState);
                 voiceLogger.connection(guildId, 'Voice state synced after join');
                 await interaction.editReply({
                     content: 'تم الانضمام الى ' + voiceChannel.name + ' جاري التشغيل',

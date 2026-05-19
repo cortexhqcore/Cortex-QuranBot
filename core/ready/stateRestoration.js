@@ -37,7 +37,7 @@ async function restoreGuildStates(client, activeGuildIds) {
                             return;
                         }
                         logger.info(`Guild ${guildId} Re-establishing Lavalink Connection...`);
-                        const joinResult = await establishVoiceConnection(
+                        const joinResult = await initializeConnection(
                             guildId,
                             guildState,
                             restoreResult.channel,
@@ -58,7 +58,7 @@ async function restoreGuildStates(client, activeGuildIds) {
                     guildState.isPaused = false;
                     guildState.playedOffset = storedState.playedOffset || 0;
                     persistentStateManager.setManualDisconnect(guildId, false);
-                    await persistVoiceStateToStorage(guildId, guildState);
+                    await syncVoiceState(guildId, guildState);
                     if (guildState.playbackMode === 'surah') {
                         try {
                             const audioResource = await createSurahResource(guildState, guildState.currentSurah - 1);
