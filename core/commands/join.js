@@ -2,7 +2,7 @@ require('pathlra-aliaser')();
 
 const { wrapInteraction, safeError } = require('@deferReply');
 const { resolveGuildState } = require('@guard');
-const { initializeConnection, persistVoiceStateToStorage } = require('@audio-core');
+const { initializeConnection, syncVoiceState } = require('@audio-core');
 const { createSurahResource, createRadioResource } = require('@audio-core');
 const logger = require('@logger');
 const voiceLogger = require('@voiceLogger');
