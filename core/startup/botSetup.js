@@ -102,9 +102,9 @@ const manager = new LavalinkManager({
             autoReconnect: true,
             destroyPlayer: false,
         },
-         onEmptyQueue: {
+        onEmptyQueue: {
             destroyAfterMs: 0,
-         },
+        },
         useUnresolvedData: true,
     },
 });
