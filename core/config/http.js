@@ -4,7 +4,7 @@ const { urls, voice_config, time_constants } = require('@configConstants');
 
 const default_user_agent =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
-const bot_user_agent = 'Mozilla/5.0 (compatible; QuranBot/0.7.29; +https://github.com/mgv-hub/quranbot)';
+const bot_user_agent = 'Mozilla/5.0 (compatible; QuranBot/0.7.29; +https://github.com/cortexhqcore/Cortex-QuranBot)';
 
 const audio_accept_header = 'audio/*, */*;q=0.8';
 const json_accept_header = 'application/json, text/plain, */*';

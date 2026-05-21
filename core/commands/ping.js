@@ -132,7 +132,7 @@ module.exports = {
                 { name: 'Azkar Sent', value: formatCompactNumber(azkar), inline: true },
                 {
                     name: 'Source Code',
-                    value: '[GitHub](https://github.com/mgv-hub/quranbot)',
+                    value: '[GitHub](https://github.com/cortexhqcore/Cortex-QuranBot)',
                     inline: true,
                 },
             );
