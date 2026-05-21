@@ -43,7 +43,9 @@ function getCpuLoadPct() {
         return `0.00% / ${cores * 100}%`;
     }
     const cpuPercent = ((totalCpuMicros / elapsedMicros) * 100).toFixed(2);
-    return `${cpuPercent}% / ${cores * 100}%`;
+    // Removed ${cores * 100}%
+    // and now showing actual bot process CPU usage only
+    return `${cpuPercent}%`;
 }
 
 async function deferOnce(ix) {
