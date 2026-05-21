@@ -1,5 +1,4 @@
-require('pathlra-aliaser')();
-
+require('pathlra-aliaser');
 // const { createAudioPlayer } = require('@discordjs/voice');
 const logger = require('@logger');
 const inactivity_threshold_ms = 30 * 60 * 1000;
@@ -23,9 +22,6 @@ function validateAndResetPlayer(guildId, state) {
     if (isLongInactivity) {
         logger.info('Guild ' + guildId + ' Long Inactivity Detected Resetting Player');
         try {
-            if (typeof player.stopPlaying === 'function') {
-                player.stopPlaying();
-            }
             state.errorCount = 0;
             state.isPaused = true;
             state.pauseReason = 'player_reset';
@@ -42,7 +38,6 @@ function validateAndResetPlayer(guildId, state) {
     }
     return true;
 }
-
 module.exports.validateAndResetPlayer = validateAndResetPlayer;
 module.exports.createNewPlayer = createNewPlayer;
 module.exports.inactivity_threshold_ms = inactivity_threshold_ms;
