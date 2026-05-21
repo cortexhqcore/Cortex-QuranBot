@@ -31,7 +31,7 @@ const {
     checkVoiceCooldown,
     createRadioRow,
     createRadioResource,
-} = require('@registry/core');
+} = require('@registry');
 const { loadData, saveSetupGuilds } = require('@data-manager-core_data');
 const { Client, GatewayIntentBits, REST } = require('discord.js');
 const { LavalinkManager } = require('../package/lavalink-client/dist/index');
