@@ -14,6 +14,9 @@ const fs = require('fs');
 let netBytesPrev = 0;
 let statsTick = Date.now();
 
+let lastCpuUsage = process.cpuUsage();
+let lastCpuCheck = process.hrtime.bigint();
+
 function getExternalNetBytes() {
     const ifaces = os.networkInterfaces();
     let bytes = 0;
@@ -24,6 +27,23 @@ function getExternalNetBytes() {
         }
     }
     return bytes;
+}
+
+function getCpuLoadPct() {
+    // CPU = core * 100%
+    const cores = os.cpus().length;
+    const currentUsage = process.cpuUsage(lastCpuUsage);
+    const currentTime = process.hrtime.bigint();
+    const elapsedNanos = currentTime - lastCpuCheck;
+    lastCpuUsage = process.cpuUsage();
+    lastCpuCheck = currentTime;
+    const elapsedMicros = Number(elapsedNanos) / 1000;
+    const totalCpuMicros = (currentUsage.user + currentUsage.system) / 1000;
+    if (elapsedMicros <= 0) {
+        return `0.00% / ${cores * 100}%`;
+    }
+    const cpuPercent = ((totalCpuMicros / elapsedMicros) * 100).toFixed(2);
+    return `${cpuPercent}% / ${cores * 100}%`;
 }
 
 async function deferOnce(ix) {
@@ -91,6 +111,7 @@ module.exports = {
         const azkar = fbStats?.azkarSent || 0;
         const cmds = fbStats?.commandsUsed || 0;
         const voiceCxns = fbStats?.voiceConnections ?? countVoiceCxns();
+        const cpuUsage = getCpuLoadPct();
 
         const status = new EmbedBuilder()
             .setColor(0x1e1f22)
@@ -105,6 +126,7 @@ module.exports = {
                 { name: 'Voice Connections', value: formatCompactNumber(voiceCxns), inline: true },
                 { name: 'Bot Version', value: ver, inline: true },
                 { name: 'Commands Used', value: formatCompactNumber(cmds), inline: true },
+                { name: 'CPU Usage', value: cpuUsage, inline: true },
                 { name: 'Azkar Sent', value: formatCompactNumber(azkar), inline: true },
                 {
                     name: 'Source Code',
