@@ -3,7 +3,7 @@ require('pathlra-aliaser')();
 const { wrapInteraction, safeReply } = require('@responder');
 const { createStandardEmbed } = require('@embedFactory');
 
-const BOT_SOURCES = [
+const msg = [
     {
         title: 'القرآن الكريم والتلاوات',
         value: '[mp3quran.net](https://www.mp3quran.net/ar)\nمصدر رسمي لتلاوات القرآن الكريم بأصوات القراء',
@@ -36,7 +36,7 @@ module.exports = {
                     .setTitle('مصادر معلومات البوت')
                     .setDescription('البوت يستخدم المصادر الرسمية التالية لجلب البيانات')
                     .addFields(
-                        ...BOT_SOURCES.map((s) => ({
+                        ...msg.map((s) => ({
                             // Map each source to an embed field
                             name: s.title,
                             value: s.value,

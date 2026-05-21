@@ -3,7 +3,7 @@ require('pathlra-aliaser')();
 const { wrapInteraction, safeReply } = require('@responder');
 const { createStandardEmbed } = require('@embedFactory');
 
-const UPDATES_LIST = [
+const msg = [
     {
         title: '🎵 ترقية البث الصوتي إلى Lavalink v4',
         value: '• نقل معالجة وتشغيل الصوت بالكامل إلى سيرفرات Lavalink الخارجية.\n• خفض استهلاك المعالج (CPU) في السيرفر المحلي إلى **0%** أثناء تشغيل الصوت.\n• حل مشكلة تقطيع وتوقف الصوت نهائياً ودعم أكثر من 150+ بث صوتي متزامن بجودة فائقة.',
@@ -33,7 +33,7 @@ module.exports = {
                         'تم ترقية البنية التحتية للبوت بالكامل لضمان تشغيل مستقر وعلى مدار الساعة لأكثر من 5,000 سيرفر بكفاءة عالية.',
                     )
                     .addFields(
-                        ...UPDATES_LIST.map((u) => ({
+                        ...msg.map((u) => ({
                             name: u.title,
                             value: u.value,
                             inline: false,

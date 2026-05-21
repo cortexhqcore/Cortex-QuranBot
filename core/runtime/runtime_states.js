@@ -62,7 +62,8 @@ async function restoreRuntimeStates(client) {
                 if (state.controlMode) guildState.controlMode = state.controlMode;
                 if (state.playedOffset !== undefined) guildState.playedOffset = state.playedOffset;
                 if (state.playbackStartTime !== undefined) guildState.playbackStartTime = state.playbackStartTime;
-
+                if (state.savedQuranState) guildState.savedQuranState = state.savedQuranState;
+                if (state.savedRadioState) guildState.savedRadioState = state.savedRadioState;
                 restoredCount++;
                 logger.info(`Restored State For Guild ${guildId} Mode ${guildState.playbackMode} Offset ${guildState.playedOffset}`);
             } catch (error) {

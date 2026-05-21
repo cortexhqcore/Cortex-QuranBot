@@ -14,6 +14,28 @@ require('@globalAll');
 const { ActivityType } = require('discord.js');
 const { client, logger } = global;
 
+process.on('unhandledRejection', (err) => {
+    const message = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    logger.error(`Unhandled rejection: ${message}`);
+    if (err?.stack) {
+        logger.error(err.stack);
+    }
+});
+process.on('uncaughtException', (err) => {
+    logger.error(`Unexpected exception: ${err.message}`);
+
+    if (err.stack) {
+        logger.error(err.stack);
+    }
+    if (err.code === 'ECONNREFUSED') {
+        logger.warn('Connection refused, retrying later...');
+        return;
+    }
+    if (err.code === 'ETIMEDOUT') {
+        logger.warn('Request timed out.');
+    }
+});
+
 let activityIndex = 0;
 
 // cairo time helper utc+2

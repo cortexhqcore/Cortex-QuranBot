@@ -151,8 +151,18 @@ function attachPlayerEvents(guildId, playerInstance) {
     logger.debug(`Player events attached for guild ${guildId} (Lavalink mode)`);
 }
 
+function stopPlayer(guildState) {
+    if (guildState?.player && !guildState.player.destroyed) {
+        if (typeof guildState.player.stopPlaying === 'function') {
+            guildState.player.stopPlaying();
+        } else if (typeof guildState.player.stop === 'function') {
+            guildState.player.stop();
+        }
+    }
+}
+
 module.exports.attachManagerEvents = attachManagerEvents;
 module.exports.attachPlayerEvents = attachPlayerEvents;
+module.exports.stopPlayer = stopPlayer;
 // module.exports.createNewPlayer = createNewPlayer;
 // module.exports.resetPlayer = resetPlayer;
-// module.exports.stopPlayer = stopPlayer;

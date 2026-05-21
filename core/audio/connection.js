@@ -6,6 +6,7 @@ const persistentState = require('../state/PersistentStateManager');
 const logger = require('@logger');
 const voiceLogger = require('@voiceLogger');
 const { time_constants } = require('@configConstants');
+const { getBestNode } = require('@botSetup');
 
 if (!global.activeVoiceConnections) {
     global.activeVoiceConnections = 0;
@@ -108,6 +109,8 @@ async function syncVoiceState(guildId, guildState) {
     storedState.isPaused = guildState.isPaused;
     storedState.currentRadioIndex = guildState.currentRadioIndex;
     storedState.currentRadioPage = guildState.currentRadioPage;
+    storedState.savedQuranState = guildState.savedQuranState;
+    storedState.savedRadioState = guildState.savedRadioState;
     persistentState.updateGuildState(guildId, storedState);
 
     if (typeof global.saveRuntimeStates === 'function') {
@@ -132,12 +135,26 @@ async function initializeConnection(guildId, guildState, targetChannel, adapterC
             throw new Error('Lavalink manager not initialized');
         }
         voiceLogger.connection(guildId, 'Calling createPlayer', { selfDeaf: true });
-        guildState.player = await client.lavalink.createPlayer({
+        const bestNode = getBestNode(client.lavalink);
+        const playerOptions = {
             guildId,
             voiceChannelId: targetChannel.id,
             textChannelId: targetChannel.isTextBased ? (targetChannel.isTextBased() ? targetChannel.id : null) : null,
             selfDeaf: true,
-        });
+        };
+        if (bestNode) {
+            playerOptions.node = bestNode.id;
+            voiceLogger.connection(guildId, `Using node ${bestNode.id} for player creation`, {
+                location: require('@botSetup').nodeConfigs.get(bestNode.id)?.location,
+            });
+        }
+        // guildState.player = await client.lavalink.createPlayer({
+        //     guildId,
+        //    voiceChannelId: targetChannel.id,
+        //     textChannelId: targetChannel.isTextBased ? (targetChannel.isTextBased() ? targetChannel.id : null) : null,
+        //    selfDeaf: true,
+        // });
+        guildState.player = await client.lavalink.createPlayer(playerOptions);
         const connectPromise = guildState.player.connect();
         const timeoutPromise = new Promise((_, reject) => {
             setTimeout(() => reject(new Error('Voice connection timeout')), connection_time);
@@ -146,6 +163,7 @@ async function initializeConnection(guildId, guildState, targetChannel, adapterC
         voiceLogger.connection(guildId, 'Lavalink player connected to voice channel successfully', {
             playerReady: !!guildState.player,
             playerDestroyed: guildState.player?.destroyed,
+            assignedNode: guildState.player.node?.id,
         });
         guildState.channelId = targetChannel.id;
         guildState.connection = guildState.player;

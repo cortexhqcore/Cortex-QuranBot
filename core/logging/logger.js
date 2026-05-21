@@ -28,7 +28,9 @@ function getLogFilePath(level) {
                   ? 'database'
                   : level === 'loader'
                     ? 'loader'
-                    : 'general';
+                    : level === 'lavalink'
+                      ? 'lavalink'
+                      : 'general';
     return pathlra.join(LOG_DIR, `logs-${suffix}-${date}.log`);
 }
 
@@ -63,6 +65,7 @@ async function writeLog(level, msg, meta = {}) {
             user: '\x1b[34m',
             db: '\x1B[34;1m',
             loader: '\x1B[36;1m',
+            lavalink: '\x1B[35;1m',
         };
         const c = colors[level] || '\x1b[37m',
             reset = '\x1b[0m';
@@ -108,6 +111,9 @@ class Logger {
     }
     loader(m, meta = {}) {
         return writeLog('loader', m, meta);
+    }
+    lavalink(m, meta = {}) {
+        return writeLog('lavalink', m, meta);
     }
 }
 

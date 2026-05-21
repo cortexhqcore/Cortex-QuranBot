@@ -3,6 +3,7 @@ require('pathlra-aliaser')();
 const { getGuildStateById } = require('../state/guild-state-store');
 const logger = require('@logger');
 const voiceLogger = require('@voiceLogger');
+const { getBestNode } = require('@botSetup');
 
 function getReciterLinks(state) {
     const reciterData = global.reciters?.[state.currentReciter];
@@ -38,7 +39,8 @@ async function validateStreamUrl(url) {
     try {
         const client = require('@botSetup').client;
         if (!client.lavalink) return { valid: false, reason: 'Lavalink unavailable' };
-        const nodes = client.lavalink.nodeManager.leastUsedNodes('players').filter((n) => n.connected);
+        const bestNode = getBestNode(client.lavalink);
+        const nodes = bestNode ? [bestNode] : client.lavalink.nodeManager.leastUsedNodes('players').filter((n) => n.connected);
         if (!nodes.length) return { valid: false, reason: 'No connected nodes' };
         const result = await nodes[0].search({ query: url, source: 'http' }, client.user);
         return { valid: result.tracks && result.tracks.length > 0, reason: 'OK' };
@@ -61,10 +63,13 @@ async function createSurahResource(state, index) {
             const client = require('@botSetup').client;
             if (!client.lavalink) throw new Error('Lavalink manager not initialized');
 
+            const bestNode = getBestNode(client.lavalink);
+
             // let searchNode;
             const searchNode = state.player?.node?.connected
                 ? state.player.node
-                : client.lavalink.nodeManager.leastUsedNodes('players').filter((n) => n.connected)[0];
+                : // : client.lavalink.nodeManager.leastUsedNodes('players').filter((n) => n.connected)[0];
+                  bestNode || client.lavalink.nodeManager.leastUsedNodes('players').filter((n) => n.connected)[0];
             if (!searchNode) throw new Error('No connected Lavalink nodes available');
 
             const result = await searchNode.search({ query: url, source: 'http' }, client.user);
@@ -112,8 +117,9 @@ async function createRadioResource(url) {
     if (!url?.startsWith('http')) throw new Error('Invalid Radio URL');
     const client = require('@botSetup').client;
     if (!client.lavalink) throw new Error('Lavalink manager not initialized');
+    const bestNode = getBestNode(client.lavalink);
 
-    const nodes = client.lavalink.nodeManager.leastUsedNodes('players').filter((n) => n.connected);
+    const nodes = bestNode ? [bestNode] : client.lavalink.nodeManager.leastUsedNodes('players').filter((n) => n.connected);
     if (!nodes.length) throw new Error('No connected Lavalink nodes available');
 
     const searchNode = nodes[0];

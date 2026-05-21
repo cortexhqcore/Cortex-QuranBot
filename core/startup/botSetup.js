@@ -66,17 +66,92 @@ const client = new Client({
     ],
 });
 
+const nodeConfigs = new Map();
+function build() {
+    let nodes = [];
+    let total = parseInt(process.env.LAVALINK_NODES || '1', 10);
+
+    for (let i = 1; i <= total; i++) {
+        const prefix = `LAVALINK_NODE_${i}`;
+        const host = process.env[`${prefix}_HOST`];
+        const port = process.env[`${prefix}_PORT`];
+        const password = process.env[`${prefix}_PASSWORD`];
+
+        if (!host || !port || !password) {
+            logger.warn(`Skipping node ${i} because config is incomplete`);
+            continue;
+        }
+
+        const nodeId = `node-${i}`;
+        const config = {
+            id: nodeId,
+            host,
+            port: Number(port),
+            password,
+            secure: process.env[`${prefix}_SECURE`] === 'true',
+            maxPlayers: parseInt(process.env[`${prefix}_MAX_PLAYERS`] || '100', 10),
+            location: process.env[`${prefix}_LOCATION`] || 'Unknown',
+            flag: process.env[`${prefix}_FLAG`] || '',
+            playerCreateDelay: parseInt(process.env[`${prefix}_PLAYER_CREATE_DELAY`] || '0', 10),
+        };
+
+        nodeConfigs.set(nodeId, config);
+
+
+        nodes.push({
+            id: config.id,
+            host: config.host,
+            port: config.port,
+            authorization: config.password,
+            secure: config.secure,
+            retryAmount: 10,
+            retryDelay: 5000,
+        });
+
+
+        logger.lavalink(
+            `Configured ${nodeId} | ${config.host}:${config.port} | Max Players: ${config.maxPlayers} | ${config.location} ${config.flag}`,
+        );
+    }
+
+    if (!nodes.length) {
+        logger.error('No Lavalink nodes configured');
+    }
+
+    return nodes;
+}
+
+
+function getBestNode(manager) {
+    let nodes = Array.from(manager.nodeManager.nodes.values());
+    let availableNodes = nodes.filter((node) => {
+        if (!node.connected) return false;
+        const config = nodeConfigs.get(node.id);
+        if (!config) return false;
+        const players = Array.from(manager.players.values()).filter((p) => p.node?.id === node.id).length;
+        return players < config.maxPlayers;
+
+    });
+
+    if (!availableNodes.length) {
+        return null;
+
+    }
+
+    
+    availableNodes.sort((a, b) => {
+        const aPlayers = Array.from(manager.players.values()).filter((p) => p.node?.id === a.id).length;
+        const bPlayers = Array.from(manager.players.values()).filter((p) => p.node?.id === b.id).length;
+        return aPlayers - bPlayers;
+
+    });
+
+    return availableNodes[0];
+}
+
 const manager = new LavalinkManager({
     // Lavalink configuration
-    nodes: [
-        {
-            id: 'primary',
-            host: process.env.LAVALINK_HOST || '127.0.0.1',
-            port: parseInt(process.env.LAVALINK_PORT, 10) || 2333,
-            authorization: process.env.LAVALINK_PASSWORD || '',
-            secure: process.env.LAVALINK_SECURE === 'true',
-        },
-    ],
+    nodes: build(),
     sendToShard: (guildId, payload) => {
         const guild = client.guilds.cache.get(guildId);
         if (guild?.shard) {
@@ -99,10 +174,30 @@ const manager = new LavalinkManager({
             destroyPlayer: false,
         },
         onEmptyQueue: {
-            destroyAfterMs: 0,
+            destroyAfterMs: 6690000,
         },
         useUnresolvedData: true,
     },
+});
+
+manager.nodeManager.on('connect', (node) => {
+    const config = nodeConfigs.get(node.id);
+    logger.lavalink(`Lavalink node "${node.id}" connected | ${config?.location || 'Unknown'} ${config?.flag || ''}`);
+});
+
+manager.nodeManager.on('disconnect', (node, reason) => {
+    logger.error(`Node "${node.id}" disconnected`, reason?.message || reason);
+});
+
+manager.nodeManager.on('error', (node, error) => {
+    logger.error(`Node "${node.id}" error`, error);
+});
+
+manager.on('playerCreate', (player) => {
+    const nodeId = player.node?.id || 'unknown';
+    const config = nodeConfigs.get(nodeId);
+    const players = Array.from(manager.players.values()).filter((p) => p.node?.id === nodeId).length;
+    logger.lavalink(`Player created | Guild: ${player.guildId} | Node: ${nodeId} | Load: ${players}/${config?.maxPlayers || 'N/A'}`);
 });
 
 client.lavalink = manager;
@@ -183,3 +278,5 @@ module.exports.saveRuntimeStates = saveRuntimeStates;
 module.exports.restoreRuntimeStates = restoreRuntimeStates;
 module.exports.loadRuntimeStates = loadRuntimeStates;
 module.exports.lavalinkManager = manager;
+module.exports.getBestNode = getBestNode;
+module.exports.nodeConfigs = nodeConfigs;

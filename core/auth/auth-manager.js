@@ -3,7 +3,7 @@ require('pathlra-aliaser')();
 const { PermissionsBitField } = require('discord.js');
 const { safeError } = require('@deferReply');
 const logger = require('@logger');
-const { PERMISSIONS_CONFIG } = require('@configConstants');
+const { permissions_config } = require('@configConstants');
 
 // actions everyone can do in 'everyone' mode
 const allowed_everyone_actions = [
@@ -31,7 +31,7 @@ function hasAdminPermission(member) {
 // check admin roles from config (keyword match)
 function hasAdminRole(member) {
     if (!member?.roles?.cache) return false;
-    const adminKws = PERMISSIONS_CONFIG.admin_roles;
+    const adminKws = permissions_config.admin_roles;
     return member.roles.cache.some((r) => adminKws.some((kw) => r.name.toLowerCase().includes(kw)));
 }
 

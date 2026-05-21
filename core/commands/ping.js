@@ -86,6 +86,106 @@ function getBotVersion() {
     }
 }
 
+function sanitizeError(message) {
+    if (!message) return 'Connection failed';
+    let sanitized = message;
+    sanitized = sanitized.replace(/https?:\/\/[^\/\s]+/gi, 'http://[REDACTED]');
+    sanitized = sanitized.replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, '[REDACTED]');
+    sanitized = sanitized.replace(/\[[0-9a-f:]+\]/gi, '[REDACTED]');
+    sanitized = sanitized.replace(/\b[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/gi, '[REDACTED]');
+    return sanitized;
+}
+
+async function LavalinkNode(host, port, secure, password, location, flag, id) {
+    const protocol = secure ? 'https' : 'http';
+    const url = `${protocol}://${host}:${port}/v4/stats`;
+    const start = Date.now();
+    const resp = await fetch(url, {
+        headers: { Authorization: password, 'User-Agent': 'QuranBot/1.0', },
+        timeout: 6000,
+    });
+    const latency = Date.now() - start;
+    if (resp.ok) {
+        const data = await resp.json();
+        return {
+            success: true,
+            latency,
+            uptime: data.uptime,
+            players: data.players ?? 0,
+            host,
+            port,
+            location,
+            flag,
+            id,
+        };
+    }
+    return {
+        success: false,
+        latency,
+        host,
+        port,
+        location,
+        flag,
+        id,
+        error: `HTTP ${resp.status}`,
+    };
+}
+
+function getLavalink() {
+    const nodes = [];
+    const nodeCount = parseInt(process.env.LAVALINK_NODES, 10) || 0;
+    for (let i = 1; i <= nodeCount; i++) {
+        let host = process.env[`LAVALINK_NODE_${i}_HOST`];
+        let port = parseInt(process.env[`LAVALINK_NODE_${i}_PORT`], 10);
+        let password = process.env[`LAVALINK_NODE_${i}_PASSWORD`];
+        let secure = process.env[`LAVALINK_NODE_${i}_SECURE`] === 'true';
+        let location = process.env[`LAVALINK_NODE_${i}_LOCATION`] || 'Unknown Location';
+        let flag = process.env[`LAVALINK_NODE_${i}_FLAG`] || '';
+        if (host && port && password) {
+            nodes.push({
+                id: i,
+                host,
+                port,
+                password,
+                secure,
+                location,
+                flag,
+            });
+        }
+    }
+    return nodes;
+}
+
+async function pingAll() {
+    const nodes = getLavalink();
+    if (nodes.length === 0) return [];
+    const results = await Promise.allSettled(
+        nodes.map((node) => LavalinkNode(node.host, node.port, node.secure, node.password, node.location, node.flag, node.id)),
+    );
+    return results
+        .filter((r) => r.status === 'fulfilled')
+        .map((r) => r.value)
+        .sort((a, b) => a.id - b.id);
+}
+
+function _formLavalink_(result) {
+    const status = result.success ? 'online' : 'offline';
+    const flag = result.flag || '';
+    const latency = result.success ? `${result.latency}ms` : 'offline';
+    const uptime = result.success && result.uptime != null ? formatTimeDuration(result.uptime, 'en') : 'N/A';
+    // Display players count from Lavalink node stats (active voice connections)
+    const players = result.success && result.players != null ? result.players : 0;
+
+    return [
+        `> ${flag} ${status} Node ${result.id}`,
+        `**  Location: ${result.location}**`,
+        `*  Ping: ${latency}`,
+        `*  Players: ${players}`,
+        `*  Uptime: ${uptime}`,
+        '',
+    ].join('\n');
+}
+
 netBytesPrev = getExternalNetBytes();
 
 module.exports = {
@@ -114,6 +214,7 @@ module.exports = {
         const cmds = fbStats?.commandsUsed || 0;
         const voiceCxns = fbStats?.voiceConnections ?? countVoiceCxns();
         const cpuUsage = getCpuLoadPct();
+        const lavalink = await pingAll();
 
         const status = new EmbedBuilder()
             .setColor(0x1e1f22)
@@ -137,6 +238,15 @@ module.exports = {
                 },
             );
 
+        if (lavalink.length > 0) {
+            let pingLines_n = lavalink.map(_formLavalink_).join('\n');
+            status.addFields({
+                name: 'Servers Lavalink',
+                value: pingLines_n || 'No nodes configured',
+                inline: false,
+            });
+        }
+        status.setFooter({ text: 'QuranBot © 2026 • Made by mgv150 • Powered by Cortex HQ' });
         await ix.editReply({ content: null, embeds: [status] });
     },
 };

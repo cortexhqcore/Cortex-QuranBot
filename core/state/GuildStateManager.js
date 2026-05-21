@@ -63,6 +63,9 @@ function getGuildState(guildId) {
             humanCount: 0,
             playbackStartTime: 0,
             playedOffset: 0,
+            // State preservation for independent modes
+            savedQuranState: null,
+            savedRadioState: null,
         };
         store.setGuildState(guildId, newState);
         setupPlayerEvents(guildId, player);

@@ -6,6 +6,7 @@ const { initializeConnection, teardownConnection, syncVoiceState } = require('./
 const { createSurahResource, createRadioResource } = require('./resource');
 const logger = require('@logger');
 
+/**
 async function handleJoin(interaction, guildId, guildState, targetChannel) {
     const joinResult = await initializeConnection(guildId, guildState, targetChannel, interaction.guild.voiceAdapterCreator);
 
@@ -15,6 +16,44 @@ async function handleJoin(interaction, guildId, guildState, targetChannel) {
     if (guildState.playbackMode === 'surah') {
         guildState.currentReciter = availableReciters[Math.floor(Math.random() * availableReciters.length)];
         guildState.currentSurah = Math.floor(Math.random() * 114) + 1;
+    }
+    guildState.isPaused = false;
+    guildState.pauseReason = null;
+
+    logger.info(`Guild ${guildId} Bot Joined Voice Channel ${targetChannel.id} Playing Surah ${guildState.currentSurah}`);
+    await syncVoiceState(guildId, guildState);
+    return true;
+}
+**/
+async function handleJoin(interaction, guildId, guildState, targetChannel) {
+    const joinResult = await initializeConnection(guildId, guildState, targetChannel, interaction.guild.voiceAdapterCreator);
+
+    if (!joinResult.success) throw new Error('Failed to establish voice connection');
+
+    const availableReciters = Object.keys(global.reciters || {});
+    if (guildState.playbackMode === 'surah') {
+        const savedQuran = guildState.savedQuranState;
+        if (savedQuran) {
+            guildState.currentReciter = savedQuran.currentReciter;
+            guildState.currentSurah = savedQuran.currentSurah;
+            guildState.currentPage = savedQuran.currentPage;
+            guildState.currentReciterPage = savedQuran.currentReciterPage;
+        } else {
+            guildState.currentReciter = availableReciters[Math.floor(Math.random() * availableReciters.length)];
+            guildState.currentSurah = Math.floor(Math.random() * 114) + 1;
+        }
+    } else {
+        const savedRadio = guildState.savedRadioState;
+        if (savedRadio) {
+            guildState.currentRadioIndex = savedRadio.currentRadioIndex;
+            guildState.currentRadioPage = savedRadio.currentRadioPage;
+        } else {
+            guildState.currentRadioIndex = 0;
+            guildState.currentRadioPage = 0;
+        }
+        if (!guildState.currentRadioUrl && global.quranRadios?.[guildState.currentRadioIndex]) {
+            guildState.currentRadioUrl = global.quranRadios[guildState.currentRadioIndex].url;
+        }
     }
     guildState.isPaused = false;
     guildState.pauseReason = null;
@@ -133,10 +172,22 @@ async function handlePlaybackControl(guildId, guildState, action) {
         case 'toggle_radio': {
             try {
                 if (guildState.playbackMode === 'surah') {
+                    guildState.savedQuranState = {
+                        currentSurah: guildState.currentSurah,
+                        currentReciter: guildState.currentReciter,
+                        currentPage: guildState.currentPage,
+                        currentReciterPage: guildState.currentReciterPage,
+                    };
+                    const savedRadio = guildState.savedRadioState || { currentRadioIndex: 0, currentRadioPage: 0 };
+                    guildState.currentRadioIndex = savedRadio.currentRadioIndex;
+                    guildState.currentRadioPage = savedRadio.currentRadioPage;
+                    if (!global.quranRadios || global.quranRadios.length === 0) {
+                        throw new Error('No radio stations available');
+                    }
+                    guildState.currentRadioUrl = global.quranRadios[guildState.currentRadioIndex]?.url || global.quranRadios[0].url;
                     guildState.playbackMode = 'radio';
-                    guildState.currentRadioIndex = guildState.currentRadioIndex ?? 0;
-                    guildState.currentRadioUrl = global.quranRadios[guildState.currentRadioIndex]?.url ?? global.quranRadios[0]?.url;
-                    guildState.currentRadioPage = Math.floor(guildState.currentRadioIndex / 25);
+                    // guildState.currentRadioIndex = guildState.currentRadioIndex ?? 0;
+                    // guildState.currentRadioPage = Math.floor(guildState.currentRadioIndex / 25);
                     /**
                     const validatedUrl = global.radioHealthChecker?.getActiveRadioUrl(guildState.currentRadioUrl);
                     if (!validatedUrl) {
@@ -157,8 +208,23 @@ async function handlePlaybackControl(guildId, guildState, action) {
                         }
                     }
                 } else {
-                    guildState.playbackMode = 'surah';
+                    guildState.savedRadioState = {
+                        currentRadioIndex: guildState.currentRadioIndex,
+                        currentRadioPage: guildState.currentRadioPage,
+                    };
+                    const availableReciters = Object.keys(global.reciters || {});
+                    const savedQuran = guildState.savedQuranState || {
+                        currentSurah: 1,
+                        currentReciter: availableReciters?.[0] || 'reciter_1_ar',
+                        currentPage: 0,
+                        currentReciterPage: 0,
+                    };
+                    guildState.currentSurah = savedQuran.currentSurah;
+                    guildState.currentReciter = savedQuran.currentReciter;
+                    guildState.currentPage = savedQuran.currentPage;
+                    guildState.currentReciterPage = savedQuran.currentReciterPage;
                     guildState.currentRadioUrl = null;
+                    guildState.playbackMode = 'surah';
                     // guildState.player.stop();
                     // guildState.player.stopPlaying();
                     const track = await global.createSurahResource(guildState, guildState.currentSurah - 1);
@@ -179,6 +245,17 @@ async function handlePlaybackControl(guildId, guildState, action) {
                 guildState.isPaused = false;
                 guildState.pauseReason = null;
                 if (typeof global.saveRuntimeStates === 'function') await global.saveRuntimeStates();
+                try {
+                    const fallbackTrack = await global.createSurahResource(guildState, 0);
+                    if (fallbackTrack) {
+                        guildState.player.queue.add(fallbackTrack);
+                        if (!guildState.player.playing && !guildState.player.paused) {
+                            await guildState.player.play();
+                        }
+                    }
+                } catch (fallbackErr) {
+                    logger.error('Fallback playback also failed', fallbackErr);
+                }
             }
             break;
         }

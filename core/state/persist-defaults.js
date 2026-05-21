@@ -29,6 +29,9 @@ function createDefaultState() {
         playedOffset: 0,
         disconnectAfterCurrentTrack: false,
         azkarFail: 0,
+        // State preservation for independent modes
+        savedQuranState: null,
+        savedRadioState: null,
     };
 }
 
