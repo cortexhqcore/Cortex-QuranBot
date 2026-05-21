@@ -40,7 +40,7 @@ async function validateStreamUrl(url) {
         if (!client.lavalink) return { valid: false, reason: 'Lavalink unavailable' };
         const nodes = client.lavalink.nodeManager.leastUsedNodes('players').filter((n) => n.connected);
         if (!nodes.length) return { valid: false, reason: 'No connected nodes' };
-        const result = await nodes[0].search({ query: url, source: 'youtube' }, client.user);
+        const result = await nodes[0].search({ query: url, source: 'http' }, client.user);
         return { valid: result.tracks && result.tracks.length > 0, reason: 'OK' };
     } catch (error) {
         return { valid: false, reason: error.message };
@@ -60,15 +60,14 @@ async function createSurahResource(state, index) {
             if (!url) throw new Error('Surah link unavailable');
             const client = require('@botSetup').client;
             if (!client.lavalink) throw new Error('Lavalink manager not initialized');
-            let searchNode;
-            if (state.player && state.player.node && state.player.node.connected) {
-                searchNode = state.player.node;
-            } else {
-                const nodes = client.lavalink.nodeManager.leastUsedNodes('players').filter((n) => n.connected);
-                if (!nodes.length) throw new Error('No connected Lavalink nodes available');
-                searchNode = nodes[0];
-            }
-            const result = await searchNode.search({ query: url, source: 'youtube' }, client.user);
+
+            // let searchNode;
+            const searchNode = state.player?.node?.connected
+                ? state.player.node
+                : client.lavalink.nodeManager.leastUsedNodes('players').filter((n) => n.connected)[0];
+            if (!searchNode) throw new Error('No connected Lavalink nodes available');
+
+            const result = await searchNode.search({ query: url, source: 'http' }, client.user);
             if (!result || !result.tracks || result.tracks.length === 0) {
                 throw new Error('Track not found on Lavalink');
             }
@@ -118,7 +117,7 @@ async function createRadioResource(url) {
     if (!nodes.length) throw new Error('No connected Lavalink nodes available');
 
     const searchNode = nodes[0];
-    const result = await searchNode.search({ query: url, source: 'youtube' }, client.user);
+    const result = await searchNode.search({ query: url, source: 'http' }, client.user);
     if (!result || !result.tracks || result.tracks.length === 0) throw new Error('Radio stream invalid');
     return result.tracks[0];
 }

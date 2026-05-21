@@ -9,7 +9,14 @@ async function get(key) {
     try {
         const client = clientManager.getRedisClient();
         if (clientManager.isRedisReady && client) {
-            return await client.get(key);
+            const result = await client.get(key);
+            if (result) {
+                try {
+                    return JSON.parse(result);
+                } catch {
+                    return result;
+                }
+            }
         }
     } catch (error) {
         logger.error(`Redis resilient get failed for key "${key}"`, error.message || error);
@@ -20,13 +27,14 @@ async function get(key) {
 }
 
 async function set(key, value, options = {}) {
+    const serializedValue = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
     try {
         const client = clientManager.getRedisClient();
         if (clientManager.isRedisReady && client) {
             if (options.EX) {
-                await client.set(key, value, { EX: options.EX });
+                await client.set(key, serializedValue, { EX: options.EX });
             } else {
-                await client.set(key, value);
+                await client.set(key, serializedValue);
             }
             memoryFallbackMap.set(key, value);
             return true;
@@ -45,9 +53,9 @@ async function del(key) {
         const client = clientManager.getRedisClient();
         if (clientManager.isRedisReady && client) {
             await client.del(key);
-            memoryFallbackMap.delete(key);
-            return true;
         }
+        memoryFallbackMap.delete(key);
+        return true;
     } catch (error) {
         logger.error(`Redis resilient del failed for key "${key}"`, error.message || error);
     }

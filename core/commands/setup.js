@@ -5,8 +5,6 @@ const { setupQuranCategory } = require('@setupCommands-core_commands');
 const bootstrap = require('@loader-core_bootstrap');
 
 module.exports = {
-    name: 'إعداد',
-    description: 'قم بإعداد قسم القرآن الكريم مع قنوات خاصة بالمسؤولين فقط',
     async execute(interaction) {
         return await wrapInteraction(
             interaction,

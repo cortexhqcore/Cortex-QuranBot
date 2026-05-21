@@ -4,10 +4,10 @@ const logger = require('@logger');
 const { db, isFirebaseReady } = require('@firebase-client-core_utils');
 const { deepCloneForFirebase } = require('@firebase-clone-core_utils');
 const { loadSetupGuildsFromFirebase, loadGuildStatesFromFirebase, loadControlIdsFromFirebase } = require('@firebase-guilds-core_utils');
+const retentiondb = require('@retention-core_database');
 
 async function clearGuildData(guildId) {
-    logger.warn('Clear Guild Data Called For ' + guildId + ' Operation Blocked To Preserve Data');
-    return false;
+    return await retentiondb.clearGuildData(guildId);
 }
 
 async function backupAllData() {
@@ -30,13 +30,12 @@ async function backupAllData() {
         };
         const firebaseReadyData = deepCloneForFirebase(backupData);
         await db.ref('backup/last').set(firebaseReadyData);
-        logger.info('Full Backup Created Successfully');
+        logger.db('Full Backup Created Successfully');
         return true;
     } catch (error) {
         logger.error('Error Creating Full Backup');
         return false;
     }
 }
-
 module.exports.clearGuildData = clearGuildData;
 module.exports.backupAllData = backupAllData;

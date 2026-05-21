@@ -3,12 +3,12 @@ require('pathlra-aliaser')();
 const { ChannelType } = require('discord.js');
 const logger = require('@logger');
 const { loadTrackedGuildsFromFirebase, saveTrackedGuildsToFirebase } = require('@firebase/index');
+const retentiondb = require('@retention-core_database');
 
 const botClient = global.client;
 let trackedGuildsList = [];
 let _initialized = false;
 
-// Load the list of tracked guilds from Firebase storage
 async function loadTrackedGuilds() {
     try {
         const fetchedData = await loadTrackedGuildsFromFirebase();
@@ -20,7 +20,6 @@ async function loadTrackedGuilds() {
     }
 }
 
-// Persist the current tracked guilds list to Firebase
 async function saveTrackedGuilds() {
     try {
         await saveTrackedGuildsToFirebase(trackedGuildsList);
@@ -30,7 +29,6 @@ async function saveTrackedGuilds() {
     }
 }
 
-// Remove entries for guilds the bot is no longer a member of
 async function cleanupTrackedGuilds() {
     try {
         const originalCount = trackedGuildsList.length;
@@ -48,13 +46,10 @@ async function cleanupTrackedGuilds() {
     }
 }
 
-// Sync tracked guilds with the bot's actual guild membership
 async function syncTrackedGuilds() {
     try {
-        // First remove any stale entries
         await cleanupTrackedGuilds();
         let newlyAddedCount = 0;
-        // Add any guilds we're in that aren't being tracked yet
         for (const guild of botClient.guilds.cache.values()) {
             const alreadyTracked = trackedGuildsList.some((entry) => entry.guildId === guild.id);
             if (!alreadyTracked) {
@@ -90,14 +85,12 @@ async function syncTrackedGuilds() {
     }
 }
 
-// Initialize module - call this explicitly in tests
 async function initialize() {
     if (_initialized) return;
     await loadTrackedGuilds();
     _initialized = true;
 }
 
-// Auto-track new guilds when the bot is added
 botClient.on('guildCreate', async (guild) => {
     try {
         const guildOwner = await guild.fetchOwner();
@@ -119,17 +112,11 @@ botClient.on('guildCreate', async (guild) => {
     }
 });
 
-// Stop tracking guilds when the bot is removed
 botClient.on('guildDelete', async (guild) => {
-    const previousCount = trackedGuildsList.length;
-    trackedGuildsList = trackedGuildsList.filter((entry) => entry.guildId !== guild.id);
-    if (trackedGuildsList.length < previousCount) {
-        await saveTrackedGuilds();
-        logger.info(`Removed Guild ${guild.name} ${guild.id}`);
-    }
+    await retentiondb.markGuildAsLeft(guild.id);
+    logger.info(`Bot left guild ${guild.name} (${guild.id}). Tracked data retained for 15 days.`);
 });
 
-// Only auto-init if not in test environment
 if (process.env.NODE_ENV !== 'test' && process.env.SKIP_AUTO_INIT !== 'true') {
     loadTrackedGuilds();
     botClient.once('clientReady', () => {
@@ -139,7 +126,6 @@ if (process.env.NODE_ENV !== 'test' && process.env.SKIP_AUTO_INIT !== 'true') {
     });
 }
 
-// Export via getter to prevent reference reassignment bugs in tests
 Object.defineProperty(module.exports, 'trackedGuilds', {
     get: () => trackedGuildsList,
     enumerable: true,

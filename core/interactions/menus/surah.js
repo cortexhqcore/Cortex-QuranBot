@@ -51,7 +51,7 @@ module.exports = {
                         return;
                     }
                     guildState.currentSurah = selectedSurahNum;
-                    guildState.disconnectAfterCurrentTrack = true;
+                    // guildState.disconnectAfterCurrentTrack = true;
                     try {
                         if (guildState.player.playing || guildState.player.state?.status === 'playing') {
                             guildState.player.stopPlaying();
@@ -65,7 +65,7 @@ module.exports = {
                                 currentSurahIndex: guildState.currentSurah - 1,
                                 isPaused: false,
                                 pauseReason: null,
-                                disconnectAfterCurrentTrack: true,
+                                // disconnectAfterCurrentTrack: true,
                             });
                         }
                     } catch (err) {

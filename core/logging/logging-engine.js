@@ -240,7 +240,7 @@ async function writeToFile(file, level, msg, meta, ts) {
                     metaStr = ' Meta Serialization Failed';
                 }
             }
-            await fs.appendFile(file, `${ts} ${level.toUpperCase()} ${msg}${metaStr}`, 'utf8');
+            await fs.appendFile(file, `${ts} ${level.toUpperCase()} ${msg}${metaStr}\n`, 'utf8');
         } catch {
             try {
                 console._originalError?.('Failed To Write Log');

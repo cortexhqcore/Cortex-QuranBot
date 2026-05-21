@@ -52,7 +52,7 @@ async function startPlayback(guildState, guildId) {
         if (guildState.playbackMode === 'surah') {
             const audioResource = await createSurahResource(guildState, guildState.currentSurah - 1, 0, 0, false);
             if (!audioResource) {
-                throw new Error('Failed to fetch surah from Lavalin');
+                throw new Error('Failed to fetch surah from Lavalink');
             }
 
             guildState.player.play({ track: audioResource });

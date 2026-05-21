@@ -28,7 +28,9 @@ module.exports = {
                     flags: 64,
                 });
             } catch (err) {
-                logger.error('Error Sending Permission Error', err);
+                if (err.code !== 10062) {
+                    logger.error('Error Sending Permission Error', err);
+                }
                 return;
             }
         }
@@ -36,7 +38,12 @@ module.exports = {
         try {
             // Defer interaction if not already done
             if (!interaction.deferred && !interaction.replied) {
-                await interaction.deferUpdate();
+                try {
+                    await interaction.deferUpdate();
+                } catch (deferErr) {
+                    if (deferErr.code === 10062) return;
+                    throw deferErr;
+                }
             }
 
             // Ensure radio selection is only processed in radio mode
@@ -117,6 +124,7 @@ module.exports = {
             await updateControlMessage(interaction, refreshedEmbed, uiComponents);
             await saveControlId(guildId, interaction.channelId, interaction.message.id);
         } catch (error) {
+            if (error.code === 10062) return;
             logger.error('Error' + guildId, error);
             try {
                 if (!interaction.replied && !interaction.deferred) {

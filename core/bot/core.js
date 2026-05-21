@@ -107,3 +107,14 @@ client.once('clientReady', () => {
 });
 
 logger.info('Bot initialized');
+
+if (client.lavalink?.nodeManager) {
+    client.lavalink.nodeManager.on('error', (node, error) => {
+        logger.error(`Lavalink NodeManager error for node "${node?.id || 'unknown'}":`, {
+            message: error?.message || String(error),
+            code: error?.code,
+            isAlive: node?.isAlive,
+            reconnectionState: node?.reconnectionState,
+        });
+    });
+}

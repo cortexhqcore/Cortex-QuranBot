@@ -4,8 +4,6 @@ const { wrapInteraction, safeReply } = require('@responder');
 const coreLoader = require('@loader-core_bootstrap');
 
 module.exports = {
-    name: 'دليل',
-    description: 'دليل استخدام البوت وخيارات الإعداد',
     async execute(interaction) {
         await wrapInteraction(
             interaction,

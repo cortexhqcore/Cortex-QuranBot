@@ -1,12 +1,13 @@
 require('pathlra-aliaser')();
 
 const logger = require('@logger');
-const redis = require('@redis');
 const { loadGuildStatesFromFirebase } = require('@firebase/index');
 const { isPlainObject } = require('@persist-utils-core_state');
 const { createDefaultState, cleanState } = require('@persist-defaults-core_state');
 const { saveGuildState, saveAllStates, scheduleSave, clearSaveTimeout } = require('@persist-storage-core_state');
-const { shouldRestore, restoreGuildState, setManualDisconnect, clearGuildState } = require('@persist-restore-core_state');
+const { shouldRestore, restoreGuildState, setManualDisconnect, clearGuildState, getAllStates } = require('@persist-restore-core_state');
+
+const redis = require('@redis/index');
 
 class PersistentStateManager {
     constructor() {
@@ -23,45 +24,45 @@ class PersistentStateManager {
                 if (isPlainObject(state)) {
                     const cleaned = cleanState(state, createDefaultState);
                     this.guildStates.set(guildId, cleaned);
-                    await redis.set(`quranbot:guild:${guildId}`, JSON.stringify(cleaned));
+                    if (redis.isRedisReady) {
+                        await redis.set(`quranbot:guild:${guildId}`, JSON.stringify(cleaned));
+                    }
                 }
             }
             this.isInitialized = true;
             logger.info('Persistent State Manager Initialized With ' + this.guildStates.size + ' Guild States cached to Redis');
+            if (redis.isRedisReady) {
+                for (const [guildId, state] of this.guildStates.entries()) {
+                    redis.set(`quranbot:guild:${guildId}`, cleanState(state, createDefaultState)).catch((err) => {
+                        logger.debug(`Redis pre-warm failed for guild ${guildId}`, err);
+                    });
+                }
+            }
         } catch (error) {
             logger.error('Failed To Initialize Persistent State Manager', error);
             this.isInitialized = true;
         }
     }
 
-    async getGuildState(guildId) {
-        try {
-            const cached = await redis.get(`quranbot:guild:${guildId}`);
-            if (cached) {
-                const parsed = JSON.parse(cached);
-                this.guildStates.set(guildId, parsed);
-                return parsed;
-            }
-        } catch (error) {
-            logger.error(`Redis parse failed for guild state of ${guildId}`, error);
-        }
-
+    getGuildState(guildId) {
         if (!this.guildStates.has(guildId)) {
             const defaultState = createDefaultState();
             this.guildStates.set(guildId, defaultState);
-            await redis.set(`quranbot:guild:${guildId}`, JSON.stringify(defaultState));
         }
         return this.guildStates.get(guildId);
     }
 
-    async updateGuildState(guildId, updates) {
-        const state = await this.getGuildState(guildId);
+    updateGuildState(guildId, updates) {
+        const state = this.getGuildState(guildId);
         const { deepMerge } = require('@persist-utils-core_state');
         deepMerge(state, updates);
         state.timestamp = Date.now();
-        this.guildStates.set(guildId, state);
-        await redis.set(`quranbot:guild:${guildId}`, JSON.stringify(state));
         scheduleSave(guildId, this.guildStates, cleanState);
+        if (redis.isRedisReady) {
+            redis.set(`quranbot:guild:${guildId}`, cleanState(state, createDefaultState)).catch((err) => {
+                logger.debug(`Redis update failed for guild ${guildId}`, err);
+            });
+        }
         return state;
     }
 
@@ -73,16 +74,12 @@ class PersistentStateManager {
         await saveAllStates(this.guildStates, (state) => cleanState(state, createDefaultState));
     }
 
-    async setManualDisconnect(guildId, value) {
+    setManualDisconnect(guildId, value) {
         setManualDisconnect(guildId, this.guildStates, scheduleSave, value);
-        const state = await this.getGuildState(guildId);
-        state.manualDisconnect = value;
-        this.guildStates.set(guildId, state);
-        await redis.set(`quranbot:guild:${guildId}`, JSON.stringify(state));
     }
 
-    async shouldRestore(guildId) {
-        const state = await this.getGuildState(guildId);
+    shouldRestore(guildId) {
+        const state = this.guildStates.get(guildId);
         return shouldRestore(state);
     }
 
@@ -90,35 +87,17 @@ class PersistentStateManager {
         return await restoreGuildState(guildId, this.guildStates, client);
     }
 
-    async clearGuildState(guildId) {
+    clearGuildState(guildId) {
         clearGuildState(guildId, this.guildStates, clearSaveTimeout);
-        await redis.del(`quranbot:guild:${guildId}`);
+        if (redis.isRedisReady) {
+            redis.del(`quranbot:guild:${guildId}`).catch((err) => {
+                logger.debug(`Redis delete failed for guild ${guildId}`, err);
+            });
+        }
     }
 
-    async getAllStates() {
-        try {
-            const keys = await redis.keys('quranbot:guild:*');
-            if (keys && keys.length > 0) {
-                const allStates = {};
-                for (const key of keys) {
-                    const guildId = key.replace('quranbot:guild:', '');
-                    const cached = await redis.get(key);
-                    if (cached) {
-                        allStates[guildId] = JSON.parse(cached);
-                    }
-                }
-                return allStates;
-            }
-        } catch (error) {
-            logger.error('Failed to retrieve states from Redis, falling back to local memory map', error);
-        }
-
-        return Object.fromEntries(
-            Array.from(this.guildStates.entries()).map(([gid, state]) => [
-                gid,
-                cleanState(state, createDefaultState),
-            ])
-        );
+    getAllStates() {
+        return getAllStates(this.guildStates, (state) => cleanState(state, createDefaultState));
     }
 }
 

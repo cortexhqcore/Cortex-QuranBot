@@ -18,7 +18,7 @@ async function saveComplaintToFirebase(complaint) {
             submittedAt: admin.database.ServerValue.TIMESTAMP,
         });
         await newComplaintRef.set(cleanComplaint);
-        logger.info('Complaint Saved To Firebase With ID ' + newComplaintRef.key);
+        logger.db('Complaint Saved To Firebase With ID ' + newComplaintRef.key);
         return true;
     } catch (error) {
         logger.error('Error Saving Complaint To Firebase');

@@ -5,14 +5,12 @@ const { removeGuildState, applyCommandPermissions } = require('@registry/core');
 const { ChannelType } = require('discord.js');
 const botClient = require('@botSetup').client;
 const http = require('http');
-const { markGuildAsLeft, markGuildAsPresent } = require('../database/firebase/services/retention.service');
+// const { markGuildAsLeft, markGuildAsPresent } = require('../database/firebase/services/retention.service');
+const retentiondb = require('@retention-core_database');
 
 botClient.on('guildCreate', async (guild) => {
     logger.info('Bot Joined New Guild ' + guild.name + ' ' + guild.id);
-
-    // Reset retention flags immediately when bot rejoins a guild to prevent scheduled deletion after 15 days.
-    // This ensures the 15-day timer resets upon re-entry, keeping the setup data alive.
-    await markGuildAsPresent(guild.id);
+    await retentiondb.markGuildAsPresent(guild.id);
 
     try {
         const guildOwner = await guild.fetchOwner();
@@ -73,13 +71,13 @@ botClient.on('guildCreate', async (guild) => {
 
 botClient.on('guildDelete', async (guild) => {
     const guildId = guild.id;
-    await markGuildAsLeft(guildId);
+    await retentiondb.markGuildAsLeft(guildId);
     logger.info(`Bot left guild ${guild.name} (${guildId}). Data retained for 15 days.`);
-    if (global.guildStates) global.guildStates.delete(guildId);
+    //if (global.guildStates) global.guildStates.delete(guildId);
     // Remove from local cache data persists in Firebase for 15 days
-    if (global.setupGuilds && global.setupGuilds[guildId]) {
-        delete global.setupGuilds[guildId];
-    }
+    //if (global.setupGuilds && global.setupGuilds[guildId]) {
+    //    delete global.setupGuilds[guildId];
+    //}
 });
 
 let healthCheckServerActive = false;

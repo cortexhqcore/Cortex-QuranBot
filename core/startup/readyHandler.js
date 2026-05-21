@@ -4,7 +4,7 @@ const logger = require('@logger');
 const { loadData } = require('@data-manager-core_data');
 const client = require('@botSetup').client;
 const persistentStateManager = require('@PersistentStateManager-core_state');
-const { loadSetupGuildsFromFirebase, loadGuildStatesFromFirebase, cleanExpiredLeftData } = require('@firebase/index');
+const { loadSetupGuildsFromFirebase, loadGuildStatesFromFirebase } = require('@firebase/index');
 const { validateAndFixSetupData } = require('@setupValidator-core_ready');
 const { recoverAzkarTimers } = require('@azkarRecovery-core_ready');
 const { recoverVoiceConnection } = require('@voiceRecovery-core_ready');
@@ -12,7 +12,11 @@ const { restoreGuildStates } = require('@stateRestoration-core_ready');
 const { registerAllCommands, startMemoryCleanup } = require('@commandRegistration-core_ready');
 const { initializeStats, startStatsTracker } = require('@StatisticsTracker-core_statistics');
 const databaseCleaner = require('../database/firebase/maintenance/databaseCleaner');
+const retentiondb = require('@retention-core_database');
 require('@storage/backup/localBackup');
+const { attachManagerEvents } = require('@audio-core');
+
+attachManagerEvents(client.lavalink);
 
 loadData()
     .then(async () => {
@@ -35,16 +39,8 @@ loadData()
             logger.info('Total Adhkar Categories ' + (global.azkarData?.length || 0));
             startStatsTracker();
             await databaseCleaner.performCleanup();
-            await cleanExpiredLeftData(client);
-
-            // Schedule periodic cleanup to run every 24 hours
-            const RETENTION_CLEANUP_INTERVAL_MS = 24 * 60 * 60 * 1000;
-            setInterval(async () => {
-                try {
-                    const result = await cleanExpiredLeftData(client);
-                    logger.info(`Periodic retention cleanup executed Result ${JSON.stringify(result)}`);
-                } catch (err) {}
-            }, RETENTION_CLEANUP_INTERVAL_MS);
+            await retentiondb.cleanExpiredLeftData(client);
+            retentiondb.startRetentionScheduler(client);
 
             const setupGuilds = await loadSetupGuildsFromFirebase();
             global.setupGuilds = setupGuilds || {};

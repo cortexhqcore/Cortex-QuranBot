@@ -27,13 +27,17 @@ async function joinVoiceChannelHandler(interaction, guildId, guildState) {
             return { success: false, error: ERRORS.JOIN_FAILED };
         }
 
-        guildState.playbackMode = 'surah';
-        const availableReciters = Object.keys(global.reciters || {});
-        if (availableReciters.length === 0) {
-            throw new Error('No reciters loaded yet Please wait for data initialization');
+        if (guildState.playbackMode === 'surah') {
+            const availableReciters = Object.keys(global.reciters || {});
+            guildState.currentReciter = availableReciters[Math.floor(Math.random() * availableReciters.length)];
+            guildState.currentSurah = Math.floor(Math.random() * 114) + 1;
+        } else {
+            guildState.playbackMode = 'radio';
+            if (!guildState.currentRadioUrl && global.quranRadios?.length) {
+                guildState.currentRadioIndex = guildState.currentRadioIndex ?? 0;
+                guildState.currentRadioUrl = global.quranRadios[guildState.currentRadioIndex]?.url || global.quranRadios[0].url;
+            }
         }
-        guildState.currentReciter = availableReciters[Math.floor(Math.random() * availableReciters.length)];
-        guildState.currentSurah = Math.floor(Math.random() * 114) + 1;
 
         await startPlayback(guildState, guildId);
         await syncVoiceState(guildId, guildState);

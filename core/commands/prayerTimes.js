@@ -8,9 +8,6 @@ const prayer_times_disclaimer =
     'هذه المعلومات يتم جلبها من https://aladhan.com وقد تختلف عن مواقيت الصلاة الرسمية في بلدك\n' +
     '**نوصي بالتحقق من الموقع الرسمي** للمواعيد الدقيقة: https://alaghan.com/prayer-times';
 module.exports = {
-    name: 'مواقيت_الصلاة',
-    description: 'عرض مواقيت الصلاة لجميع الدول والمناطق',
-
     async execute(ix) {
         // wrapInteraction handles defer/reply logic + error boundary — keeps cmd focused on happy path
         await wrapInteraction(
@@ -25,13 +22,11 @@ module.exports = {
                         inline: false,
                     });
 
-                // Button row injected via bootstrap — decouples UI from command logic
                 const rows = [];
                 if (bootstrap?.createPrayerTimesButtonRow) {
                     rows.push(bootstrap.createPrayerTimesButtonRow());
                 }
 
-                // user-only
                 await safeReply(
                     ix,
                     {

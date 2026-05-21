@@ -2,9 +2,7 @@ require('pathlra-aliaser')();
 
 const logger = require('@logger');
 const { isFirebaseReady, db } = require('../index');
-const { cleanSetupGuilds } = require('./cleaners/setupGuilds.cleaner');
-const { cleanGuildStates } = require('./cleaners/guildStates.cleaner');
-const { cleanControlIds } = require('./cleaners/controlIds.cleaner');
+const retentiondb = require('@retention-core_database');
 
 class DatabaseCleaner {
     constructor() {
@@ -16,7 +14,7 @@ class DatabaseCleaner {
     initialize(client) {
         this.client = client;
         this.isInitialized = true;
-        logger.info('Database Cleaner Initialized');
+        logger.db('Database Cleaner Initialized');
     }
 
     // exec cleanup routines + return summary
@@ -25,25 +23,17 @@ class DatabaseCleaner {
             logger.warn('Database Cleaner Not Initialized');
             return { success: false, reason: 'Not initialized' };
         }
-
         if (!isFirebaseReady || !db) {
             logger.warn('Firebase Not Available Skipping Cleanup');
             return { success: false, reason: 'Firebase not ready' };
         }
+        logger.db('Starting Database Cleanup Process');
 
-        logger.info('Starting Database Cleanup Process');
+        const results = await retentiondb.performMaintenance(this.client);
 
-        // run all cleaners in parallel-ish style
-        const results = {
-            setupGuilds: await cleanSetupGuilds(this.client),
-            guildStates: await cleanGuildStates(this.client),
-            controlIds: await cleanControlIds(this.client),
-        };
-
-        logger.info('Database Cleanup Complete', results);
+        logger.db('Database Cleanup Complete', results);
         return { success: true, results };
     }
 }
-
 const databaseCleaner = new DatabaseCleaner();
 module.exports = databaseCleaner;

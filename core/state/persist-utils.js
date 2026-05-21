@@ -1,4 +1,4 @@
-require('pathlra-aliaser');
+require('pathlra-aliaser')();
 
 function isPlainObject(obj) {
     return obj !== null && typeof obj === 'object' && !Array.isArray(obj) && Object.getPrototypeOf(obj) === Object.prototype;

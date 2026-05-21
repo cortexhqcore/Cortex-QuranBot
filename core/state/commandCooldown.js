@@ -1,11 +1,10 @@
-require('pathlra-aliaser');
+require('pathlra-aliaser')();
+
 const logger = require('@logger');
 
-// cooldown stores
 const userCD = new Map();
 const serverCD = new Map();
 
-// command cooldowns config (ms)
 const COMMAND_COOLDOWNS = {
     control: { duration: 25000, type: 'user' },
     guide: { duration: 15000, type: 'user' },
@@ -17,6 +16,7 @@ const COMMAND_COOLDOWNS = {
     prayerTimesButton: { duration: 15000, type: 'user' }, // Button
     setup: { duration: 60000, type: 'server' },
     sources: { duration: 10000, type: 'user' },
+    changelog: { duration: 15000, type: 'user' },
 };
 
 const CMD_MAP = {
@@ -30,6 +30,7 @@ const CMD_MAP = {
     prayer_times: 'prayerTimesButton',
     إعداد: 'setup',
     مصادر: 'sources',
+    تحديثات: 'changelog',
 };
 
 function getCmdKey(name) {
@@ -63,7 +64,7 @@ function setUserCooldown(userId, cmdName) {
         command: key,
         userId,
     });
-    logger.debug(`User CD set: ${userId} / ${key}`);
+    logger.user(`User CD set: ${userId} / ${key}`);
 }
 
 function checkServerCooldown(guildId, cmdName) {

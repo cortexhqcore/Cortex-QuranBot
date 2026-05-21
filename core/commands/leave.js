@@ -8,8 +8,6 @@ const logger = require('@logger');
 const voiceLogger = require('@voiceLogger');
 
 module.exports = {
-    name: 'خروج',
-    description: 'الخروج من الروم الصوتي',
     async execute(interaction) {
         await wrapInteraction(
             interaction,

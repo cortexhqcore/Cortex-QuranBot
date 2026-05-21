@@ -7,19 +7,13 @@ const { loadControlIdsFromFirebase, saveControlIdsToFirebase } = require('@fireb
 let cache = {};
 let loaded = false;
 
-// lazy load cache from firebase
 async function loadCache() {
     if (loaded) return;
     cache = await loadControlIdsFromFirebase();
     loaded = true;
 }
 
-// delete old control msgs in channel (keep new one)
-// NOTE: This part used to cause issues and headaches because old messages
-// were not being cleaned properly or the bot lacked permissions in some cases,
-// which made duplicates accumulate and the channel get messy until it was fixed.
 async function deleteOldMsgs(guildId, channelId, keepId) {
-    // keepId is the new msg we want to keep, all others will be deleted
     if (!global.client) {
         logger.warn('Client not ready for msg deletion');
         return;
@@ -42,7 +36,6 @@ async function deleteOldMsgs(guildId, channelId, keepId) {
     }
 }
 
-// save control msg id (replaces old list with new one)
 async function saveControlId(guildId, channelId, msgId) {
     if (!loaded) await loadCache();
 
@@ -54,7 +47,6 @@ async function saveControlId(guildId, channelId, msgId) {
     await saveControlIdsToFirebase(cache);
 }
 
-// append dhikr msg id to list (keeps history)
 async function saveDhikrMessageId(guildId, channelId, msgId) {
     if (!loaded) await loadCache();
 
@@ -66,13 +58,11 @@ async function saveDhikrMessageId(guildId, channelId, msgId) {
     logger.info(`Saved dhikr msg for guild ${guildId}`);
 }
 
-// get full cache (ensures loaded first)
 async function readControlIds() {
     if (!loaded) await loadCache();
     return cache;
 }
 
-// clear ids for specific channel
 async function removeControlId(guildId, channelId) {
     if (!loaded) await loadCache();
 
@@ -82,12 +72,10 @@ async function removeControlId(guildId, channelId) {
     }
 }
 
-// force sync cache to firebase
 async function flushCache() {
     await saveControlIdsToFirebase(cache);
 }
 
-// init on module load
 (async () => {
     try {
         await loadCache();

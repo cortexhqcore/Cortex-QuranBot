@@ -1,4 +1,4 @@
-require('pathlra-aliaser');
+require('pathlra-aliaser')();
 
 const logger = require('@logger');
 

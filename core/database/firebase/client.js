@@ -1,5 +1,19 @@
 require('pathlra-aliaser')();
 
+let db = null;
+let _isFirebaseReady = false;
+
+Object.defineProperty(module.exports, 'db', {
+    get: () => db,
+    enumerable: true,
+    configurable: true,
+});
+Object.defineProperty(module.exports, 'isFirebaseReady', {
+    get: () => _isFirebaseReady,
+    enumerable: true,
+    configurable: true,
+});
+
 const admin = require('firebase-admin');
 const logger = require('@logger');
 require('../../package/Envira/src/lib/main');
@@ -35,8 +49,6 @@ const firebaseAdminConfig = {
     client_x509_cert_url: process.env.FIREBASE_ADMIN_CLIENT_X509_CERT_URL,
 };
 
-let db = null;
-let _isFirebaseReady = false;
 let connectionAttempts = 0;
 const max_connection_attempts = 5;
 
@@ -57,13 +69,13 @@ async function initializeFirebase() {
         }
         db = admin.database();
         _isFirebaseReady = true;
-        logger.info('Firebase Admin Realtime Database Initialized Successfully');
-        logger.info('Connected To ' + firebaseAdminConfig.databaseURL);
+        logger.db('Firebase Admin Realtime Database Initialized Successfully');
+        logger.db('Connected To ' + firebaseAdminConfig.databaseURL);
         return true;
     } catch (error) {
         connectionAttempts++;
         if (error.message.includes('Invalid PEM formatted message')) {
-            logger.error(`Firebase Private Key Format Invalid`);
+            logger.error('Firebase Private Key Format Invalid');
         } else {
             logger.error('Firebase initialization error', error);
         }
@@ -80,14 +92,6 @@ if (process.env.NODE_ENV !== 'test' && process.env.SKIP_AUTO_INIT !== 'true') {
     initializeFirebase();
 }
 
-// Export with getter for isFirebaseReady to allow proper mocking in tests
-// Using Object.defineProperty ensures the getter can be overridden in mocks
-Object.defineProperty(module.exports, 'isFirebaseReady', {
-    get: () => _isFirebaseReady,
-    enumerable: true,
-    configurable: true,
-});
-module.exports.db = db;
 module.exports.firebaseAdminConfig = firebaseAdminConfig;
 module.exports.initializeFirebase = initializeFirebase;
 module.exports.max_connection_attempts = max_connection_attempts;

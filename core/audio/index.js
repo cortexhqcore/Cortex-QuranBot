@@ -69,6 +69,9 @@ module.exports = {
     get attachPlayerEvents() {
         return getPlayer().attachPlayerEvents;
     },
+    get attachManagerEvents() {
+        return getPlayer().attachManagerEvents;
+    },
     get createNewPlayer() {
         return getPlayer().createNewPlayer;
     },

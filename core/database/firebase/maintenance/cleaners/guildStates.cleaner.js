@@ -7,7 +7,7 @@ async function cleanGuildStates(client) {
     try {
         const data = await loadGuildStatesFromFirebase();
         if (!data || !Object.keys(data).length) {
-            logger.info('No Guild States Data To Clean');
+            logger.db('No Guild States Data To Clean');
             return { cleaned: 0, reason: 'No data' };
         }
 
@@ -18,14 +18,14 @@ async function cleanGuildStates(client) {
         for (const [gid, state] of Object.entries(data)) {
             if (!botGuilds.has(gid)) {
                 removed++;
-                logger.info('Removed Guild State Bot Not In: ' + gid);
+                logger.db('Removed Guild State Bot Not In: ' + gid);
                 continue;
             }
 
             const guild = client.guilds.cache.get(gid);
             if (!guild) {
                 removed++;
-                logger.info('Removed Guild State Not Found: ' + gid);
+                logger.db('Removed Guild State Not Found: ' + gid);
                 continue;
             }
 
@@ -37,7 +37,7 @@ async function cleanGuildStates(client) {
                 if (!vc) {
                     state.voiceChannelId = null;
                     state.connectionStatus = false;
-                    logger.info('Guild ' + gid + ' Voice Channel Deleted Cleared State');
+                    logger.db('Guild ' + gid + ' Voice Channel Deleted Cleared State');
                 }
             }
 
@@ -46,7 +46,7 @@ async function cleanGuildStates(client) {
 
         if (removed > 0) {
             await saveGuildStatesToFirebase(valid);
-            logger.info('Saved Cleaned Guild States: ' + Object.keys(valid).length);
+            logger.db('Saved Cleaned Guild States: ' + Object.keys(valid).length);
         }
 
         return { cleaned: removed, remaining: Object.keys(valid).length };

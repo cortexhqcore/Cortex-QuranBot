@@ -7,7 +7,7 @@ async function cleanControlIds(client) {
     try {
         const data = await loadControlIdsFromFirebase();
         if (!data || !Object.keys(data).length) {
-            logger.info('No Control IDs Data To Clean');
+            logger.db('No Control IDs Data To Clean');
             return { cleaned: 0, reason: 'No data' };
         }
 
@@ -19,14 +19,14 @@ async function cleanControlIds(client) {
             // skip if bot left this guild
             if (!botGuilds.has(gid)) {
                 removed++;
-                logger.info('Removed Control IDs Bot Not In Guild: ' + gid);
+                logger.db('Removed Control IDs Bot Not In Guild: ' + gid);
                 continue;
             }
 
             const guild = client.guilds.cache.get(gid);
             if (!guild) {
                 removed++;
-                logger.info('Removed Control IDs Guild Not Found: ' + gid);
+                logger.db('Removed Control IDs Guild Not Found: ' + gid);
                 continue;
             }
 
@@ -57,7 +57,7 @@ async function cleanControlIds(client) {
 
         if (removed > 0 || JSON.stringify(cleaned) !== JSON.stringify(data)) {
             await saveControlIdsToFirebase(cleaned);
-            logger.info('Saved Cleaned Control IDs');
+            logger.db('Saved Cleaned Control IDs');
         }
 
         return { cleaned: removed, remaining: Object.keys(cleaned).length };

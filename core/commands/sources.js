@@ -27,9 +27,6 @@ const BOT_SOURCES = [
 ];
 
 module.exports = {
-    name: 'مصادر',
-    description: 'عرض مصادر المعلومات والروابط التي يستخدمها البوت',
-
     async execute(ix) {
         // wrapInteraction handles defer/reply + error boundary — cmd stays focused
         await wrapInteraction(

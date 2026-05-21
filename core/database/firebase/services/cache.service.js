@@ -9,12 +9,10 @@ const logger = require('@logger');
  */
 
 async function loadCachedDataFromFirebase() {
-    logger.debug('Firebase cache service disabled - returning empty object');
     return {};
 }
 
-async function saveCachedDataToFirebase(data) {
-    logger.debug('Firebase cache service disabled - save operation skipped');
+async function saveCachedDataToFirebase() {
     return true;
 }
 

@@ -123,8 +123,8 @@ function createControlEmbed(st, guildId) {
                 inline: true,
             };
         }
-
-        const footer = `${pkg.lastUpdated || 'N/A'}\n${pkg.lastUpdateNote || ''}`;
+        // const footer = `${pkg.lastUpdated || 'N/A'}\n${pkg.lastUpdateNote || ''}`;
+        const footer = `${pkg.lastUpdateNote || ''} | ${pkg.lastUpdated || 'N/A'}`;
         const status = st.isPaused ? 'متوقف مؤقتا' : 'يعمل الآن';
 
         let embed = new EmbedBuilder()

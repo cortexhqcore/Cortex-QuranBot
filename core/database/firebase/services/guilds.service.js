@@ -13,10 +13,10 @@ async function loadSetupGuildsFromFirebase() {
         const snapshot = await db.ref('setup_guilds').once('value');
         const data = snapshot.val();
         if (data) {
-            logger.info('Loaded ' + Object.keys(data).length + ' Setup Guilds From Firebase');
+            logger.db('Loaded ' + Object.keys(data).length + ' Setup Guilds From Firebase');
             return data;
         }
-        logger.info('No Setup Guilds Found In Firebase');
+        logger.db('No Setup Guilds Found In Firebase');
         return {};
     } catch (error) {
         logger.error('Error Loading Setup Guilds From Firebase');
@@ -32,7 +32,7 @@ async function saveSetupGuildsToFirebase(data) {
     try {
         const cleanData = deepCloneForFirebase(data);
         await db.ref('setup_guilds').set(cleanData);
-        logger.info('Saved ' + Object.keys(data).length + ' Setup Guilds To Firebase');
+        logger.db('Saved ' + Object.keys(data).length + ' Setup Guilds To Firebase');
         return true;
     } catch (error) {
         logger.error('Error Saving Setup Guilds To Firebase', error);
@@ -49,10 +49,10 @@ async function loadGuildStatesFromFirebase() {
         const snapshot = await db.ref('guild_states').once('value');
         const data = snapshot.val();
         if (data) {
-            logger.info('Loaded ' + Object.keys(data).length + ' Guild States From Firebase');
+            logger.db('Loaded ' + Object.keys(data).length + ' Guild States From Firebase');
             return data;
         }
-        logger.info('No Guild States Found In Firebase');
+        logger.db('No Guild States Found In Firebase');
         return {};
     } catch (error) {
         logger.error('Error Loading Guild States From Firebase');
@@ -71,7 +71,7 @@ async function saveGuildStatesToFirebase(data) {
         const merged = { ...currentData, ...data };
         const firebaseReadyData = deepCloneForFirebase(merged);
         await db.ref('guild_states').set(firebaseReadyData);
-        logger.info('Saved ' + Object.keys(data).length + ' Guild States To Firebase');
+        logger.db('Saved ' + Object.keys(data).length + ' Guild States To Firebase');
         return true;
     } catch (error) {
         logger.error('Error Saving Guild States To Firebase', error);

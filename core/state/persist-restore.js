@@ -1,12 +1,12 @@
-require('pathlra-aliaser');
+require('pathlra-aliaser')();
 
 const logger = require('@logger');
 
 function shouldRestore(state) {
     if (!state) return false;
-    if (state.manualDisconnectFlag === true) return false;
-    if (!state.voiceChannelId) return false;
-    if (state.connectionStatus !== true) return false;
+    // if (state.manualDisconnectFlag === true) return false;
+    // if (!state.voiceChannelId) return false;
+    //if (state.connectionStatus !== true) return false;
     return true;
 }
 
@@ -49,9 +49,9 @@ function setManualDisconnect(guildId, guildStates, scheduleSaveFn, value) {
 
     state.manualDisconnectFlag = value;
     state.timestamp = Date.now();
-    if (value === true) {
-        state.connectionStatus = false;
-    }
+    // if (value === true) {
+    //     state.connectionStatus = false;
+    // }
     scheduleSaveFn(guildId, guildStates, null);
     logger.info('Manual Disconnect Flag For Guild ' + guildId + ' Set To ' + value);
 }

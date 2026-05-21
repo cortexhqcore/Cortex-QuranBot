@@ -9,8 +9,6 @@ const voiceLogger = require('@voiceLogger');
 const coreLoader = require('@loader-core_bootstrap');
 
 module.exports = {
-    name: 'دخول',
-    description: 'الانضمام إلى الروم الصوتي المعد من الاعداد',
     async execute(interaction) {
         await wrapInteraction(
             interaction,
@@ -47,9 +45,15 @@ module.exports = {
                     return;
                 }
                 const botPerms = voiceChannel.permissionsFor(interaction.guild.members.me);
-                if (!botPerms.has(coreLoader.PermissionsBitField.Flags.Connect)) {
-                    voiceLogger.connection(guildId, 'Join failed - missing Connect permission', {
-                        missingPerms: botPerms.missing([coreLoader.PermissionsBitField.Flags.Connect]),
+                if (
+                    !botPerms.has(coreLoader.PermissionsBitField.Flags.Connect) ||
+                    !botPerms.has(coreLoader.PermissionsBitField.Flags.Speak)
+                ) {
+                    voiceLogger.connection(guildId, 'Join failed - invalid channel', {
+                        missingPerms: botPerms.missing([
+                            coreLoader.PermissionsBitField.Flags.Connect,
+                            coreLoader.PermissionsBitField.Flags.Speak,
+                        ]),
                     });
                     await safeError(interaction, 'البوت ليس لديه الصلاحيات الكاملة للانضمام الى هذه الغرفة الصوتية');
                     return;
@@ -62,36 +66,60 @@ module.exports = {
                     });
                     throw new Error('Connection initialization failed');
                 }
-                guildState.playbackMode = guildState.playbackMode || 'surah';
-                const availableReciters = Object.keys(global.reciters || {});
-                guildState.currentReciter = availableReciters[Math.floor(Math.random() * availableReciters.length)];
-                guildState.currentSurah = Math.floor(Math.random() * 114) + 1;
+                // guildState.playbackMode = guildState.playbackMode || 'surah';
+                // const availableReciters = Object.keys(global.reciters || {});
+                // guildState.currentReciter = availableReciters[Math.floor(Math.random() * availableReciters.length)];
+                // guildState.currentSurah = Math.floor(Math.random() * 114) + 1;
                 guildState.isPaused = false;
                 guildState.pauseReason = null;
-                voiceLogger.connection(guildId, 'Preparing playback', {
-                    mode: guildState.playbackMode,
-                    reciter: guildState.currentReciter,
-                    surah: guildState.currentSurah,
-                });
+
                 if (guildState.playbackMode === 'surah') {
+                    const availableReciters = Object.keys(global.reciters || {});
+                    guildState.currentReciter = availableReciters[Math.floor(Math.random() * availableReciters.length)];
+                    guildState.currentSurah = Math.floor(Math.random() * 114) + 1;
+                    voiceLogger.connection(guildId, 'Preparing playback', {
+                        mode: 'surah',
+                        reciter: guildState.currentReciter,
+                        surah: guildState.currentSurah,
+                    });
                     voiceLogger.connection(guildId, 'Creating surah resource for playback');
                     const audioResource = await createSurahResource(guildState, guildState.currentSurah - 1);
                     if (audioResource) {
-                        guildState.player.play({ track: audioResource });
+                        guildState.player.queue.add(audioResource);
+
+                        if (!guildState.player.playing && !guildState.player.paused) {
+                            await guildState.player.play();
+                        }
                     }
                     voiceLogger.connection(guildId, 'Started surah playback');
-                } else if (guildState.currentRadioUrl) {
-                    voiceLogger.connection(guildId, 'Creating radio resource for playback', {
+                } else {
+                    guildState.playbackMode = 'radio';
+                    if (global.quranRadios && global.quranRadios.length > 0) {
+                        if (!guildState.currentRadioIndex && guildState.currentRadioIndex !== 0) {
+                            guildState.currentRadioIndex = 0;
+                            guildState.currentRadioUrl = global.quranRadios[0].url;
+                        }
+                    }
+                    voiceLogger.connection(guildId, 'Preparing playback', {
+                        mode: 'radio',
                         url: guildState.currentRadioUrl,
                     });
-                    const streamUrl =
-                        global.radioHealthChecker?.getActiveRadioUrl(guildState.currentRadioUrl) || guildState.currentRadioUrl;
-                    const radioResource = await createRadioResource(streamUrl);
-                    if (radioResource) {
-                        guildState.player.play({ track: radioResource });
+                    if (guildState.currentRadioUrl) {
+                        voiceLogger.connection(guildId, 'Creating radio resource for playback', {
+                            url: guildState.currentRadioUrl,
+                        });
+                        const streamUrl =
+                            global.radioHealthChecker?.getActiveRadioUrl(guildState.currentRadioUrl) || guildState.currentRadioUrl;
+                        const radioResource = await createRadioResource(streamUrl);
+                        if (radioResource) {
+                            guildState.player.queue.add(radioResource);
+                            if (!guildState.player.playing && !guildState.player.paused) {
+                                await guildState.player.play();
+                            }
+                        }
+                        guildState.currentRadioUrl = streamUrl;
+                        voiceLogger.connection(guildId, 'Started radio playback');
                     }
-                    guildState.currentRadioUrl = streamUrl;
-                    voiceLogger.connection(guildId, 'Started radio playback');
                 }
                 await syncVoiceState(guildId, guildState);
                 voiceLogger.connection(guildId, 'Voice state synced after join');

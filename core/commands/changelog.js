@@ -23,16 +23,15 @@ const UPDATES_LIST = [
 ];
 
 module.exports = {
-    name: 'تحديثات',
-    description: 'عرض قائمة التحديثات الأخيرة والتغييرات المعمارية في البوت',
-
     async execute(ix) {
         await wrapInteraction(
             ix,
             async () => {
                 const embed = createStandardEmbed()
                     .setTitle('سجل التحديثات والتغييرات الأخيرة 🚀')
-                    .setDescription('تم ترقية البنية التحتية للبوت بالكامل لضمان تشغيل مستقر وعلى مدار الساعة لأكثر من 5,000 سيرفر بكفاءة عالية.')
+                    .setDescription(
+                        'تم ترقية البنية التحتية للبوت بالكامل لضمان تشغيل مستقر وعلى مدار الساعة لأكثر من 5,000 سيرفر بكفاءة عالية.',
+                    )
                     .addFields(
                         ...UPDATES_LIST.map((u) => ({
                             name: u.title,

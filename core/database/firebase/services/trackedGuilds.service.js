@@ -13,10 +13,10 @@ async function loadTrackedGuildsFromFirebase() {
         const snapshot = await db.ref('tracked_guilds').once('value');
         const data = snapshot.val();
         if (data && Array.isArray(data)) {
-            logger.info('Tracked Guilds Loaded From Firebase ' + data.length + ' Guilds');
+            logger.db('Tracked Guilds Loaded From Firebase ' + data.length + ' Guilds');
             return data;
         }
-        logger.info('No Tracked Guilds Found In Firebase');
+        logger.db('No Tracked Guilds Found In Firebase');
         return [];
     } catch (error) {
         logger.error('Error Loading Tracked Guilds From Firebase');
@@ -32,7 +32,7 @@ async function saveTrackedGuildsToFirebase(data) {
     try {
         const cleanData = deepCloneForFirebase(Array.isArray(data) ? data : []);
         await db.ref('tracked_guilds').set(cleanData);
-        logger.info('Tracked Guilds Saved To Firebase ' + (Array.isArray(data) ? data.length : 0) + ' Guilds');
+        logger.db('Tracked Guilds Saved To Firebase ' + (Array.isArray(data) ? data.length : 0) + ' Guilds');
         return true;
     } catch (error) {
         logger.error('Error Saving Tracked Guilds To Firebase');

@@ -28,6 +28,7 @@ jest.config.js
 bot-lavalink.js
 test-archiver.js
 knip.json
+application.yml
 
 .vscode/*
 !.vscode/extensions.json

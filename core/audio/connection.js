@@ -66,7 +66,16 @@ async function teardownConnection(guildId, guildState) {
                 guildState.player.stopPlaying();
             }
             await new Promise((resolve) => setTimeout(resolve, 100));
-            guildState.player.destroy();
+            try {
+                await guildState.player.destroy();
+                voiceLogger.connection(guildId, 'Destroyed voice connection');
+            } catch (destroyErr) {
+                if (destroyErr.message?.includes('Destroy failed (expected during teardown)')) {
+                    voiceLogger.connection(guildId, 'Player cleanup handled by library internal flow');
+                } else {
+                    throw destroyErr;
+                }
+            }
             voiceLogger.connection(guildId, 'Destroyed voice connection');
         } catch (err) {
             voiceLogger.connection(guildId, 'Destroy failed (expected during teardown)', {
@@ -96,8 +105,6 @@ async function syncVoiceState(guildId, guildState) {
     storedState.playbackMode = guildState.playbackMode;
     storedState.currentReciter = guildState.currentReciter;
     storedState.currentSurahIndex = guildState.currentSurah - 1;
-    // oid storedState.connectionStatus = !!guildState.connection && !guildState.connection.destroyed;
-    storedState.connectionStatus = !!guildState.player && !guildState.player?.destroyed;
     storedState.isPaused = guildState.isPaused;
     storedState.currentRadioIndex = guildState.currentRadioIndex;
     storedState.currentRadioPage = guildState.currentRadioPage;
@@ -154,7 +161,7 @@ async function initializeConnection(guildId, guildState, targetChannel, adapterC
         });
         if (guildState.player && !guildState.player.destroyed) {
             try {
-                guildState.player.destroy();
+                await guildState.player.destroy();
             } catch (cleanupErr) {
                 voiceLogger.debug(guildId, 'Cleanup after connection failure', { error: cleanupErr.message });
             }

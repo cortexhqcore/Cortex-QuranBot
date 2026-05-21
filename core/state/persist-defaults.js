@@ -1,4 +1,4 @@
-require('pathlra-aliaser');
+require('pathlra-aliaser')();
 
 // Create the baseline state object for a guild
 function createDefaultState() {
@@ -7,14 +7,14 @@ function createDefaultState() {
         azkarChannelId: null,
         textChannelId: null,
         categoryId: null,
-        playbackMode: 'surah',
+        playbackMode: 'radio',
         currentReciter: 'reciter_1_ar',
         currentSurahIndex: 0,
         currentRadioIndex: 0,
         currentRadioPage: 0,
         currentReciterPage: 0,
         currentPage: 0,
-        connectionStatus: false,
+        // connectionStatus: false,
         manualDisconnectFlag: false,
         timestamp: Date.now(),
         setupData: {
@@ -22,12 +22,13 @@ function createDefaultState() {
             textChannelId: null,
             azkarChannelId: null,
         },
-        controlMode: 'admins',
+        controlMode: 'everyone',
         isPaused: true,
         pauseReason: 'initial',
         playbackStartTime: 0,
         playedOffset: 0,
         disconnectAfterCurrentTrack: false,
+        azkarFail: 0,
     };
 }
 

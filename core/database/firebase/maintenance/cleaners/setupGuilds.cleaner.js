@@ -19,10 +19,10 @@ async function validateSetupData(guildId, setupData, guild) {
             if (found) {
                 fixed.categoryId = found.id;
                 changed = true;
-                logger.info('Guild ' + guildId + ' Fixed Category ID To ' + found.id);
+                logger.db('Guild ' + guildId + ' Fixed Category ID To ' + found.id);
             } else {
                 ok = false;
-                logger.info('Guild ' + guildId + ' Category Deleted And Not Found');
+                logger.db('Guild ' + guildId + ' Category Deleted And Not Found');
                 return { valid: false, hasChanges: false, data: setupData };
             }
         }
@@ -41,11 +41,11 @@ async function validateSetupData(guildId, setupData, guild) {
             if (found) {
                 fixed[id] = found.id;
                 changed = true;
-                logger.info('Guild ' + guildId + ' Fixed ' + key + ' ID To ' + found.id);
+                logger.db('Guild ' + guildId + ' Fixed ' + key + ' ID To ' + found.id);
             } else {
                 delete fixed[id];
                 changed = true;
-                logger.info('Guild ' + guildId + ' ' + key + ' Channel Deleted Removed From Data');
+                logger.db('Guild ' + guildId + ' ' + key + ' Channel Deleted Removed From Data');
             }
         }
     };
@@ -69,7 +69,7 @@ async function cleanSetupGuilds(client) {
     try {
         const data = await loadSetupGuildsFromFirebase();
         if (!data || !Object.keys(data).length) {
-            logger.info('No Setup Guilds Data To Clean');
+            logger.db('No Setup Guilds Data To Clean');
             return { cleaned: 0, reason: 'No data' };
         }
 
@@ -82,28 +82,28 @@ async function cleanSetupGuilds(client) {
             // skip if bot left this guild
             if (!botGuilds.has(gid)) {
                 removed++;
-                logger.info('Removed Setup Guild Bot Not In: ' + gid);
+                logger.db('Removed Setup Guild Bot Not In: ' + gid);
                 continue;
             }
 
             const guild = client.guilds.cache.get(gid);
             if (!guild) {
                 removed++;
-                logger.info('Removed Setup Guild Not Found In Cache: ' + gid);
+                logger.db('Removed Setup Guild Not Found In Cache: ' + gid);
                 continue;
             }
 
             const res = await validateSetupData(gid, sData, guild);
             if (!res.valid) {
                 removed++;
-                logger.info('Removed Setup Guild Invalid Category: ' + gid);
+                logger.db('Removed Setup Guild Invalid Category: ' + gid);
                 continue;
             }
 
             if (res.hasChanges) {
                 valid[gid] = res.data;
                 updated++;
-                logger.info('Updated Setup Guild Removed Deleted Channels: ' + gid);
+                logger.db('Updated Setup Guild Removed Deleted Channels: ' + gid);
             } else {
                 valid[gid] = sData;
             }
@@ -112,7 +112,7 @@ async function cleanSetupGuilds(client) {
         // persist if anything changed
         if (removed > 0 || updated > 0) {
             await saveSetupGuildsToFirebase(valid);
-            logger.info('Saved Cleaned Setup Guilds: ' + Object.keys(valid).length);
+            logger.db('Saved Cleaned Setup Guilds: ' + Object.keys(valid).length);
         }
 
         return { cleaned: removed, updated, remaining: Object.keys(valid).length };

@@ -4,6 +4,7 @@ const { EmbedBuilder } = require('discord.js');
 const logger = require('@logger');
 // Replaced inline global.SPE_USER_IDS check with centralized isSpecialUser helper
 const { isSpecialUser } = require('@authManager');
+const retentiondb = require('@retention-core_database');
 
 module.exports = {
     customId: 'admin_confirm_kick',
@@ -24,10 +25,8 @@ module.exports = {
         }
         try {
             await targetGuild.leave();
-            const { removeGuildState } = require('../../state/GuildStateManager');
-            removeGuildState(targetGuildId);
-            const { persistentStateManager } = require('@loader-core_bootstrap');
-            persistentStateManager.clearGuildState(targetGuildId);
+            // const { removeGuildState } = require('../../state/GuildStateManager');
+            await retentiondb.clearGuildData(targetGuildId);
             logger.info(`Admin ${interaction.user.tag} kicked bot from guild ${targetGuild.name} (${targetGuildId})`);
             const confirmationEmbed = new EmbedBuilder()
                 .setColor(0x1e1f22)

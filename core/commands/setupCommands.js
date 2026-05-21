@@ -51,7 +51,7 @@ async function setupQuranCategory(guild, ix, opts = {}) {
     const st = getGuildState(gid);
     st.isPaused = true;
     st.pauseReason = 'manual';
-    st.playbackMode = 'surah';
+    st.playbackMode = 'radio';
     if (st.connection && !st.connection.destroyed) {
         try {
             st.connection.unsubscribe(st.player);
@@ -219,8 +219,8 @@ async function setupQuranCategory(guild, ix, opts = {}) {
             voiceChannelId: voice.id,
             textChannelId: text.id,
             azkarChannelId: azkar.id,
-            leftAt: null,
-            isLeft: false,
+            // leftAt: null,
+            // isLeft: false,
         };
         await persistSetupData();
         const embed = createControlEmbed(st, gid);

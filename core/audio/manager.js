@@ -3,7 +3,7 @@ require('pathlra-aliaser')();
 // const { getGuildStateById } = require('../state/guild-state-store');
 const { initializeConnection, teardownConnection, syncVoiceState } = require('./connection');
 // const { stopPlayer } = require('./player');
-const { validateStreamUrl } = require('./resource');
+const { createSurahResource, createRadioResource } = require('./resource');
 const logger = require('@logger');
 
 async function handleJoin(interaction, guildId, guildState, targetChannel) {
@@ -11,10 +11,11 @@ async function handleJoin(interaction, guildId, guildState, targetChannel) {
 
     if (!joinResult.success) throw new Error('Failed to establish voice connection');
 
-    guildState.playbackMode = 'surah';
     const availableReciters = Object.keys(global.reciters || {});
-    guildState.currentReciter = availableReciters[Math.floor(Math.random() * availableReciters.length)];
-    guildState.currentSurah = Math.floor(Math.random() * 114) + 1;
+    if (guildState.playbackMode === 'surah') {
+        guildState.currentReciter = availableReciters[Math.floor(Math.random() * availableReciters.length)];
+        guildState.currentSurah = Math.floor(Math.random() * 114) + 1;
+    }
     guildState.isPaused = false;
     guildState.pauseReason = null;
 
@@ -51,11 +52,15 @@ async function handlePlaybackControl(guildId, guildState, action) {
             if (guildState.playbackMode !== 'surah') throw new Error('Next unavailable in radio mode');
             let targetSurah = guildState.currentSurah < global.surahNames.length ? guildState.currentSurah + 1 : 1;
             guildState.currentSurah = targetSurah;
-            guildState.player.stopPlaying();
-            await new Promise((r) => setTimeout(r, 100));
+            // guildState.player.stopPlaying();
             const track = await global.createSurahResource(guildState, targetSurah - 1);
             // const res = await global.createSurahResource(guildState, targetSurah - 1, 0, 0, false);
-            if (track) guildState.player.play({ track: track });
+            if (track) {
+                guildState.player.queue.add(track);
+                if (!guildState.player.playing && !guildState.player.paused) {
+                    await guildState.player.play();
+                }
+            }
             // guildState.player.play(res);
             guildState.isPaused = false;
             guildState.pauseReason = null;
@@ -66,12 +71,14 @@ async function handlePlaybackControl(guildId, guildState, action) {
             if (guildState.playbackMode !== 'surah') throw new Error('Previous unavailable in radio mode');
             let targetSurah = guildState.currentSurah > 1 ? guildState.currentSurah - 1 : global.surahNames.length;
             guildState.currentSurah = targetSurah;
-            guildState.player.stopPlaying();
-            await new Promise((r) => setTimeout(r, 100));
+            // guildState.player.stopPlaying();
             const track = await global.createSurahResource(guildState, targetSurah - 1);
-            // const res = await global.createSurahResource(guildState, targetSurah - 1, 0, 0, false);
-            if (track) guildState.player.play({ track: track });
-            // guildState.player.play(res);
+            if (track) {
+                guildState.player.queue.add(track);
+                if (!guildState.player.playing && !guildState.player.paused) {
+                    await guildState.player.play();
+                }
+            }
             guildState.isPaused = false;
             guildState.pauseReason = null;
             break;
@@ -142,16 +149,25 @@ async function handlePlaybackControl(guildId, guildState, action) {
                         guildState.player.play(radioRes);
                     }
                     **/
-                    guildState.player.stopPlaying();
                     const track = await global.createRadioResource(guildState.currentRadioUrl);
-                    if (track) guildState.player.play({ track: track });
+                    if (track) {
+                        guildState.player.queue.add(track);
+                        if (!guildState.player.playing && !guildState.player.paused) {
+                            await guildState.player.play();
+                        }
+                    }
                 } else {
                     guildState.playbackMode = 'surah';
                     guildState.currentRadioUrl = null;
                     // guildState.player.stop();
-                    guildState.player.stopPlaying();
+                    // guildState.player.stopPlaying();
                     const track = await global.createSurahResource(guildState, guildState.currentSurah - 1);
-                    if (track) guildState.player.play({ track: track });
+                    if (track) {
+                        guildState.player.queue.add(track);
+                        if (!guildState.player.playing && !guildState.player.paused) {
+                            await guildState.player.play();
+                        }
+                    }
                 }
                 guildState.isPaused = false;
                 guildState.pauseReason = null;

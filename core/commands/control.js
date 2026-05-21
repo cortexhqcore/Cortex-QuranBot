@@ -6,8 +6,6 @@ const { rebuildAndSendControlPanel } = require('@controlPanelBuilder');
 const logger = require('@logger');
 
 module.exports = {
-    name: 'تحكم',
-    description: 'عرض لوحة التحكم',
     async execute(interaction) {
         await wrapInteraction(
             interaction,

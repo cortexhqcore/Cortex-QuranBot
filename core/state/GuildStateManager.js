@@ -3,7 +3,6 @@ require('pathlra-aliaser')();
 // const { createAudioPlayer } = require('@discordjs/voice');
 const logger = require('@logger');
 let _store, _voice, _player, _events, _auth, _cleanup, _persistent;
-
 function getStore() {
     if (!_store) _store = require('@guild-state-store-core_state');
     return _store;
@@ -32,7 +31,6 @@ function getPersistent() {
     if (!_persistent) _persistent = require('@PersistentStateManager-core_state');
     return _persistent;
 }
-
 function getGuildState(guildId) {
     const store = getStore();
     if (!store.hasGuildState(guildId)) {
@@ -55,11 +53,11 @@ function getGuildState(guildId) {
             currentPage: 0,
             currentReciterPage: 0,
             currentReciter: defaultReciter,
-            playbackMode: 'surah',
+            playbackMode: 'radio',
             currentRadioIndex: 0,
             currentRadioUrl: global.quranRadios?.[0]?.url || null,
             inactivityTimer: null,
-            controlMode: 'admins',
+            controlMode: 'everyone',
             lastActivity: Date.now(),
             errorCount: 0,
             humanCount: 0,
@@ -75,12 +73,10 @@ function getGuildState(guildId) {
     state.lastActivity = Date.now();
     return state;
 }
-
 function updatePersistentState(guildId, updates) {
     const persistent = getPersistent();
     return persistent.updateGuildState(guildId, updates);
 }
-
 let statePollInProgress = false;
 setInterval(async () => {
     if (statePollInProgress) return;
@@ -99,6 +95,7 @@ setInterval(async () => {
     }
 }, 300000);
 
+/**
 setInterval(async () => {
     if (statePollInProgress) return;
     statePollInProgress = true;
@@ -144,6 +141,7 @@ setInterval(async () => {
         statePollInProgress = false;
     }
 }, 10000);
+ */
 
 module.exports = {
     getGuildState,

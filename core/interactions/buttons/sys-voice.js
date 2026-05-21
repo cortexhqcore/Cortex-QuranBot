@@ -36,7 +36,7 @@ async function getVoiceChannel(guild, setupData, guildState) {
 
 function checkBotPermissions(channel, botMember) {
     const channelPerms = channel.permissionsFor(botMember);
-    return channelPerms.has(PermissionsBitField.Flags.Connect);
+    return channelPerms.has(PermissionsBitField.Flags.Connect) && channelPerms.has(PermissionsBitField.Flags.Speak);
 }
 
 module.exports.getVoiceChannel = getVoiceChannel;

@@ -17,7 +17,18 @@ let initDone = false;
 
 function getLogFilePath(level) {
     const date = getCairoDate().replace(/\//g, '-');
-    const suffix = level === 'error' || level === 'fatal' ? 'errors' : level === 'warn' ? 'warnings' : 'general';
+    const suffix =
+        level === 'error' || level === 'fatal'
+            ? 'errors'
+            : level === 'warn'
+              ? 'warnings'
+              : level === 'user'
+                ? 'users'
+                : level === 'db'
+                  ? 'database'
+                  : level === 'loader'
+                    ? 'loader'
+                    : 'general';
     return pathlra.join(LOG_DIR, `logs-${suffix}-${date}.log`);
 }
 
@@ -49,6 +60,9 @@ async function writeLog(level, msg, meta = {}) {
             warn: '\x1b[33m',
             info: '\x1b[36m',
             debug: '\x1b[32m',
+            user: '\x1b[34m',
+            db: '\x1B[34;1m',
+            loader: '\x1B[36;1m',
         };
         const c = colors[level] || '\x1b[37m',
             reset = '\x1b[0m';
@@ -85,6 +99,15 @@ class Logger {
     }
     debug(m, meta = {}) {
         return writeLog('debug', m, meta);
+    }
+    user(m, meta = {}) {
+        return writeLog('user', m, meta);
+    }
+    db(m, meta = {}) {
+        return writeLog('db', m, meta);
+    }
+    loader(m, meta = {}) {
+        return writeLog('loader', m, meta);
     }
 }
 

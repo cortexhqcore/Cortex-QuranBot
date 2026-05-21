@@ -1,6 +1,18 @@
 require('pathlra-aliaser')();
 
 const client = require('./client');
+
+Object.defineProperty(module.exports, 'db', {
+    get: () => client.db,
+    enumerable: true,
+    configurable: true,
+});
+Object.defineProperty(module.exports, 'isFirebaseReady', {
+    get: () => client.isFirebaseReady,
+    enumerable: true,
+    configurable: true,
+});
+
 const clone = require('./utils/clone');
 const complaints = require('./services/complaints.service');
 const cooldowns = require('./services/cooldowns.service');
@@ -11,8 +23,6 @@ const trackedGuilds = require('./services/trackedGuilds.service');
 const backup = require('./services/backup.service');
 const retention = require('./services/retention.service');
 
-module.exports.db = client.db;
-module.exports.isFirebaseReady = client.isFirebaseReady;
 module.exports.firebaseAdminConfig = client.firebaseAdminConfig;
 module.exports.initializeFirebase = client.initializeFirebase;
 module.exports.max_connection_attempts = client.max_connection_attempts;

@@ -13,10 +13,7 @@ async function loadControlIdsFromFirebase() {
     try {
         const snapshot = await db.ref('control_ids').once('value');
         const data = snapshot.val();
-        if (data) {
-            return data;
-        }
-        logger.info('No Control Ids Found In Firebase');
+        logger.db('No Control Ids Found In Firebase');
         return {};
     } catch (error) {
         logger.error('Error Loading Control Ids From Firebase');
@@ -32,6 +29,7 @@ async function saveControlIdsToFirebase(data) {
     try {
         const cleanData = deepCloneForFirebase(data);
         await db.ref('control_ids').set(cleanData);
+        logger.db('Control Ids Saved To Firebase For ' + Object.keys(data).length + ' Guilds');
         return true;
     } catch (error) {
         logger.error('Error Saving Control Ids To Firebase');
