@@ -24,7 +24,9 @@
                 <nav class="header-nav">
                     <a href="./index.html" class="nav-link">Home</a>
                     <a target="_blank" href="./terms.html" class="nav-link">Terms</a>
-                    <a href="https://github.com/mgv-hub/quranbot" target="_blank" class="nav-link"><i class="fab fa-github"></i></a>
+                    <a href="https://github.com/cortexhqcore/Cortex-QuranBot" target="_blank" class="nav-link"
+                        ><i class="fab fa-github"></i
+                    ></a>
                 </nav>
                 <button class="mobile-menu-toggle" aria-label="Toggle menu">
                     <i class="fas fa-bars"></i>
@@ -35,8 +37,7 @@
             <div class="doc-header">
                 <h1 class="doc-title"><i class="fas fa-file-shield"></i> Privacy Policy</h1>
             </div>
-            <p class="doc-meta"><i class="fas fa-calendar-alt"></i> Last Updated: April 17, 2026</p>
-
+            <p class="doc-meta"><i class="fas fa-calendar-alt"></i> Last Updated: May 20, 2026</p>
             <div class="exec-summary">
                 <h3><i class="fas fa-bolt"></i> Executive Summary</h3>
                 <p>
@@ -169,8 +170,10 @@
                         Operating core bot functions: Quran recitation streaming, radio playback, and azkar automation
                         <i class="fas fa-mosque"></i>
                     </li>
-                    <li>Saving guild settings to Firebase Realtime Database for automatic restoration after bot restarts</li>
-                    <li>Managing voice connections and playback state across multiple guilds simultaneously</li>
+                    <li>
+                        Saving guild settings to Firebase Realtime Database and Redis Cache for automatic restoration after bot restarts
+                    </li>
+                    <li>Managing voice connections via Lavalink v4 nodes and playback state across multiple guilds simultaneously</li>
                     <li>Responding to voluntary feedback submitted via the dedicated in-bot form</li>
                     <li>Improving bot performance through basic, anonymized usage metrics</li>
                     <li>
@@ -234,7 +237,15 @@
                         <span class="highlight">Discord API</span> for platform interaction, command handling, and voice channel management
                         <i class="fab fa-discord"></i>
                     </li>
-                    <li><span class="highlight">Firebase Realtime Database</span> for storing guild settings and user preferences</li>
+                    <li>
+                        <span class="highlight">Firebase Realtime Database</span> for persistent storage of guild settings and user
+                        preferences
+                    </li>
+                    <li><span class="highlight">Redis Cache</span> for fast-access state management and distributed runtime data</li>
+                    <li>
+                        <span class="highlight">Lavalink Audio Nodes</span> for high-performance audio streaming (processing audio streams
+                        only)
+                    </li>
                     <li><span class="highlight">mp3quran.net API</span> for fetching Quran recitations and radio station lists</li>
                     <li><span class="highlight">aladhan.com API</span> for retrieving prayer times based on geographic coordinates</li>
                     <li><span class="highlight">GitHub Pages</span> for hosting static azkar resources</li>
@@ -453,4 +464,3 @@
         <script src="./scripts.js"></script>
     </body>
 </html>
-
