@@ -34,7 +34,6 @@ const {
 } = require('@registry/core');
 const { loadData, saveSetupGuilds } = require('@data-manager-core_data');
 const { Client, GatewayIntentBits, REST } = require('discord.js');
-const { ClusterClient, getInfo } = require('discord-hybrid-sharding');
 const { LavalinkManager } = require('../package/lavalink-client/dist/index');
 
 const token = process.env.DISCORD_TOKEN;
@@ -54,9 +53,10 @@ if (!token) {
 
 global.token = token;
 global.clientId = clientId;
-const clusterInfo = getInfo();
 
-const clientOptions = {
+logger.info('Current Date In Cairo ' + new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Cairo' }));
+
+const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
@@ -64,15 +64,8 @@ const clientOptions = {
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildVoiceStates,
     ],
-};
+});
 
-if (clusterInfo) {
-    clientOptions.shards = clusterInfo.SHARD_LIST;
-    clientOptions.shardCount = clusterInfo.TOTAL_SHARDS;
-}
-
-const client = new Client(clientOptions);
-ClusterClient.addToClient(client);
 const manager = new LavalinkManager({
     // Lavalink configuration
     nodes: [
@@ -85,7 +78,10 @@ const manager = new LavalinkManager({
         },
     ],
     sendToShard: (guildId, payload) => {
-        client.cluster.send(payload);
+        const guild = client.guilds.cache.get(guildId);
+        if (guild?.shard) {
+            guild.shard.send(payload);
+        }
     },
     client: {
         id: clientId,

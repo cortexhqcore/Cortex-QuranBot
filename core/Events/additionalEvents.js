@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
 const logger = require('@logger');
-const { removeGuildState, applyCommandPermissions } = require('@registry/core');
+const { removeGuildState, applyCommandPermissions } = require('@registry');
 const { ChannelType } = require('discord.js');
 const botClient = require('@botSetup').client;
 const http = require('http');

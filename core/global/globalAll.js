@@ -25,7 +25,7 @@ const {
     checkCooldown,
     checkRateLimit,
     checkVoiceCooldown,
-} = require('@registry/core');
+} = require('@registry');
 
 global.createSurahResource = createSurahResource;
 global.createRadioResource = createRadioResource;

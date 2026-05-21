@@ -10,14 +10,14 @@ function getAudio() {
 const { createReciterRow, createRadioRow, createSelectRow, createButtonRow, createNavigationRow } = require('@components-core_ui');
 
 const { createControlEmbed } = require('@embeds-core_ui');
-const { getGuildState, removeGuildState, isAuthorized } = require('./state/GuildStateManager');
+const { getGuildState, removeGuildState, isAuthorized } = require('../state/GuildStateManager');
 
-const { sendRandomAzkar, startAzkarTimerForGuild } = require('./state/azkarManager');
+const { sendRandomAzkar, startAzkarTimerForGuild } = require('../state/azkarManager');
 const { registerCommands, applyCommandPermissions } = require('@commandregistry');
 const { checkCooldown, checkRateLimit, checkVoiceCooldown, COOLDOWN_TYPES } = require('@cooldown-core_state');
 
 const { loadPrayerTimesData, getCountries, getCitiesByCountry, getCitiesForCountry, getCountryByCode } = require('@data/prayerTimesData');
-const databaseCleaner = require('./database/firebase/maintenance/databaseCleaner');
+const databaseCleaner = require('../database/firebase/maintenance/databaseCleaner');
 
 module.exports = {
     // Exporting all core registry functions and properties in a single object for easy access throughout the bot
