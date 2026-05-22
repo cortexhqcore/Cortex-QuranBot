@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
 const path = require('path');
-const Envira = require('../package/Envira/src/lib/main');
+const Envira = require('../package/envira/src/lib/main');
 const logger = require('@logging/logger');
 const fs = require('fs');
 
