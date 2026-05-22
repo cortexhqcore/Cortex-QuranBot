@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const { interactionCache, max_interaction_cache_size, interaction_cache_ttl_ms } = require('@interactionCache-core_interactions');
-const coreLoader = require('@loader-core_bootstrap');
+const { interactionCache, max_interaction_cache_size, interaction_cache_ttl_ms } = require('@interactions/interactionCache');
+const coreLoader = require('@bot/bootstrap');
 
 // Check if an interaction has already been processed recently to prevent duplicates
 function checkDuplicateInteraction(interaction) {

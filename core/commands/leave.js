@@ -1,11 +1,11 @@
 require('pathlra-aliaser')();
 
-const { wrapInteraction, safeError } = require('@deferReply');
-const { resolveGuildState } = require('@guard');
-const { teardownConnection, syncVoiceState, stopPlayer } = require('@audio-core');
-const persistentState = require('@PersistentStateManager-core_state');
-const logger = require('@logger');
-const voiceLogger = require('@voiceLogger');
+const { wrapInteraction, safeError } = require('@interactions/flow/deferReply');
+const { resolveGuildState } = require('@auth/guard');
+const { teardownConnection, syncVoiceState, stopPlayer } = require('@audio');
+const persistentState = require('@state/PersistentStateManager');
+const logger = require('@logging/logger');
+const voiceLogger = require('@logging/voiceLogger');
 
 module.exports = {
     async execute(interaction) {

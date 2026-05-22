@@ -1,11 +1,11 @@
 require('pathlra-aliaser')();
 
-const { wrapInteraction, safeError } = require('@deferReply');
-const { checkAuthorization, resolveGuildState } = require('@guard');
-const { rebuildAndSendControlPanel } = require('@controlPanelBuilder');
-const { createSurahResource, getCurrentLinks, findAvailableSurahForReciter } = require('@audioUtils-core_utils');
-const logger = require('@logger');
-const persistentState = require('@PersistentStateManager-core_state');
+const { wrapInteraction, safeError } = require('@interactions/flow/deferReply');
+const { checkAuthorization, resolveGuildState } = require('@auth/guard');
+const { rebuildAndSendControlPanel } = require('@ui/controlPanelBuilder');
+const { createSurahResource, getCurrentLinks, findAvailableSurahForReciter } = require('@audio');
+const logger = require('@logging/logger');
+const persistentState = require('@state/PersistentStateManager');
 
 module.exports = {
     customId: 'select_reciter',

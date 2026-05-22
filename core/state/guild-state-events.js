@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
 function setupPlayerEvents(guildId, playerInstance) {
-    const { attachPlayerEvents } = require('@audio-core').player;
+    const { attachPlayerEvents } = require('@audio').player;
     attachPlayerEvents(guildId, playerInstance);
 }
 

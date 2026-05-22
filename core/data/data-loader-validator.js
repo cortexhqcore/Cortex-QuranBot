@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const { GLOBAL_CONSTANTS } = require('@data-loader-constants-core_data');
+const { GLOBAL_CONSTANTS } = require('@data/data-loader-constants');
 // 114
 function validateSurahId(surahId) {
     return surahId >= 1 && surahId <= GLOBAL_CONSTANTS.total_surahs;

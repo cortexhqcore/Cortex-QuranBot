@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const { resetPlayer, stopPlayer } = require('@audio-core');
-const logger = require('@logger');
+const { resetPlayer, stopPlayer } = require('@audio');
+const logger = require('@logging/logger');
 
 async function resetPlayerState(guildState, guildId) {
     return await resetPlayer(guildId, guildState);

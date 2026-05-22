@@ -1,7 +1,7 @@
 require('../package/Envira/src/lib/main').config();
 require('pathlra-aliaser')();
 const pathlra = require('path');
-const { logging_config } = require('@configConstants');
+const { logging_config } = require('@config/constants');
 const {
     enqueueWrite,
     ensureDir,

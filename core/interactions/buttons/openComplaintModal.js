@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
 const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require('discord.js');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 
 module.exports = {
     customId: 'open_complaint_modal',

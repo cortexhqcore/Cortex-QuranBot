@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const coreLoader = require('@loader-core_bootstrap');
+const coreLoader = require('@bot/bootstrap');
 
 /**
  * Button routing configuration.

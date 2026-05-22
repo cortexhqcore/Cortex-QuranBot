@@ -9,8 +9,8 @@ const {
     MessageFlags,
 } = require('discord.js');
 const { getCitiesForCountry, getCountryByCode } = require('@data/prayerTimesData');
-const { createStandardEmbed, createCountrySelectionEmbed } = require('@embedFactory');
-const logger = require('@logger');
+const { createStandardEmbed, createCountrySelectionEmbed } = require('@ui/embedFactory');
+const logger = require('@logging/logger');
 
 module.exports = {
     customId: 'select_country_prayer',

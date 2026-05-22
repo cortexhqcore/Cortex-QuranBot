@@ -2,47 +2,47 @@
  * This file serves as a central export hub for all core functionalities of the bot, including commands, interactions, state management, and utilities. It is designed to be imported by various parts of the application to access these shared resources without needing to import each module individually. This approach promotes modularity and maintainability by providing a single point of access for core features.
  */
 require('pathlra-aliaser')();
-const pingCommand = require('@ping-core_commands');
-const joinCommand = require('@join-core_commands');
-// const joinChannelCommand = require('@join_channel-core_commands');
-const leaveCommand = require('@leave-core_commands');
-const controlCommand = require('@control-core_commands');
-const setupCommand = require('@setup-core_commands');
-const guideCommand = require('@guide-core_commands');
-const prayerTimesCommand = require('@prayerTimes-core_commands');
-const sourcesCommand = require('@sources-core_commands');
-const changelogCommand = require('@changelog-core_commands');
-const navigationButtons = require('@navigation-core_interactions_buttons');
-const playbackButtons = require('@playback-core_interactions_buttons');
-const radioButtons = require('@radio-core_interactions_buttons');
-const systemButtons = require('@system-core_interactions_buttons');
-const complaintButton = require('@complaint-core_interactions_buttons');
-const openComplaintModalButton = require('@openComplaintModal-core_interactions_buttons');
-const prayerTimesButton = require('@prayerTimes-core_interactions_buttons');
-const prayerTimesNavigation = require('@prayer-times-navigation');
-const reciterMenu = require('@reciter-core_interactions_menus');
-const surahMenu = require('@surah-core_interactions_menus');
-const radioMenu = require('@radio-core_interactions_menus');
-const countrySelect = require('@countrySelect-core_interactions_menus');
-const adminVoiceChannelsPagination = require('@adminVoiceChannelsPagination-core_interactions_buttons');
-const adminServerListPagination = require('@adminServerListPagination-core_interactions_buttons');
-const citySelect = require('@citySelect-core_interactions_menus');
-const moreFeaturesButton = require('@moreFeatures-core_interactions_buttons');
-const backToMainButton = require('@backToMain-core_interactions_buttons');
-const complaintModal = require('@complaintModal-core_interactions_modals');
-const adminResponseModal = require('@adminResponseModal-core_interactions_modals');
-const azkarAudioButton = require('@azkarAudio-core_interactions_buttons');
-const adminPanelButton = require('@adminPanel-core_interactions_buttons');
-const adminResponseModalButton = require('@adminResponseModalButton-core_interactions_buttons');
-const adminServerListButton = require('@adminServerList-core_interactions_buttons');
-const adminSendMessageButton = require('@adminSendMessage-core_interactions_buttons');
-const adminKickBotButton = require('@adminKickBot-core_interactions_buttons');
-const adminConfirmKickButton = require('@adminConfirmKick-core_interactions_buttons');
-const adminBotStatsButton = require('@adminBotStats-core_interactions_buttons');
-const adminSelectGuildMenu = require('@adminSelectGuild-core_interactions_menus');
-const adminSendMessageModal = require('@adminSendMessageModal-core_interactions_modals');
-const { updateControlPanel } = require('@controlpanel');
-const { createControlEmbed } = require('@embeds-core_ui');
+const pingCommand = require('@commands/ping');
+const joinCommand = require('@commands/join');
+// const joinChannelCommand = require('@commands/join_channel');
+const leaveCommand = require('@commands/leave');
+const controlCommand = require('@commands/control');
+const setupCommand = require('@commands/setup');
+const guideCommand = require('@commands/guide');
+const prayerTimesCommand = require('@commands/prayerTimes');
+const sourcesCommand = require('@commands/sources');
+const changelogCommand = require('@commands/changelog');
+const navigationButtons = require('@interactions/buttons/navigation');
+const playbackButtons = require('@interactions/buttons/playback');
+const radioButtons = require('@interactions/buttons/radio');
+const systemButtons = require('@interactions/buttons/system');
+const complaintButton = require('@interactions/buttons/complaint');
+const openComplaintModalButton = require('@interactions/buttons/openComplaintModal');
+const prayerTimesButton = require('@interactions/buttons/prayerTimes');
+const prayerTimesNavigation = require('@interactions/buttons/prayer-times-navigation');
+const reciterMenu = require('@interactions/menus/reciter');
+const surahMenu = require('@interactions/menus/surah');
+const radioMenu = require('@interactions/menus/radio');
+const countrySelect = require('@interactions/menus/countrySelect');
+const adminVoiceChannelsPagination = require('@interactions/buttons/adminVoiceChannelsPagination');
+const adminServerListPagination = require('@interactions/buttons/adminServerListPagination');
+const citySelect = require('@interactions/menus/citySelect');
+const moreFeaturesButton = require('@interactions/buttons/moreFeatures');
+const backToMainButton = require('@interactions/buttons/backToMain');
+const complaintModal = require('@interactions/modals/complaintModal');
+const adminResponseModal = require('@interactions/modals/adminResponseModal');
+const azkarAudioButton = require('@interactions/buttons/azkarAudio');
+const adminPanelButton = require('@interactions/buttons/adminPanel');
+const adminResponseModalButton = require('@interactions/buttons/adminResponseModal');
+const adminServerListButton = require('@interactions/buttons/adminServerList');
+const adminSendMessageButton = require('@interactions/buttons/adminSendMessage');
+const adminKickBotButton = require('@interactions/buttons/adminKickBot');
+const adminConfirmKickButton = require('@interactions/buttons/adminConfirmKick');
+const adminBotStatsButton = require('@interactions/buttons/adminBotStats');
+const adminSelectGuildMenu = require('@interactions/menus/adminSelectGuild');
+const adminSendMessageModal = require('@interactions/modals/adminSendMessageModal');
+const { updateControlPanel } = require('@ui/controlpanel');
+const { createControlEmbed } = require('@ui/embeds');
 const {
     createReciterRow,
     createRadioRow,
@@ -51,7 +51,7 @@ const {
     createNavigationRow,
     createMoreFeaturesRow,
     createPrayerTimesButtonRow,
-} = require('@components-core_ui');
+} = require('@ui/components');
 const {
     getGuildState,
     removeGuildState,
@@ -61,11 +61,11 @@ const {
     incrementVoiceConnections,
     decrementVoiceConnections,
 } = require('../state/GuildStateManager');
-const { checkRateLimit, COOLDOWN_TYPES, isUserInGlobalCooldown } = require('@cooldown-core_state');
+const { checkRateLimit, COOLDOWN_TYPES, isUserInGlobalCooldown } = require('@state/cooldown');
 const { saveControlId, readControlIds, removeControlId, saveDhikrMessageId } = require('@database/trackers/controlIds');
-const { updateControlMessage } = require('@messageUpdater');
-const { createSurahResource, createRadioResource, getReciterLinks } = require('@audio-core');
-const { registerCommands, applyCommandPermissions } = require('@commandregistry');
+const { updateControlMessage } = require('@interactions/flow/messageUpdater');
+const { createSurahResource, createRadioResource, getReciterLinks } = require('@audio');
+const { registerCommands, applyCommandPermissions } = require('@registry/commandregistry');
 const { sendRandomAzkar, startAzkarTimerForGuild } = require('../state/azkarManager');
 const {
     EmbedBuilder,
@@ -80,12 +80,12 @@ const {
     ActivityType,
 } = require('discord.js');
 const { joinVoiceChannel, createAudioPlayer, entersState, VoiceConnectionStatus, AudioPlayerStatus } = require('@discordjs/voice');
-const logger = require('@logger');
-const voiceLogger = require('@voiceLogger');
+const logger = require('@logging/logger');
+const voiceLogger = require('@logging/voiceLogger');
 const fs = require('fs').promises;
 const pathlra = require('path');
 const fetch = require('node-fetch').default;
-const persistentStateManager = require('@PersistentStateManager-core_state');
+const persistentStateManager = require('@state/PersistentStateManager');
 const {
     checkUserCooldown,
     setUserCooldown,
@@ -96,8 +96,8 @@ const {
     getCooldownResponse,
     COMMAND_COOLDOWNS,
     COMMAND_NAME_MAP,
-} = require('@commandCooldown');
-const { incrementCommandStats, getStatisticsTracker } = require('@proc-stats-core_interactions');
+} = require('@state/commandCooldown');
+const { incrementCommandStats, getStatisticsTracker } = require('@interactions/proc-stats');
 module.exports.pingCommand = pingCommand;
 module.exports.joinCommand = joinCommand;
 // module.exports.joinChannelCommand = joinChannelCommand;

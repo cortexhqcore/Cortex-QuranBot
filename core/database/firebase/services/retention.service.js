@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const retentiondb = require('@retention-core_database');
+const retentiondb = require('@database/firebase/retention/retention');
 
 module.exports.markGuildAsLeft = retentiondb.markGuildAsLeft;
 module.exports.markGuildAsPresent = retentiondb.markGuildAsPresent;

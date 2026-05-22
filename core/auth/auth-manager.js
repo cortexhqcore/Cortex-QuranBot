@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
 const { PermissionsBitField } = require('discord.js');
-const { safeError } = require('@deferReply');
-const logger = require('@logger');
-const { permissions_config } = require('@configConstants');
+const { safeError } = require('@interactions/flow/deferReply');
+const logger = require('@logging/logger');
+const { permissions_config } = require('@config/constants');
 
 // actions everyone can do in 'everyone' mode
 const allowed_everyone_actions = [

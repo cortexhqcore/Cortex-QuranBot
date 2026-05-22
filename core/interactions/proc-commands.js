@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const coreLoader = require('@loader-core_bootstrap');
-const { getErrorType } = require('@interactionErrors-core_interactions');
+const coreLoader = require('@bot/bootstrap');
+const { getErrorType } = require('@interactions/interactionErrors');
 // Categorize commands by access level and execution context
 const public_commands = ['مصادر', 'مواقيت_الصلاة', 'سرعة', 'دليل', 'تحديثات'];
 // const admin_commands = ['خروج', 'دخول', 'دخول_قناة', 'إعداد'];

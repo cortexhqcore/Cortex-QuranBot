@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const coreLoader = require('@loader-core_bootstrap');
-const { handleInteractionError } = require('@interactionErrors-core_interactions');
+const coreLoader = require('@bot/bootstrap');
+const { handleInteractionError } = require('@interactions/interactionErrors');
 const azkar_prefix = 'play_azkar_';
 const prayer_buttons = ['prayer_times', 'home_prayer', 'refresh_prayer', 'back_country_prayer', 'cancel_prayer'];
 const prayer_menus = ['select_country_prayer', 'select_city_prayer'];

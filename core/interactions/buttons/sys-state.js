@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const voiceManager = require('@voice-connection');
-const persistentState = require('@PersistentStateManager-core_state');
+const voiceManager = require('@audio/voice-connection');
+const persistentState = require('@state/PersistentStateManager');
 
 // Sync runtime guild state to persistent storage for recovery across restarts
 // Replaced inline persistent sync logic with centralized voiceManager.syncVoiceState

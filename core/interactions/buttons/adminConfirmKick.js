@@ -1,10 +1,10 @@
 require('pathlra-aliaser')();
 
 const { EmbedBuilder } = require('discord.js');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 // Replaced inline global.SPE_USER_IDS check with centralized isSpecialUser helper
-const { isSpecialUser } = require('@authManager');
-const retentiondb = require('@retention-core_database');
+const { isSpecialUser } = require('@auth/auth-manager');
+const retentiondb = require('@database/firebase/retention/retention');
 
 module.exports = {
     customId: 'admin_confirm_kick',

@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const { initializeGlobalLanguages } = require('@data-loader-config-core_data');
 const { loadSurahNames } = require('@data-loader-surah-core_data');
 const { loadReciters } = require('@data-loader-reciters-core_data');
@@ -8,7 +8,7 @@ const { loadQuranRadios } = require('@data-loader-radios-core_data');
 const { loadAzkarData } = require('@data-loader-azkar-core_data');
 const { loadAzkarImages } = require('@data-loader-azkar-images-core_data');
 const { normalizeSurahCount } = require('@data-loader-validator-core_data');
-const { GLOBAL_CONSTANTS } = require('@data-loader-constants-core_data');
+const { GLOBAL_CONSTANTS } = require('@data/data-loader-constants');
 
 async function loadAllData() {
     try {

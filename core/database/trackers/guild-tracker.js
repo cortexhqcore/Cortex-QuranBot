@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
 const { ChannelType } = require('discord.js');
-const logger = require('@logger');
-const { loadTrackedGuildsFromFirebase, saveTrackedGuildsToFirebase } = require('@firebase/index');
-const retentiondb = require('@retention-core_database');
+const logger = require('@logging/logger');
+const { loadTrackedGuildsFromFirebase, saveTrackedGuildsToFirebase } = require('@database/firebase');
+const retentiondb = require('@database/firebase/retention/retention');
 
 const botClient = global.client;
 let trackedGuildsList = [];

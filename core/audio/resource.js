@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
 const { getGuildStateById } = require('../state/guild-state-store');
-const logger = require('@logger');
-const voiceLogger = require('@voiceLogger');
-const { getBestNode } = require('@botSetup');
+const logger = require('@logging/logger');
+const voiceLogger = require('@logging/voiceLogger');
+const { getBestNode } = require('@startup/botSetup');
 
 function getReciterLinks(state) {
     const reciterData = global.reciters?.[state.currentReciter];
@@ -37,7 +37,7 @@ function findWorkingReciter(excludeReciter = null) {
 async function validateStreamUrl(url) {
     if (!url?.startsWith('http')) return { valid: false, reason: 'Invalid URL' };
     try {
-        const client = require('@botSetup').client;
+        const client = require('@startup/botSetup').client;
         if (!client.lavalink) return { valid: false, reason: 'Lavalink unavailable' };
         const bestNode = getBestNode(client.lavalink);
         const nodes = bestNode ? [bestNode] : client.lavalink.nodeManager.leastUsedNodes('players').filter((n) => n.connected);
@@ -60,7 +60,7 @@ async function createSurahResource(state, index) {
         try {
             const url = getReciterLinks(state)[currentIndex];
             if (!url) throw new Error('Surah link unavailable');
-            const client = require('@botSetup').client;
+            const client = require('@startup/botSetup').client;
             if (!client.lavalink) throw new Error('Lavalink manager not initialized');
 
             const bestNode = getBestNode(client.lavalink);
@@ -115,7 +115,7 @@ async function createSurahResource(state, index) {
 
 async function createRadioResource(url) {
     if (!url?.startsWith('http')) throw new Error('Invalid Radio URL');
-    const client = require('@botSetup').client;
+    const client = require('@startup/botSetup').client;
     if (!client.lavalink) throw new Error('Lavalink manager not initialized');
     const bestNode = getBestNode(client.lavalink);
 

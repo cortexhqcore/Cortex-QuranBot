@@ -1,13 +1,13 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { loadGuildStatesFromFirebase } = require('@firebase/index');
-const { isPlainObject } = require('@persist-utils-core_state');
-const { createDefaultState, cleanState } = require('@persist-defaults-core_state');
-const { saveGuildState, saveAllStates, scheduleSave, clearSaveTimeout } = require('@persist-storage-core_state');
-const { shouldRestore, restoreGuildState, setManualDisconnect, clearGuildState, getAllStates } = require('@persist-restore-core_state');
+const logger = require('@logging/logger');
+const { loadGuildStatesFromFirebase } = require('@database/firebase');
+const { isPlainObject } = require('@state/persist-utils');
+const { createDefaultState, cleanState } = require('@state/persist-defaults');
+const { saveGuildState, saveAllStates, scheduleSave, clearSaveTimeout } = require('@state/persist-storage');
+const { shouldRestore, restoreGuildState, setManualDisconnect, clearGuildState, getAllStates } = require('@state/persist-restore');
 
-const redis = require('@redis/index');
+const redis = require('@database/redis');
 
 class PersistentStateManager {
     constructor() {
@@ -54,7 +54,7 @@ class PersistentStateManager {
 
     updateGuildState(guildId, updates) {
         const state = this.getGuildState(guildId);
-        const { deepMerge } = require('@persist-utils-core_state');
+        const { deepMerge } = require('@state/persist-utils');
         deepMerge(state, updates);
         state.timestamp = Date.now();
         scheduleSave(guildId, this.guildStates, cleanState);

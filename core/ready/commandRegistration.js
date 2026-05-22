@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { registerCommands, applyCommandPermissions } = require('@commandregistry');
+const logger = require('@logging/logger');
+const { registerCommands, applyCommandPermissions } = require('@registry/commandregistry');
 
 async function registerAllCommands(client) {
     try {

@@ -1,13 +1,13 @@
 require('pathlra-aliaser')();
 
 const { getGuildState } = require('../../state/GuildStateManager');
-const logger = require('@logger');
-const { checkInteractionAuth } = require('@sys-perms-core_interactions_buttons');
-const { joinVoiceChannelHandler } = require('@sys-join-core_interactions_buttons');
-const { leaveVoiceChannelHandler } = require('@sys-leave-core_interactions_buttons');
-const { toggleControlMode } = require('@sys-mode-core_interactions_buttons');
-const { updateControlPanel } = require('@sys-ui-core_interactions_buttons');
-const { handleSystemError, sendErrorReply } = require('@sys-errors-core_interactions_buttons');
+const logger = require('@logging/logger');
+const { checkInteractionAuth } = require('@interactions/buttons/sys-perms');
+const { joinVoiceChannelHandler } = require('@interactions/buttons/sys-join');
+const { leaveVoiceChannelHandler } = require('@interactions/buttons/sys-leave');
+const { toggleControlMode } = require('@interactions/buttons/sys-mode');
+const { updateControlPanel } = require('@interactions/buttons/sys-ui');
+const { handleSystemError, sendErrorReply } = require('@interactions/buttons/sys-errors');
 
 module.exports = {
     customId: 'system',

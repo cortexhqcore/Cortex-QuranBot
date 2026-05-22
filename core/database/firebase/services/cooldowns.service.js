@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { db, isFirebaseReady } = require('@firebase-client-core_utils');
+const logger = require('@logging/logger');
+const { db, isFirebaseReady } = require('@database/firebase/client');
 
 async function loadUserCooldownFromFirebase(userId) {
     if (!isFirebaseReady || !db) return null;

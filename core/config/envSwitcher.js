@@ -2,7 +2,7 @@ require('pathlra-aliaser')();
 
 const path = require('path');
 const Envira = require('../package/Envira/src/lib/main');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const fs = require('fs');
 
 const baseEnvFilePath = path.resolve(__dirname, '../../.env');

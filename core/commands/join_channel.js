@@ -3,11 +3,11 @@
 /**
 require('pathlra-aliaser')();
 
-const { wrapInteraction, safeError, safeReply } = require('@responder');
-const voiceManager = require('@voice-connection');
-const core = require('@loader-core_bootstrap');
-const logger = require('@logger');
-const { createStandardEmbed } = require('@embedFactory');
+const { wrapInteraction, safeError, safeReply } = require('@interactions/flow/responder');
+const voiceManager = require('@audio/voice-connection');
+const core = require('@bot/bootstrap');
+const logger = require('@logging/logger');
+const { createStandardEmbed } = require('@ui/embedFactory');
 
 module.exports = {
     name: 'دخول_قناة',

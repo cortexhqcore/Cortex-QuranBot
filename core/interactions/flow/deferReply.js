@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 
 async function deferInteraction(interaction, ephemeral = false) {
     if (interaction.deferred || interaction.replied) return;

@@ -8,7 +8,7 @@ const {
     StringSelectMenuBuilder,
     StringSelectMenuOptionBuilder,
 } = require('discord.js');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const { calculatePagination, createPaginationRow } = require('@ui/pagination'); // Do not use pseudonyms at this time
 
 module.exports = {

@@ -1,10 +1,4 @@
-const {
-    createSurahResource,
-    createRadioResource,
-    getReciterLinks,
-    findWorkingReciter,
-    findAvailableSurahForReciter,
-} = require('@audio-core');
+const { createSurahResource, createRadioResource, getReciterLinks, findWorkingReciter, findAvailableSurahForReciter } = require('@audio');
 
 const {
     createReciterRow,
@@ -25,7 +19,7 @@ const {
     checkCooldown,
     checkRateLimit,
     checkVoiceCooldown,
-} = require('@registry');
+} = require('@registry/registry');
 
 global.createSurahResource = createSurahResource;
 global.createRadioResource = createRadioResource;

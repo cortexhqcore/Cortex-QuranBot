@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
-const { createControlEmbed } = require('@embeds-ui');
-const { createReciterRow, createRadioRow, createSelectRow, createButtonRow, createNavigationRow } = require('@ui-components');
-const logger = require('@logger');
-const { updateControlMessage, saveControlId } = require('@messageUpdater');
+const { createControlEmbed } = require('@ui/embeds');
+const { createReciterRow, createRadioRow, createSelectRow, createButtonRow, createNavigationRow } = require('@ui/components');
+const logger = require('@logging/logger');
+const { updateControlMessage, saveControlId } = require('@interactions/flow/messageUpdater');
 
 async function updateControlPanel(interaction, state, guildId) {
     try {

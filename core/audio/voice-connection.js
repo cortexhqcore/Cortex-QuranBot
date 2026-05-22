@@ -2,8 +2,8 @@ require('pathlra-aliaser')();
 
 const { createAudioPlayer, joinVoiceChannel } = require('@discordjs/voice');
 const { setupPlayerEvents } = require('../state/GuildStateManager');
-const persistentState = require('@PersistentStateManager-core_state');
-const logger = require('@logger');
+const persistentState = require('@state/PersistentStateManager');
+const logger = require('@logging/logger');
 
 async function teardownConnection(guildId, guildState) {
     if (!guildState) return;

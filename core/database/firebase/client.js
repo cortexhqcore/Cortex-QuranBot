@@ -15,7 +15,7 @@ Object.defineProperty(module.exports, 'isFirebaseReady', {
 });
 
 const admin = require('firebase-admin');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 require('../../package/Envira/src/lib/main');
 
 // firebase key sanitizer strips quotes/newlines that break dotenv parsing

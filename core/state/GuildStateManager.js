@@ -1,34 +1,34 @@
 require('pathlra-aliaser')();
 
 // const { createAudioPlayer } = require('@discordjs/voice');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 let _store, _voice, _player, _events, _auth, _cleanup, _persistent;
 function getStore() {
-    if (!_store) _store = require('@guild-state-store-core_state');
+    if (!_store) _store = require('@state/guild-state-store');
     return _store;
 }
 function getVoice() {
-    if (!_voice) _voice = require('@guild-state-voice-core_state');
+    if (!_voice) _voice = require('@state/guild-state-voice');
     return _voice;
 }
 function getPlayer() {
-    if (!_player) _player = require('@guild-state-player-core_state');
+    if (!_player) _player = require('@state/guild-state-player');
     return _player;
 }
 function getEvents() {
-    if (!_events) _events = require('@guild-state-events-core_state');
+    if (!_events) _events = require('@state/guild-state-events');
     return _events;
 }
 function getAuth() {
-    if (!_auth) _auth = require('@guild-state-auth-core_state');
+    if (!_auth) _auth = require('@state/guild-state-auth');
     return _auth;
 }
 function getCleanup() {
-    if (!_cleanup) _cleanup = require('@guild-state-cleanup-core_state');
+    if (!_cleanup) _cleanup = require('@state/guild-state-cleanup');
     return _cleanup;
 }
 function getPersistent() {
-    if (!_persistent) _persistent = require('@PersistentStateManager-core_state');
+    if (!_persistent) _persistent = require('@state/PersistentStateManager');
     return _persistent;
 }
 function getGuildState(guildId) {

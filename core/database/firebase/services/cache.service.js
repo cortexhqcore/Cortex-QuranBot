@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 
 /**
  * Cache service stub - all caching operations are now disabled

@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const { calculatePagination, createPaginationRow } = require('@ui/pagination');
-const { pagination } = require('@configConstants');
+const { pagination } = require('@config/constants');
 
 function extractPageFromFooter(footerText) {
     if (!footerText) return 0;
@@ -15,7 +15,7 @@ module.exports = {
     customId: 'admin_voice_pagination',
     async execute(interaction) {
         const requesterId = interaction.user.id;
-        const { isSpecialUser } = require('@authManager');
+        const { isSpecialUser } = require('@auth/auth-manager');
         if (!isSpecialUser(requesterId)) {
             return interaction.reply({
                 content: 'This feature is available for the developer only',

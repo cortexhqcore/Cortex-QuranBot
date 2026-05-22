@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const coreLoader = require('@loader-core_bootstrap');
-const { cache_config, memory_config, limits } = require('@configConstants');
+const coreLoader = require('@bot/bootstrap');
+const { cache_config, memory_config, limits } = require('@config/constants');
 
 const interactionCache = new Map();
 const embedCache = new Map();

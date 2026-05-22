@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const { ref, set, get, serverTimestamp, increment, update } = require('firebase/database');
-const { db, isFirebaseReady } = require('@firebase/index');
+const { db, isFirebaseReady } = require('@database/firebase');
 
 const STATS_UPDATE_INTERVAL_MS = 60000;
 const path = 'bot_statistics';

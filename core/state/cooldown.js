@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 
 const COOLDOWN_TYPES = {
     COMMAND: 'command',

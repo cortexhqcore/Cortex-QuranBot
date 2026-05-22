@@ -1,10 +1,14 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { db, isFirebaseReady } = require('@firebase-client-core_utils');
-const { deepCloneForFirebase } = require('@firebase-clone-core_utils');
-const { loadSetupGuildsFromFirebase, loadGuildStatesFromFirebase, loadControlIdsFromFirebase } = require('@firebase-guilds-core_utils');
-const retentiondb = require('@retention-core_database');
+const logger = require('@logging/logger');
+const { db, isFirebaseReady } = require('@database/firebase/client');
+const { deepCloneForFirebase } = require('@database/firebase/utils/clone');
+const {
+    loadSetupGuildsFromFirebase,
+    loadGuildStatesFromFirebase,
+    loadControlIdsFromFirebase,
+} = require('@database/firebase/services/guilds.service');
+const retentiondb = require('@database/firebase/retention/retention');
 
 async function clearGuildData(guildId) {
     return await retentiondb.clearGuildData(guildId);

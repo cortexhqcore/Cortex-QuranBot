@@ -2,10 +2,10 @@ require('pathlra-aliaser')();
 
 const { EmbedBuilder } = require('discord.js');
 const fetch = require('node-fetch').default;
-const logger = require('@logger');
-const formatTimeDuration = require('@formatUptime');
-const formatCompactNumber = require('@formatCompactNumber');
-const bootstrap = require('@loader-core_bootstrap');
+const logger = require('@logging/logger');
+const formatTimeDuration = require('@helpers/time/formatUptime');
+const formatCompactNumber = require('@helpers/number/formatCompactNumber');
+const bootstrap = require('@bot/bootstrap');
 const os = require('os');
 const path = require('path');
 const fs = require('fs');
@@ -56,7 +56,7 @@ async function deferOnce(ix) {
 
 async function pullFirebaseStats() {
     try {
-        const { db, isFirebaseReady } = require('@firebase/index');
+        const { db, isFirebaseReady } = require('@database/firebase');
         const { get, ref } = require('firebase/database');
         if (!isFirebaseReady || !db) return null;
         const snap = await get(ref(db, 'bot_statistics'));

@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const { startAzkarTimerForGuild } = require('../state/azkarManager');
 const { getGuildState } = require('../state/GuildStateManager');
-const persistentStateManager = require('@PersistentStateManager-core_state');
+const persistentStateManager = require('@state/PersistentStateManager');
 
 async function recoverAzkarTimers(guild, fixedSetupData, guildId) {
     if (fixedSetupData.azkarChannelId) {

@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
 const { ChannelType, PermissionsBitField } = require('discord.js');
-const logger = require('@logger');
-const { channel_names, permissions_config } = require('@configConstants');
-const { ERRORS } = require('@sys-config-core_interactions_buttons');
+const logger = require('@logging/logger');
+const { channel_names, permissions_config } = require('@config/constants');
+const { ERRORS } = require('@interactions/buttons/sys-config');
 
 async function getVoiceChannel(guild, setupData, guildState) {
     let targetChannelId = null;

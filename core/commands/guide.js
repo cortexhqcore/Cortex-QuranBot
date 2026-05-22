@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const { wrapInteraction, safeReply } = require('@responder');
-const coreLoader = require('@loader-core_bootstrap');
+const { wrapInteraction, safeReply } = require('@interactions/flow/responder');
+const coreLoader = require('@bot/bootstrap');
 
 module.exports = {
     async execute(interaction) {

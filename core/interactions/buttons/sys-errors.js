@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 
 async function handleSystemError(interaction, guildId, error) {
     logger.error('Error Executing Action In Guild ' + guildId, error);

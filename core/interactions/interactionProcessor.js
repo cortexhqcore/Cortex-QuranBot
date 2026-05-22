@@ -1,17 +1,17 @@
 require('pathlra-aliaser')();
 
-const coreLoader = require('@loader-core_bootstrap');
-const { handleInteractionError } = require('@interactionErrors-core_interactions');
-const { checkGlobalCooldown } = require('@interactionCooldown-core_interactions');
-const { checkDuplicateInteraction, addToInteractionCache } = require('@proc-cache-core_interactions');
-const { handleCommandInteraction } = require('@proc-commands-core_interactions');
-const { isModalSubmit, handleModalInteraction } = require('@proc-modals-core_interactions');
-const { isPublicFeature, handlePublicInteraction } = require('@proc-public-core_interactions');
-const { checkVoiceState } = require('@proc-voice-core_interactions');
-const { checkAuthorization } = require('@proc-auth-core_interactions');
-const { checkVoiceCooldown } = require('@proc-cooldown-core_interactions');
-const { handleButtonInteraction } = require('@proc-buttons-core_interactions');
-const { handleMenuInteraction } = require('@proc-menus-core_interactions');
+const coreLoader = require('@bot/bootstrap');
+const { handleInteractionError } = require('@interactions/interactionErrors');
+const { checkGlobalCooldown } = require('@interactions/interactionCooldown');
+const { checkDuplicateInteraction, addToInteractionCache } = require('@interactions/proc-cache');
+const { handleCommandInteraction } = require('@interactions/proc-commands');
+const { isModalSubmit, handleModalInteraction } = require('@interactions/proc-modals');
+const { isPublicFeature, handlePublicInteraction } = require('@interactions/proc-public');
+const { checkVoiceState } = require('@interactions/proc-voice');
+const { checkAuthorization } = require('@interactions/proc-auth');
+const { checkVoiceCooldown } = require('@interactions/proc-cooldown');
+const { handleButtonInteraction } = require('@interactions/proc-buttons');
+const { handleMenuInteraction } = require('@interactions/proc-menus');
 
 // Central routing function for all validated interactions
 async function handleInteraction(interaction) {

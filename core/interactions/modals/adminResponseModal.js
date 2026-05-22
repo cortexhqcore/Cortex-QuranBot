@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
 const { PermissionsBitField } = require('discord.js');
-const logger = require('@logger');
-const { isSpecialUser } = require('@authManager');
-const { createStandardEmbed } = require('@embedFactory');
+const logger = require('@logging/logger');
+const { isSpecialUser } = require('@auth/auth-manager');
+const { createStandardEmbed } = require('@ui/embedFactory');
 
 module.exports = {
     customId: 'admin_response_modal_submit',

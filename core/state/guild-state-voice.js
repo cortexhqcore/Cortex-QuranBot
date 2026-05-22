@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const voiceLogger = require('@voiceLogger');
+const voiceLogger = require('@logging/voiceLogger');
 
 // Check if bot can join another voice channel based on shard limit
 function canJoinVoice() {

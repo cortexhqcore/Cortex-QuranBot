@@ -1,10 +1,10 @@
 require('pathlra-aliaser')();
 
-const { wrapInteraction, safeError } = require('@deferReply');
-const { checkAuthorization, resolveGuildState } = require('@guard');
-const { rebuildAndSendControlPanel } = require('@controlPanelBuilder');
-const { createRadioResource, createSurahResource, stopPlayer } = require('@audio-core');
-const logger = require('@logger');
+const { wrapInteraction, safeError } = require('@interactions/flow/deferReply');
+const { checkAuthorization, resolveGuildState } = require('@auth/guard');
+const { rebuildAndSendControlPanel } = require('@ui/controlPanelBuilder');
+const { createRadioResource, createSurahResource, stopPlayer } = require('@audio');
+const logger = require('@logging/logger');
 
 module.exports = {
     customId: 'radio',

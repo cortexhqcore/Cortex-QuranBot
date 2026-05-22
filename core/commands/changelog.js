@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const { wrapInteraction, safeReply } = require('@responder');
-const { createStandardEmbed } = require('@embedFactory');
+const { wrapInteraction, safeReply } = require('@interactions/flow/responder');
+const { createStandardEmbed } = require('@ui/embedFactory');
 
 const msg = [
     {

@@ -1,10 +1,10 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { loadCachedData } = require('@data-cache-core_data');
-const { fetchSurahs, fetchReciters, fetchRiwayat, fetchMoshaf, fetchRadios, fetchTafasir } = require('@data-fetchers-core_data');
-const { loadRemoteAzkarData } = require('@data-azkar-core_data');
-const { loadSetupGuilds, saveSetupGuilds, updateGuildNames } = require('@data-guilds-core_data');
+const logger = require('@logging/logger');
+const { loadCachedData } = require('@data/data-cache');
+const { fetchSurahs, fetchReciters, fetchRiwayat, fetchMoshaf, fetchRadios, fetchTafasir } = require('@data/data-fetchers');
+const { loadRemoteAzkarData } = require('@data/data-azkar');
+const { loadSetupGuilds, saveSetupGuilds, updateGuildNames } = require('@data/data-guilds');
 const azkar_images_base = 'https://hub-mgv.github.io/QuranBotData/azkar-images/';
 
 async function loadData() {

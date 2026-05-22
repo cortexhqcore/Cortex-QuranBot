@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const persistentStateManager = require('@PersistentStateManager-core_state');
-const voiceManager = require('@voice-connection');
+const logger = require('@logging/logger');
+const persistentStateManager = require('@state/PersistentStateManager');
+const voiceManager = require('@audio/voice-connection');
 
 async function saveRuntimeStates() {
     try {

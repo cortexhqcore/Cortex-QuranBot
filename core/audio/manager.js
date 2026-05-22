@@ -4,7 +4,7 @@ require('pathlra-aliaser')();
 const { initializeConnection, teardownConnection, syncVoiceState } = require('./connection');
 // const { stopPlayer } = require('./player');
 const { createSurahResource, createRadioResource } = require('./resource');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 
 /**
 async function handleJoin(interaction, guildId, guildState, targetChannel) {
@@ -74,7 +74,7 @@ async function handleLeave(guildId, guildState) {
     guildState.pauseReason = 'manual_leave';
 
     await teardownConnection(guildId, guildState);
-    require('@PersistentStateManager-core_state').setManualDisconnect(guildId, true);
+    require('@state/PersistentStateManager').setManualDisconnect(guildId, true);
     await syncVoiceState(guildId, guildState);
     logger.info(`Guild ${guildId} Bot Disconnected From Voice Channel`);
     return true;

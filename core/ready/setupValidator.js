@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const { ChannelType } = require('discord.js');
-const { saveSetupGuildsToFirebase } = require('@firebase/index');
+const { saveSetupGuildsToFirebase } = require('@database/firebase');
 
 // Validate channel IDs in setup data and auto-correct if channels no longer exist
 async function validateAndFixSetupData(guild, setupData) {

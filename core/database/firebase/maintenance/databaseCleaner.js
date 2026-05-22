@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const { isFirebaseReady, db } = require('../index');
-const retentiondb = require('@retention-core_database');
+const retentiondb = require('@database/firebase/retention/retention');
 
 class DatabaseCleaner {
     constructor() {

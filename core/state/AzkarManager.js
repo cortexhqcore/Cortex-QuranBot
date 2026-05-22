@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
-const { azkar_expiry_ms, azkar_interval_ms } = require('@azkar-config-core_state');
-const { getAudioData, getMessageTimestamp } = require('@azkar-cache-core_state');
-const { sendRandomAzkar } = require('@azkar-sender-core_state');
-const { startAzkarTimerForGuild, stopAzkarTimerForGuild, resetAzkarFirstMessage, isAzkarTimerActive } = require('@azkar-timer-core_state');
+const { azkar_expiry_ms, azkar_interval_ms } = require('@state/azkar-config');
+const { getAudioData, getMessageTimestamp } = require('@state/azkar-cache');
+const { sendRandomAzkar } = require('@state/azkar-sender');
+const { startAzkarTimerForGuild, stopAzkarTimerForGuild, resetAzkarFirstMessage, isAzkarTimerActive } = require('@state/azkar-timer');
 
 function getAzkarAudioUrl(customId) {
     return getAudioData(customId);

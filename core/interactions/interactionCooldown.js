@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const coreLoader = require('@loader-core_bootstrap');
+const coreLoader = require('@bot/bootstrap');
 
 // Check if user interaction should be blocked due to global cooldown or rate limiting
 async function checkGlobalCooldown(interaction) {

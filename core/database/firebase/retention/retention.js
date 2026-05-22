@@ -1,10 +1,10 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { db, isFirebaseReady } = require('@firebase/index');
-const { deepCloneForFirebase } = require('@firebase-clone-core_utils');
+const logger = require('@logging/logger');
+const { db, isFirebaseReady } = require('@database/firebase');
+const { deepCloneForFirebase } = require('@database/firebase/utils/clone');
 const { ChannelType } = require('discord.js');
-const { channel_names } = require('@configConstants');
+const { channel_names } = require('@config/constants');
 const retention_days = 15;
 const retention_ms = retention_days * 24 * 60 * 60 * 1000;
 const cleanupInterval = 24 * 60 * 60 * 1000;
@@ -12,7 +12,7 @@ const RETENTION_INDEX_PATH = 'retention_index';
 
 function getFirebaseServices() {
     // Lazy load firebase services
-    const firebase = require('@firebase/index');
+    const firebase = require('@database/firebase');
     return {
         loadSetupGuildsFromFirebase: firebase.loadSetupGuildsFromFirebase,
         saveSetupGuildsToFirebase: firebase.saveSetupGuildsToFirebase,

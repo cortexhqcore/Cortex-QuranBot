@@ -1,9 +1,9 @@
 require('../package/Envira/src/lib/main');
 require('pathlra-aliaser')();
 
-let Topgg = require('@top-gg/sdk');
-let logger = require('@logger');
-let { client } = require('@botSetup');
+const Topgg = require('@top-gg/sdk');
+const logger = require('@logging/logger');
+const { client } = require('@startup/botSetup');
 
 const DBL_TOKEN = process.env.TOPGG_TOKEN;
 

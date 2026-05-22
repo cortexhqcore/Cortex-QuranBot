@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const { isAuthorized, isPublicFeature, authorizeInteraction } = require('@authManager');
+const { isAuthorized, isPublicFeature, authorizeInteraction } = require('@auth/auth-manager');
 
 // Consolidated public feature detection and exemption logic
 const EXCLUDED_FROM_AUTH = ['submit_complaint', 'open_complaint_modal', 'cancel_support'];

@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { isSpecialUser } = require('@authManager');
-const { createStandardEmbed } = require('@embedFactory');
+const logger = require('@logging/logger');
+const { isSpecialUser } = require('@auth/auth-manager');
+const { createStandardEmbed } = require('@ui/embedFactory');
 
 module.exports = {
     customId: 'admin_send_msg_modal',

@@ -2,7 +2,7 @@ require('./package/Envira/src/lib/main');
 require('pathlra-aliaser')();
 
 const { ClusterManager } = require('discord-hybrid-sharding');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const path = require('path');
 require('./config/envSwitcher');
 

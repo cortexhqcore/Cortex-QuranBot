@@ -4,9 +4,9 @@ const fs = require('fs');
 const fsPromises = require('fs').promises;
 const pathlra = require('path');
 const { get, ref } = require('firebase/database');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const { db, isFirebaseReady } = require('../firebase/index');
-const { paths } = require('@configConstants');
+const { paths } = require('@config/constants');
 const zlib = require('zlib');
 
 const BACKUP_INTERVAL_MS = parseInt(process.env.BACKUP_INTERVAL_MS);

@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
 const { EmbedBuilder } = require('discord.js');
-const { getCurrentDurations, formatDurationText, parseDurationToSeconds, getDurationForSurah } = require('@audioUtils-core_utils');
-const logger = require('@logger');
+const { getCurrentDurations, formatDurationText, parseDurationToSeconds, getDurationForSurah } = require('@audio');
+const logger = require('@logging/logger');
 const path = require('path');
 const fs = require('fs');
 

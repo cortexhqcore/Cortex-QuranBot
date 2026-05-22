@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
-const { createControlEmbed } = require('@embeds-core_ui');
-const { createReciterRow, createSelectRow, createButtonRow, createNavigationRow, createRadioRow } = require('@components-core_ui');
-const { updateControlMessage, saveControlId } = require('@messageUpdater');
+const { createControlEmbed } = require('@ui/embeds');
+const { createReciterRow, createSelectRow, createButtonRow, createNavigationRow, createRadioRow } = require('@ui/components');
+const { updateControlMessage, saveControlId } = require('@interactions/flow/messageUpdater');
 
 // Rebuild and update the control panel UI after state changes
 async function updateControlPanel(interaction, guildState, guildId) {

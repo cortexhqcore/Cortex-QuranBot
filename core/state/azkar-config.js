@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const { time_constants, urls } = require('@configConstants');
+const { time_constants, urls } = require('@config/constants');
 
 const adhkar_base_url = urls.adhkar_base_url;
 const adhkar_images_base_url = urls.adhkar_images_base_url;

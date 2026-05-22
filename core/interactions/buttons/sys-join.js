@@ -1,11 +1,11 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const persistentState = require('@PersistentStateManager-core_state');
-const { initializeConnection, teardownConnection, syncVoiceState } = require('@audio-core');
-const { getVoiceChannel, checkBotPermissions } = require('@sys-voice-core_interactions_buttons');
-const { startPlayback } = require('@sys-playback-core_interactions_buttons');
-const { ERRORS } = require('@sys-config-core_interactions_buttons');
+const logger = require('@logging/logger');
+const persistentState = require('@state/PersistentStateManager');
+const { initializeConnection, teardownConnection, syncVoiceState } = require('@audio');
+const { getVoiceChannel, checkBotPermissions } = require('@interactions/buttons/sys-voice');
+const { startPlayback } = require('@interactions/buttons/sys-playback');
+const { ERRORS } = require('@interactions/buttons/sys-config');
 
 async function joinVoiceChannelHandler(interaction, guildId, guildState) {
     const targetGuild = interaction.guild;

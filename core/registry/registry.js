@@ -3,18 +3,18 @@ require('pathlra-aliaser')();
 // lazy-load audio to avoid circular deps
 let _audio;
 function getAudio() {
-    if (!_audio) _audio = require('@audio-core');
+    if (!_audio) _audio = require('@audio');
     return _audio;
 }
 
-const { createReciterRow, createRadioRow, createSelectRow, createButtonRow, createNavigationRow } = require('@components-core_ui');
+const { createReciterRow, createRadioRow, createSelectRow, createButtonRow, createNavigationRow } = require('@ui/components');
 
-const { createControlEmbed } = require('@embeds-core_ui');
+const { createControlEmbed } = require('@ui/embeds');
 const { getGuildState, removeGuildState, isAuthorized } = require('../state/GuildStateManager');
 
 const { sendRandomAzkar, startAzkarTimerForGuild } = require('../state/azkarManager');
-const { registerCommands, applyCommandPermissions } = require('@commandregistry');
-const { checkCooldown, checkRateLimit, checkVoiceCooldown, COOLDOWN_TYPES } = require('@cooldown-core_state');
+const { registerCommands, applyCommandPermissions } = require('@registry/commandregistry');
+const { checkCooldown, checkRateLimit, checkVoiceCooldown, COOLDOWN_TYPES } = require('@state/cooldown');
 
 const { loadPrayerTimesData, getCountries, getCitiesByCountry, getCitiesForCountry, getCountryByCode } = require('@data/prayerTimesData');
 const databaseCleaner = require('../database/firebase/maintenance/databaseCleaner');

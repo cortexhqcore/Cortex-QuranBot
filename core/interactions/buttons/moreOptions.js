@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
 const { getGuildState, isAuthorized } = require('../../state/GuildStateManager');
-const { createControlEmbed } = require('@controlpanel');
+const { createControlEmbed } = require('@ui/controlpanel');
 const {
     createReciterRow,
     createSelectRow,
@@ -10,9 +10,9 @@ const {
     createMoreOptionsRow,
     createEntryRow,
     createRadioRow,
-} = require('@components-core_ui');
-const { updateControlMessage, saveControlId } = require('@messageUpdater');
-const logger = require('@logger');
+} = require('@ui/components');
+const { updateControlMessage, saveControlId } = require('@interactions/flow/messageUpdater');
+const logger = require('@logging/logger');
 const { EmbedBuilder } = require('discord.js');
 
 async function sendChannelError(interaction, errorMessage) {

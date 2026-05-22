@@ -2,7 +2,7 @@ require('pathlra-aliaser')();
 
 const fs = require('fs').promises;
 const path = require('path');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 
 // Load Quran-related data from local JSON files with graceful fallbacks
 async function loadDataFromLocal() {

@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { GLOBAL_CONSTANTS } = require('@data-loader-constants-core_data');
+const logger = require('@logging/logger');
+const { GLOBAL_CONSTANTS } = require('@data/data-loader-constants');
 const { getCachedRecitersData } = require('@data-loader-cache-core_data');
 const { validateReciterData } = require('@data-loader-validator-core_data');
 const { formatReciterName, formatServerUrl, formatSurahUrl, formatDuration } = require('@data-loader-formatter-core_data');

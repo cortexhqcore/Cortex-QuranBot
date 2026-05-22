@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
-const formatTimeDuration = require('@formatUptime');
-const logger = require('@logger');
+const formatTimeDuration = require('@helpers/time/formatUptime');
+const logger = require('@logging/logger');
 const os = require('os');
 
 module.exports = {

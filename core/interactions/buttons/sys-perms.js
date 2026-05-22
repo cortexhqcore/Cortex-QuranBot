@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
 const { isAuthorized } = require('../../state/GuildStateManager');
-const { ERRORS } = require('@sys-config-core_interactions_buttons');
+const { ERRORS } = require('@interactions/buttons/sys-config');
 
 // Check if the interaction user has permission to execute the requested action
 function checkInteractionAuth(interaction, guildState, actionId) {

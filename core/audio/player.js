@@ -1,16 +1,16 @@
 require('pathlra-aliaser')();
 
 // const { createAudioPlayer, AudioPlayerStatus } = require('@discordjs/voice');
-const logger = require('@logger');
-const voiceLogger = require('@voiceLogger');
-const { voice_config } = require('@configConstants');
+const logger = require('@logging/logger');
+const voiceLogger = require('@logging/voiceLogger');
+const { voice_config } = require('@config/constants');
 const { getGuildStateById } = require('../state/guild-state-store');
 const MAX_ERROR_COUNT = voice_config.max_error_count;
 
 /**
 function getGuildStateById(guildId) {
     if (!_getGuildStateById) {
-        _getGuildStateById = require('@guild-state-store-core_state').getGuildStateById;
+        _getGuildStateById = require('@state/guild-state-store').getGuildStateById;
     }
     return _getGuildStateById(guildId);
 }

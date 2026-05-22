@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
 const clientManager = require('./client');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 
 const memoryFallbackMap = new Map();
 

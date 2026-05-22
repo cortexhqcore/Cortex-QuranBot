@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const logger = require('@logger');
-const { clean_Dhikr } = require('@azkar');
+const logger = require('@logging/logger');
+const { clean_Dhikr } = require('@helpers/azkar');
 const {
     adhkar_base_url,
     azkar_expiry_ms,
@@ -10,10 +10,10 @@ const {
     azkar_retry_delay_ms,
     request_timeout_ms,
     fallback_azkar_data,
-} = require('@azkar-config-core_state');
-const { setAudioData, deleteAudioData, setMessageTimestamp, deleteMessageTimestamp } = require('@azkar-cache-core_state');
+} = require('@state/azkar-config');
+const { setAudioData, deleteAudioData, setMessageTimestamp, deleteMessageTimestamp } = require('@state/azkar-cache');
 
-const persistentStateManager = require('@PersistentStateManager-core_state');
+const persistentStateManager = require('@state/PersistentStateManager');
 
 // Classify Discord API errors to determine retry strategy
 function categorizeDiscordError(err) {
@@ -64,7 +64,7 @@ function trackAudioData(id, data) {
 
 async function incStat() {
     try {
-        const { incrementStat } = require('@StatisticsTracker-core_statistics');
+        const { incrementStat } = require('@statistics/StatisticsTracker');
         if (typeof incrementStat === 'function') incrementStat('azkarSent', 1);
     } catch {
         logger.debug('Statistics tracking not available for azkar');

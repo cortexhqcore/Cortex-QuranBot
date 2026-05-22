@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const { loadCachedData } = require('@data-cache-core_data');
-const logger = require('@logger');
+const { loadCachedData } = require('@data/data-cache');
+const logger = require('@logging/logger');
 
 async function getCachedSurahData() {
     try {

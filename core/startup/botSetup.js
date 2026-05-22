@@ -3,9 +3,9 @@ require('pathlra-aliaser')();
 const fs = require('fs').promises;
 const pathlra = require('path');
 const { Mutex } = require('async-mutex');
-const logger = require('@logger');
-require('@cooldown-core_state');
-const { getBrowserHeaders, TimeoutRequest } = require('@http');
+const logger = require('@logging/logger');
+require('@state/cooldown');
+const { getBrowserHeaders, TimeoutRequest } = require('@config/http');
 global.logger = logger;
 const mutex = new Mutex();
 const {
@@ -31,8 +31,8 @@ const {
     checkVoiceCooldown,
     createRadioRow,
     createRadioResource,
-} = require('@registry');
-const { loadData, saveSetupGuilds } = require('@data-manager-core_data');
+} = require('@registry/registry');
+const { loadData, saveSetupGuilds } = require('@data/data-manager');
 const { Client, GatewayIntentBits, REST } = require('discord.js');
 const { LavalinkManager } = require('../package/lavalink-client/dist/index');
 
@@ -261,7 +261,7 @@ setInterval(() => {
     }
 }, 60000);
 
-const runtimeStates = require('@RuntimeState');
+const runtimeStates = require('@runtime/runtime_states');
 const { saveRuntimeStates, restoreRuntimeStates, loadRuntimeStates } = runtimeStates;
 global.saveRuntimeStates = saveRuntimeStates;
 

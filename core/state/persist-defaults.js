@@ -37,7 +37,7 @@ function createDefaultState() {
 
 // Clean and merge state with defaults, filtering non-serializable values
 function cleanState(state) {
-    const { isPlainObject, deepCloneForFirebase } = require('@persist-utils-core_state');
+    const { isPlainObject, deepCloneForFirebase } = require('@state/persist-utils');
     if (!state || !isPlainObject(state)) return createDefaultState();
 
     const defaultState = createDefaultState();

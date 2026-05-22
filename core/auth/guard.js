@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
 const { getGuildState } = require('../state/GuildStateManager');
-const { authorizeInteraction } = require('@authManager');
-const { safeError } = require('@deferReply');
+const { authorizeInteraction } = require('@auth/auth-manager');
+const { safeError } = require('@interactions/flow/deferReply');
 
 // Replaced redundant state resolution and auth checking with unified wrappers
 async function checkAuthorization(interaction, actionId = null) {

@@ -1,11 +1,11 @@
 require('pathlra-aliaser')();
 
 const { getGuildState, isAuthorized } = require('../../state/GuildStateManager');
-const { createRadioResource, createSurahResource } = require('@audioUtils-core_utils');
-const { createControlEmbed } = require('@embeds-core_ui');
-const { createRadioRow, createButtonRow, createNavigationRow } = require('@components-core_ui');
-const { updateControlMessage, saveControlId } = require('@messageUpdater');
-const logger = require('@logger');
+const { createRadioResource, createSurahResource } = require('@audio');
+const { createControlEmbed } = require('@ui/embeds');
+const { createRadioRow, createButtonRow, createNavigationRow } = require('@ui/components');
+const { updateControlMessage, saveControlId } = require('@interactions/flow/messageUpdater');
+const logger = require('@logging/logger');
 
 module.exports = {
     customId: 'select_radio',

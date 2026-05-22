@@ -3,10 +3,10 @@ require('pathlra-aliaser')();
 const { getGuildStateById } = require('../state/guild-state-store');
 const persistentState = require('../state/PersistentStateManager');
 const { ChannelType } = require('discord.js');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const { initializeConnection, syncVoiceState } = require('./connection');
 // const { AudioPlayerStatus } = require('@discordjs/voice');
-const { time_constants } = require('@configConstants');
+const { time_constants } = require('@config/constants');
 
 const RECOVERY_DELAY_MS = time_constants.error_recovery_delay_ms || 7000;
 const RECONNECT_ATTEMPT_DELAY = 2000;

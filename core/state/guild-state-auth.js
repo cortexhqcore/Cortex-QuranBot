@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
 // Replaced all inline authorization logic with centralized authManager to eliminate duplication
-const { isAuthorized, hasAdminPermission, hasAdminRole, isSpecialUser, allowed_everyone_actions } = require('@authManager');
+const { isAuthorized, hasAdminPermission, hasAdminRole, isSpecialUser, allowed_everyone_actions } = require('@auth/auth-manager');
 
 module.exports.isAuthorized = isAuthorized;
 module.exports.checkAdminPermission = hasAdminPermission;

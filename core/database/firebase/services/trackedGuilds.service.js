@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { db, isFirebaseReady } = require('@firebase-client-core_utils');
-const { deepCloneForFirebase } = require('@firebase-clone-core_utils');
+const logger = require('@logging/logger');
+const { db, isFirebaseReady } = require('@database/firebase/client');
+const { deepCloneForFirebase } = require('@database/firebase/utils/clone');
 
 async function loadTrackedGuildsFromFirebase() {
     if (!isFirebaseReady || !db) {

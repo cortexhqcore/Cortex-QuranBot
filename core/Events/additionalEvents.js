@@ -1,12 +1,12 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { removeGuildState, applyCommandPermissions } = require('@registry');
+const logger = require('@logging/logger');
+const { removeGuildState, applyCommandPermissions } = require('@registry/registry');
 const { ChannelType } = require('discord.js');
-const botClient = require('@botSetup').client;
+const botClient = require('@startup/botSetup').client;
 const http = require('http');
 // const { markGuildAsLeft, markGuildAsPresent } = require('../database/firebase/services/retention.service');
-const retentiondb = require('@retention-core_database');
+const retentiondb = require('@database/firebase/retention/retention');
 
 botClient.on('guildCreate', async (guild) => {
     logger.info('Bot Joined New Guild ' + guild.name + ' ' + guild.id);
@@ -39,7 +39,7 @@ botClient.on('guildCreate', async (guild) => {
         global.setupGuilds = global.setupGuilds || {};
 
         if (!global.setupGuilds[guild.id]) {
-            const { loadSetupGuildsFromFirebase } = require('@firebase/index');
+            const { loadSetupGuildsFromFirebase } = require('@database/firebase');
             const firebaseData = await loadSetupGuildsFromFirebase();
 
             if (firebaseData && firebaseData[guild.id]) {
@@ -139,4 +139,4 @@ function getConnectedVoiceCount() {
     return activeCount;
 }
 
-require('@globalAll');
+require('@global/globalAll');

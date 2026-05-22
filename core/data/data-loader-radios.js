@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const { getCachedRadiosData } = require('@data-loader-cache-core_data');
 const { validateRadioData, formatRadioUrl } = require('@data-loader-validator-core_data');
 

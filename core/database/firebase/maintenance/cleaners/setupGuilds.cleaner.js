@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const { ChannelType } = require('discord.js');
-const { loadSetupGuildsFromFirebase, saveSetupGuildsToFirebase } = require('@firebase/index');
-const { channel_names } = require('@configConstants');
+const { loadSetupGuildsFromFirebase, saveSetupGuildsToFirebase } = require('@database/firebase');
+const { channel_names } = require('@config/constants');
 
 async function validateSetupData(guildId, setupData, guild) {
     let changed = false;

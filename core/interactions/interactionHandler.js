@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
-const coreLoader = require('@loader-core_bootstrap');
+const coreLoader = require('@bot/bootstrap');
 const botClient = global.client;
-const { handleInteraction } = require('@interactionProcessor-core_interactions');
-const { getErrorType } = require('@interactionErrors-core_interactions');
+const { handleInteraction } = require('@interactions/interactionProcessor');
+const { getErrorType } = require('@interactions/interactionErrors');
 
 // Initialize rate limit map and attach auto-cleanup interval
 if (!global.interactionRateLimits) {
@@ -67,4 +67,4 @@ botClient.on('interactionCreate', async (interaction) => {
     }
 });
 
-require('@globalAll');
+require('@global/globalAll');

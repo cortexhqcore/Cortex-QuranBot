@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
 const { createClient } = require('redis');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 require('../../package/Envira/src/lib/main');
 
 const redisUrl = process.env.REDIS_URL || 'redis://127.0.0.1:6379';

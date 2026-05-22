@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 
 const guildStates = new Map();
 global.guildStates = guildStates;

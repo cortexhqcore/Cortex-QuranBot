@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const coreLoader = require('@loader-core_bootstrap');
+const coreLoader = require('@bot/bootstrap');
 const MENU_HANDLERS = {
     select_reciter: 'reciterMenu',
     select_surah: 'surahMenu',

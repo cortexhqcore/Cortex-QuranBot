@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
-const { wrapInteraction, safeError } = require('@deferReply');
-const { resolveGuildState } = require('@guard');
-const { rebuildAndSendControlPanel } = require('@controlPanelBuilder');
-const logger = require('@logger');
+const { wrapInteraction, safeError } = require('@interactions/flow/deferReply');
+const { resolveGuildState } = require('@auth/guard');
+const { rebuildAndSendControlPanel } = require('@ui/controlPanelBuilder');
+const logger = require('@logging/logger');
 
 module.exports = {
     async execute(interaction) {

@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const voiceLogger = require('@voiceLogger');
-// const persistentState = require('@PersistentStateManager-core_state');
-const botClient = require('@botSetup').client;
+const logger = require('@logging/logger');
+const voiceLogger = require('@logging/voiceLogger');
+// const persistentState = require('@state/PersistentStateManager');
+const botClient = require('@startup/botSetup').client;
 
 // Monitor voice state changes to handle external bot disconnections
 botClient.on('voiceStateUpdate', async (previousState, currentState) => {

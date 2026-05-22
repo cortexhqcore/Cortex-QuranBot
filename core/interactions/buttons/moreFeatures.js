@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
-const { wrapInteraction, safeReply } = require('@responder');
+const { wrapInteraction, safeReply } = require('@interactions/flow/responder');
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { createStandardEmbed } = require('@embedFactory');
+const { createStandardEmbed } = require('@ui/embedFactory');
 
 module.exports = {
     customId: 'more_features',

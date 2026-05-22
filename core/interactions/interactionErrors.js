@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const coreLoader = require('@loader-core_bootstrap');
+const coreLoader = require('@bot/bootstrap');
 
 // Classify Discord API errors into user-friendly categories for appropriate handling
 function getErrorType(error) {

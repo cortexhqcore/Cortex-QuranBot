@@ -1,12 +1,12 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 // const { AudioPlayerStatus } = require('@discordjs/voice');
 const { ChannelType } = require('discord.js');
 const { getGuildState } = require('../state/GuildStateManager');
-const persistentStateManager = require('@PersistentStateManager-core_state');
-// const voiceManager = require('@voice-connection');
-const { initializeConnection, syncVoiceState, createSurahResource, createRadioResource } = require('@audio-core');
+const persistentStateManager = require('@state/PersistentStateManager');
+// const voiceManager = require('@audio/voice-connection');
+const { initializeConnection, syncVoiceState, createSurahResource, createRadioResource } = require('@audio');
 let restorationActive = false;
 
 async function restoreGuildStates(client, activeGuildIds) {

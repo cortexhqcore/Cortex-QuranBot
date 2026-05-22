@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const { urls } = require('@configConstants');
+const { urls } = require('@config/constants');
 
 function initializeGlobalLanguages() {
     global.languages = [

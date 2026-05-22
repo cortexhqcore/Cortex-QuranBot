@@ -8,11 +8,11 @@ const {
     StringSelectMenuBuilder,
     StringSelectMenuOptionBuilder,
 } = require('discord.js');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const { calculatePagination, createPaginationRow } = require('@ui/pagination');
-const { isSpecialUser } = require('@authManager');
+const { isSpecialUser } = require('@auth/auth-manager');
 // Import pagination limits from centralized config
-const { pagination } = require('@configConstants');
+const { pagination } = require('@config/constants');
 
 module.exports = {
     customId: 'admin_server_list',

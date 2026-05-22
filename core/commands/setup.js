@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
-const { wrapInteraction, safeReply, safeError } = require('@responder');
-const { setupQuranCategory } = require('@setupCommands-core_commands');
-const bootstrap = require('@loader-core_bootstrap');
+const { wrapInteraction, safeReply, safeError } = require('@interactions/flow/responder');
+const { setupQuranCategory } = require('@commands/setupCommands');
+const bootstrap = require('@bot/bootstrap');
 
 module.exports = {
     async execute(interaction) {

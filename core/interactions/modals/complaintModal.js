@@ -1,7 +1,12 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { saveComplaintToFirebase, loadUserCooldownFromFirebase, saveUserCooldownToFirebase, isFirebaseReady } = require('@firebase/index');
+const logger = require('@logging/logger');
+const {
+    saveComplaintToFirebase,
+    loadUserCooldownFromFirebase,
+    saveUserCooldownToFirebase,
+    isFirebaseReady,
+} = require('@database/firebase');
 const { MessageFlags } = require('discord.js');
 
 module.exports = {

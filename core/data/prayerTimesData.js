@@ -2,7 +2,7 @@ require('pathlra-aliaser')();
 
 const fs = require('fs').promises;
 const pathlra = require('path');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 
 let prayerTimesData = null;
 let dataLoadAttempted = false;

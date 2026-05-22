@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
 const { ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
-const formatTimeDuration = require('@formatUptime');
-const logger = require('@logger');
-const { createStandardEmbed } = require('@embedFactory');
+const formatTimeDuration = require('@helpers/time/formatUptime');
+const logger = require('@logging/logger');
+const { createStandardEmbed } = require('@ui/embedFactory');
 
 // Count how many guilds the bot is currently connected to via voice
 function getActiveVoiceConnections() {
@@ -21,7 +21,7 @@ function getActiveVoiceConnections() {
 module.exports = {
     customId: 'admin_panel',
     async execute(interaction) {
-        const { isSpecialUser } = require('@authManager');
+        const { isSpecialUser } = require('@auth/auth-manager');
         // Replaced inline global.SPE_USER_IDS check with centralized isSpecialUser helper
         if (!isSpecialUser(interaction.user.id)) {
             return interaction.reply({

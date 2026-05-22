@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { loadGuildStatesFromFirebase, saveGuildStatesToFirebase } = require('@firebase/index');
+const logger = require('@logging/logger');
+const { loadGuildStatesFromFirebase, saveGuildStatesToFirebase } = require('@database/firebase');
 
 async function cleanGuildStates(client) {
     try {

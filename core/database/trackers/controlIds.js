@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { loadControlIdsFromFirebase, saveControlIdsToFirebase } = require('@firebase/index');
+const logger = require('@logging/logger');
+const { loadControlIdsFromFirebase, saveControlIdsToFirebase } = require('@database/firebase');
 
 // in-memory cache + loaded flag
 let cache = {};

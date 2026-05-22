@@ -1,10 +1,10 @@
 require('pathlra-aliaser')();
 
 const { EmbedBuilder } = require('discord.js');
-const { createControlEmbed } = require('@embeds-core_ui');
-const { createReciterRow, createRadioRow, createSelectRow, createButtonRow, createNavigationRow } = require('@components-core_ui');
+const { createControlEmbed } = require('@ui/embeds');
+const { createReciterRow, createRadioRow, createSelectRow, createButtonRow, createNavigationRow } = require('@ui/components');
 const { saveControlId } = require('@database/trackers/controlIds');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 
 // update the control message, with fallbacks if the original interaction expires
 async function updateControlMessage(interaction, embed, components) {

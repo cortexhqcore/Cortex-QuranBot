@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const coreLoader = require('@loader-core_bootstrap');
+const coreLoader = require('@bot/bootstrap');
 
 let StatisticsTracker = null;
 
@@ -8,7 +8,7 @@ let StatisticsTracker = null;
 function getStatisticsTracker() {
     if (!StatisticsTracker) {
         try {
-            StatisticsTracker = require('@StatisticsTracker-core_statistics');
+            StatisticsTracker = require('@statistics/StatisticsTracker');
             coreLoader.logger.info('StatisticsTracker loaded successfully');
         } catch (error) {
             coreLoader.logger.error('Failed to load StatisticsTracker:', error.message);

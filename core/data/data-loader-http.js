@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
 const fetch = require('node-fetch').default;
-const logger = require('@logger');
-const { getBrowserHeaders, TimeoutRequest } = require('@http');
+const logger = require('@logging/logger');
+const { getBrowserHeaders, TimeoutRequest } = require('@config/http');
 const { getAdhkarUrl } = require('@data-loader-config-core_data');
 
 // Fetch adhkar data from the configured remote endpoint

@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const persistentState = require('@PersistentStateManager-core_state');
+const persistentState = require('@state/PersistentStateManager');
 
 // Toggle control mode between 'everyone' and 'admins' and persist the change
 async function toggleControlMode(guildId, guildState) {

@@ -9,11 +9,11 @@ const {
     EmbedBuilder,
     MessageFlags,
 } = require('discord.js');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const fetch = require('node-fetch').default;
 const { getCountries, getCitiesForCountry, getCountryByCode, getTimeFormatForCountry } = require('@data/prayerTimesData');
-const { getBrowserHeaders, TimeoutRequest } = require('@http');
-const { prayer_times_config } = require('@configConstants');
+const { getBrowserHeaders, TimeoutRequest } = require('@config/http');
+const { prayer_times_config } = require('@config/constants');
 
 function truncateText(text, maxLength) {
     if (!text) return '';

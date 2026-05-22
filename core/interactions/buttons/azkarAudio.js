@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
-const { wrapInteraction, safeError, safeReply } = require('@responder');
+const { wrapInteraction, safeError, safeReply } = require('@interactions/flow/responder');
 const { MessageFlags } = require('discord.js');
-const { clean_Dhikr } = require('@azkar');
+const { clean_Dhikr } = require('@helpers/azkar');
 
 const azkar_request_expiry = 10 * 24 * 60 * 60 * 1000;
 

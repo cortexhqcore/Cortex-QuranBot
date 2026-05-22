@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
 const { AudioPlayerStatus } = require('@discordjs/voice');
-const logger = require('@logger');
-const { createSurahResource } = require('@audioUtils-core_utils');
-const { player_config } = require('@sys-config-core_interactions_buttons');
+const logger = require('@logging/logger');
+const { createSurahResource } = require('@audio');
+const { player_config } = require('@interactions/buttons/sys-config');
 
 async function ensurePlaybackStarted(guildState, guildId) {
     try {
@@ -28,7 +28,7 @@ async function ensurePlaybackStarted(guildState, guildId) {
                 guildState.isPaused = false;
                 guildState.pauseReason = null;
             } else if (guildState.currentRadioUrl) {
-                const { createRadioResource } = require('@audioUtils-core_utils');
+                const { createRadioResource } = require('@audio');
                 const radioResource = await createRadioResource(guildState.currentRadioUrl, 0);
                 if (!radioResource) throw new Error('Radio resource creation returned undefined');
                 guildState.player.play({ track: radioResource });
@@ -57,7 +57,7 @@ async function startPlayback(guildState, guildId) {
 
             guildState.player.play({ track: audioResource });
         } else if (guildState.currentRadioUrl) {
-            const { createRadioResource } = require('@audioUtils-core_utils');
+            const { createRadioResource } = require('@audio');
             const radioResource = await createRadioResource(guildState.currentRadioUrl, 0);
             if (!radioResource) {
                 throw new Error('Failed to fetch radio stream from Lavalink');

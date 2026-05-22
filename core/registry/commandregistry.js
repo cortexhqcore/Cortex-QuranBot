@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
 const { ChannelType, PermissionsBitField, SlashCommandBuilder, Routes, REST } = require('discord.js');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 
 async function registerCommands() {
     const cmds = [

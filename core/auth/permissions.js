@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
 const { PermissionsBitField } = require('discord.js');
-const logger = require('@logger');
-const auth = require('@authManager');
+const logger = require('@logging/logger');
+const auth = require('@auth/auth-manager');
 
 // Delegated core authorization to authManager.js to remove duplicate permission logic
 module.exports.isAuthorized = auth.isAuthorized;

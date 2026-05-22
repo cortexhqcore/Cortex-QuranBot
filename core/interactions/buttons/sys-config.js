@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const { channel_names } = require('@configConstants');
+const { channel_names } = require('@config/constants');
 
 const player_config = {
     no_subscriber_timeout: 60000,

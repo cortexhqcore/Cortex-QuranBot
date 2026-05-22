@@ -1,6 +1,6 @@
 require('pathlra-aliaser')();
 
-const { wrapInteraction, safeReply, safeError } = require('@responder');
+const { wrapInteraction, safeReply, safeError } = require('@interactions/flow/responder');
 const {
     ActionRowBuilder,
     ButtonBuilder,
@@ -13,8 +13,8 @@ const {
 const { getCountries, loadPrayerTimesData } = require('@data/prayerTimesData');
 const { calculatePagination, createPaginationRow } = require('@ui/pagination');
 // Import config for consistent pagination limits
-const { prayer_times_config } = require('@configConstants');
-const coreLoader = require('@loader-core_bootstrap');
+const { prayer_times_config } = require('@config/constants');
+const coreLoader = require('@bot/bootstrap');
 
 function truncateText(text, maxLength) {
     if (!text) return '';

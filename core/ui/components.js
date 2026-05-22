@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js');
-const { getCurrentDurations } = require('@audioUtils-core_utils');
+const { getCurrentDurations } = require('@audio');
 
 function truncateText(t, max) {
     if (!t) return '';

@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { loadSetupGuildsFromFirebase, saveSetupGuildsToFirebase } = require('@firebase/index');
+const logger = require('@logging/logger');
+const { loadSetupGuildsFromFirebase, saveSetupGuildsToFirebase } = require('@database/firebase');
 
 // Local cache for guild setup configurations
 let setupGuilds = {};

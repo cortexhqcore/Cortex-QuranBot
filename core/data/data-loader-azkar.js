@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 const { fetchAdhkarData } = require('@data-loader-http-core_data');
 const { validateAdhkarData } = require('@data-loader-validator-core_data');
-const { _adhkar_fallback_data_ } = require('@data-loader-constants-core_data');
+const { _adhkar_fallback_data_ } = require('@data/data-loader-constants');
 
 // Load adhkar data from remote source with validation and graceful fallback
 async function loadAzkarData() {

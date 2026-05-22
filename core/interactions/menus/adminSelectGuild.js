@@ -1,7 +1,7 @@
 require('pathlra-aliaser')();
 
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ChannelType } = require('discord.js');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 
 module.exports = {
     customId: 'admin_select_guild',

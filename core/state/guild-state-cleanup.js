@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { getGuildStateById, deleteGuildState } = require('@guild-state-store-core_state');
-const { decrementVoiceConnections } = require('@guild-state-voice-core_state');
+const logger = require('@logging/logger');
+const { getGuildStateById, deleteGuildState } = require('@state/guild-state-store');
+const { decrementVoiceConnections } = require('@state/guild-state-voice');
 
 // Remove guild state and clean up associated resources
 function removeGuildState(guildId) {
@@ -50,7 +50,7 @@ function cleanupGuildState(guildId) {
 }
 
 function cleanupDestroyedConnections() {
-    const { getGuildStatesMap } = require('@guild-state-store-core_state');
+    const { getGuildStatesMap } = require('@state/guild-state-store');
     const guildStates = getGuildStatesMap();
     let cleanedCount = 0;
     for (const [guildId, state] of guildStates.entries()) {

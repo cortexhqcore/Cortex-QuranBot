@@ -1,9 +1,9 @@
 require('pathlra-aliaser')();
 
-const { wrapInteraction } = require('@deferReply');
-const { resolveGuildState } = require('@guard');
-const { rebuildAndSendControlPanel } = require('@controlPanelBuilder');
-const logger = require('@logger');
+const { wrapInteraction } = require('@interactions/flow/deferReply');
+const { resolveGuildState } = require('@auth/guard');
+const { rebuildAndSendControlPanel } = require('@ui/controlPanelBuilder');
+const logger = require('@logging/logger');
 
 module.exports = {
     customId: 'back_to_main',

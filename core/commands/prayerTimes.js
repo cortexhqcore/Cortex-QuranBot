@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
-const { wrapInteraction, safeReply } = require('@responder');
-const bootstrap = require('@loader-core_bootstrap');
-const { createStandardEmbed } = require('@embedFactory');
+const { wrapInteraction, safeReply } = require('@interactions/flow/responder');
+const bootstrap = require('@bot/bootstrap');
+const { createStandardEmbed } = require('@ui/embedFactory');
 
 const prayer_times_disclaimer =
     'هذه المعلومات يتم جلبها من https://aladhan.com وقد تختلف عن مواقيت الصلاة الرسمية في بلدك\n' +

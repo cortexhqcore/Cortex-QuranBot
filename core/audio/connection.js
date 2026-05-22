@@ -3,10 +3,10 @@ require('pathlra-aliaser')();
 
 // const { joinVoiceChannel } = require('@discordjs/voice');
 const persistentState = require('../state/PersistentStateManager');
-const logger = require('@logger');
-const voiceLogger = require('@voiceLogger');
-const { time_constants } = require('@configConstants');
-const { getBestNode } = require('@botSetup');
+const logger = require('@logging/logger');
+const voiceLogger = require('@logging/voiceLogger');
+const { time_constants } = require('@config/constants');
+const { getBestNode } = require('@startup/botSetup');
 
 if (!global.activeVoiceConnections) {
     global.activeVoiceConnections = 0;
@@ -130,7 +130,7 @@ async function initializeConnection(guildId, guildState, targetChannel, adapterC
     //const { resetPlayer } = require('./player');
     //await resetPlayer(guildId, guildState);
     try {
-        const client = require('@botSetup').client;
+        const client = require('@startup/botSetup').client;
         if (!client.lavalink) {
             throw new Error('Lavalink manager not initialized');
         }
@@ -145,7 +145,7 @@ async function initializeConnection(guildId, guildState, targetChannel, adapterC
         if (bestNode) {
             playerOptions.node = bestNode.id;
             voiceLogger.connection(guildId, `Using node ${bestNode.id} for player creation`, {
-                location: require('@botSetup').nodeConfigs.get(bestNode.id)?.location,
+                location: require('@startup/botSetup').nodeConfigs.get(bestNode.id)?.location,
             });
         }
         // guildState.player = await client.lavalink.createPlayer({
@@ -196,17 +196,4 @@ module.exports.incrementVoiceConnections = incrementVoiceConnections;
 module.exports.decrementVoiceConnections = decrementVoiceConnections;
 module.exports.teardownConnection = teardownConnection;
 module.exports.syncVoiceState = syncVoiceState;
-// Added missing export to resolve 'initializeConnection is not a function' error in recovery javascript``
-//
-// 2026-05-08T13:11:50.965Z ERROR Failed To Connect To Voice Channel For Guild 1455855604676689922 initializeConnection is not a function
-// {
-//  stack: 'TypeError: initializeConnection is not a function\n' +
-//    '    at recoverVoiceConnection (D:\\Data\\bot\\QuranBot\\NV\\QuranBot\\core\\ready\\voiceRecovery.js:53:22)\n' +
-//    '    at Timeout._onTimeout (D:\\Data\\bot\\QuranBot\\NV\\QuranBot\\core\\startup\\readyHandler.js:72:22)\n' +
-//    '    at runNextTicks (node:internal/process/task_queues:65:5)\n' +
-//    '    at listOnTimeout (node:internal/timers:555:9)\n' +
-//    '    at process.processTimers (node:internal/timers:529:7)',
-//  name: 'TypeError'
-// }
-//}
 module.exports.initializeConnection = initializeConnection;

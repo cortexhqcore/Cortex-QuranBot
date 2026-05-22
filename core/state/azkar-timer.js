@@ -1,10 +1,10 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
+const logger = require('@logging/logger');
 // Fixed case mismatch that caused undefined interval (0ms spam loop)
-const { azkar_interval_ms } = require('@azkar-config-core_state');
-const { setFirstMessage, getFirstMessage, deleteFirstMessage } = require('@azkar-cache-core_state');
-const { sendRandomAzkar } = require('@azkar-sender-core_state');
+const { azkar_interval_ms } = require('@state/azkar-config');
+const { setFirstMessage, getFirstMessage, deleteFirstMessage } = require('@state/azkar-cache');
+const { sendRandomAzkar } = require('@state/azkar-sender');
 function startAzkarTimerForGuild(gid, cid, isFirst = true) {
     const { getGuildState } = require('../state/GuildStateManager');
     const st = getGuildState(gid);

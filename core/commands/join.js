@@ -1,12 +1,12 @@
 require('pathlra-aliaser')();
 
-const { wrapInteraction, safeError } = require('@deferReply');
-const { resolveGuildState } = require('@guard');
-const { initializeConnection, syncVoiceState } = require('@audio-core');
-const { createSurahResource, createRadioResource } = require('@audio-core');
-const logger = require('@logger');
-const voiceLogger = require('@voiceLogger');
-const coreLoader = require('@loader-core_bootstrap');
+const { wrapInteraction, safeError } = require('@interactions/flow/deferReply');
+const { resolveGuildState } = require('@auth/guard');
+const { initializeConnection, syncVoiceState } = require('@audio');
+const { createSurahResource, createRadioResource } = require('@audio');
+const logger = require('@logging/logger');
+const voiceLogger = require('@logging/voiceLogger');
+const coreLoader = require('@bot/bootstrap');
 
 module.exports = {
     async execute(interaction) {

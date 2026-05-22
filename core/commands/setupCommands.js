@@ -4,11 +4,11 @@ const fs = require('fs').promises;
 const pathlra = require('path');
 const { ChannelType, PermissionsBitField, OverwriteType } = require('discord.js');
 const { getGuildState } = require('../state/GuildStateManager');
-const logger = require('@logger');
-const { loadSetupGuildsFromFirebase, saveSetupGuildsToFirebase } = require('@firebase/index');
-const { channel_names } = require('@configConstants');
-const { createControlEmbed } = require('@embeds-core_ui');
-const { createReciterRow, createSelectRow, createButtonRow, createNavigationRow, createRadioRow } = require('@components-core_ui');
+const logger = require('@logging/logger');
+const { loadSetupGuildsFromFirebase, saveSetupGuildsToFirebase } = require('@database/firebase');
+const { channel_names } = require('@config/constants');
+const { createControlEmbed } = require('@ui/embeds');
+const { createReciterRow, createSelectRow, createButtonRow, createNavigationRow, createRadioRow } = require('@ui/components');
 const { saveControlId } = require('@database/trackers/controlIds');
 
 let startAzkarTimerForGuild;

@@ -1,15 +1,15 @@
 require('../config/envSwitcher.js');
 require('pathlra-aliaser')();
-require('@botSetup');
+require('@startup/botSetup');
 // require('@voiceHandlers');
-require('@voiceStateHandler-core_events');
-require('@interactionHandler');
-require('@readyHandler');
-require('@additionalevents');
-require('@ping-core_commands');
-require('@guild-tracker');
-require('@topgg-core_web');
-require('@globalAll');
+require('@events/voiceStateHandler');
+require('@interactions/interactionHandler');
+require('@startup/readyHandler');
+require('@events/additionalEvents');
+require('@commands/ping');
+require('@database/trackers/guild-tracker');
+require('@web/top');
+require('@global/globalAll');
 
 const { ActivityType } = require('discord.js');
 const { client, logger } = global;

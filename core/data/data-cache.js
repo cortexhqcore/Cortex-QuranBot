@@ -1,8 +1,8 @@
 require('pathlra-aliaser')();
 
 const fetch = require('node-fetch').default;
-const logger = require('@logger');
-const { getBrowserHeaders, TimeoutRequest } = require('@http');
+const logger = require('@logging/logger');
+const { getBrowserHeaders, TimeoutRequest } = require('@config/http');
 
 // Remote data endpoint containing all Quran-related datasets
 const remote_data_url = 'https://hub-mgv.github.io/QuranBotData/data_quran.json';

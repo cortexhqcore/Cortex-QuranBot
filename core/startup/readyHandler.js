@@ -1,20 +1,20 @@
 require('pathlra-aliaser')();
 
-const logger = require('@logger');
-const { loadData } = require('@data-manager-core_data');
-const client = require('@botSetup').client;
-const persistentStateManager = require('@PersistentStateManager-core_state');
-const { loadSetupGuildsFromFirebase, loadGuildStatesFromFirebase } = require('@firebase/index');
-const { validateAndFixSetupData } = require('@setupValidator-core_ready');
-const { recoverAzkarTimers } = require('@azkarRecovery-core_ready');
-const { recoverVoiceConnection } = require('@voiceRecovery-core_ready');
-const { restoreGuildStates } = require('@stateRestoration-core_ready');
-const { registerAllCommands, startMemoryCleanup } = require('@commandRegistration-core_ready');
-const { initializeStats, startStatsTracker } = require('@StatisticsTracker-core_statistics');
+const logger = require('@logging/logger');
+const { loadData } = require('@data/data-manager');
+const client = require('@startup/botSetup').client;
+const persistentStateManager = require('@state/PersistentStateManager');
+const { loadSetupGuildsFromFirebase, loadGuildStatesFromFirebase } = require('@database/firebase');
+const { validateAndFixSetupData } = require('@ready/setupValidator');
+const { recoverAzkarTimers } = require('@ready/azkarRecovery');
+const { recoverVoiceConnection } = require('@ready/voiceRecovery');
+const { restoreGuildStates } = require('@ready/stateRestoration');
+const { registerAllCommands, startMemoryCleanup } = require('@ready/commandRegistration');
+const { initializeStats, startStatsTracker } = require('@statistics/StatisticsTracker');
 const databaseCleaner = require('../database/firebase/maintenance/databaseCleaner');
-const retentiondb = require('@retention-core_database');
-require('@storage/backup/localBackup');
-const { attachManagerEvents } = require('@audio-core');
+const retentiondb = require('@database/firebase/retention/retention');
+require('@database/local/localBackup');
+const { attachManagerEvents } = require('@audio');
 
 attachManagerEvents(client.lavalink);
 
@@ -31,7 +31,7 @@ loadData()
                 logger.error('Failed to initialize Lavalink Manager', err);
             }
 
-            const runtimeStates = require('@RuntimeState');
+            const runtimeStates = require('@runtime/runtime_states');
             await runtimeStates.restoreRuntimeStates(client);
             logger.info('Logged In As ' + client.user.tag + ' - ' + (global.surahNames?.length || 114) + ' Surahs Loaded');
             logger.info('Number Of Reciters ' + Object.keys(global.reciters).length);

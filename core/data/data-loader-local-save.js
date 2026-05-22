@@ -2,7 +2,7 @@ require('pathlra-aliaser')();
 
 const fs = require('fs').promises;
 const path = require('path');
-const logger = require('@logger');
+const logger = require('@logging/logger');
 
 // Persist global data objects to local JSON files for offline fallback
 async function saveDataLocally() {
