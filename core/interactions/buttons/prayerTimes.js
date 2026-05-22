@@ -29,14 +29,14 @@ module.exports = {
         await wrapInteraction(
             interaction,
             async () => {
-                const cdResult = coreLoader.checkCooldown(interaction.user.id, interaction.guildId, 'مواقيت_الصلاة');
+                const cdResult = coreLoader.checkCooldown(interaction.user.id, interaction.guildId, 'prayerTimesButton');
                 if (!cdResult.allowed) {
                     // Reply with appropriate cooldown message based on user/server type
                     await safeError(interaction, coreLoader.getCooldownResponse(cdResult.remaining, cdResult.type));
                     return;
                 }
                 // Set cooldown immediately to prevent rapid clicking while data loads
-                coreLoader.setCooldown(interaction.user.id, interaction.guildId, 'مواقيت_الصلاة');
+                coreLoader.setCooldown(interaction.user.id, interaction.guildId, 'prayerTimesButton');
                 await loadPrayerTimesData();
                 const availableCountries = getCountries();
                 if (!availableCountries || availableCountries.length === 0) {
