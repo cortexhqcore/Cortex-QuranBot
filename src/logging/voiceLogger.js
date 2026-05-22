@@ -1,4 +1,4 @@
-require('../package/envira/src/lib/main').config();
+require('dotenv').config();
 require('pathlra-aliaser')();
 
 const fs = require('fs').promises;

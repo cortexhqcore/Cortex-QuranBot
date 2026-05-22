@@ -1,4 +1,4 @@
-require('./package/envira/src/lib/main');
+require('dotenv').config();
 require('pathlra-aliaser')();
 
 const { ClusterManager } = require('discord-hybrid-sharding');
