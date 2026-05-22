@@ -19,7 +19,7 @@ async function loadPrayerTimesData() {
     dataLoadAttempted = true;
 
     try {
-        const dataPath = pathlra.join(__dirname, '../../json/prayerTimesData.json');
+        const dataPath = pathlra.join(__dirname, '../json/prayerTimesData.json');
         const fileContent = await fs.readFile(dataPath, 'utf8');
         prayerTimesData = JSON.parse(fileContent);
         logger.info('Prayer Times Data Loaded From JSON - ' + (prayerTimesData?.countries?.length || 0) + ' countries');

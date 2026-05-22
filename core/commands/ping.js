@@ -101,7 +101,7 @@ async function LavalinkNode(host, port, secure, password, location, flag, id) {
     const url = `${protocol}://${host}:${port}/v4/stats`;
     const start = Date.now();
     const resp = await fetch(url, {
-        headers: { Authorization: password, 'User-Agent': 'QuranBot/1.0', },
+        headers: { Authorization: password, 'User-Agent': 'QuranBot/1.0' },
         timeout: 6000,
     });
     const latency = Date.now() - start;

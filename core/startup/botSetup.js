@@ -97,7 +97,6 @@ function build() {
 
         nodeConfigs.set(nodeId, config);
 
-
         nodes.push({
             id: config.id,
             host: config.host,
@@ -107,7 +106,6 @@ function build() {
             retryAmount: 10,
             retryDelay: 5000,
         });
-
 
         logger.lavalink(
             `Configured ${nodeId} | ${config.host}:${config.port} | Max Players: ${config.maxPlayers} | ${config.location} ${config.flag}`,
@@ -121,7 +119,6 @@ function build() {
     return nodes;
 }
 
-
 function getBestNode(manager) {
     let nodes = Array.from(manager.nodeManager.nodes.values());
     let availableNodes = nodes.filter((node) => {
@@ -130,20 +127,16 @@ function getBestNode(manager) {
         if (!config) return false;
         const players = Array.from(manager.players.values()).filter((p) => p.node?.id === node.id).length;
         return players < config.maxPlayers;
-
     });
 
     if (!availableNodes.length) {
         return null;
-
     }
 
-    
     availableNodes.sort((a, b) => {
         const aPlayers = Array.from(manager.players.values()).filter((p) => p.node?.id === a.id).length;
         const bPlayers = Array.from(manager.players.values()).filter((p) => p.node?.id === b.id).length;
         return aPlayers - bPlayers;
-
     });
 
     return availableNodes[0];
