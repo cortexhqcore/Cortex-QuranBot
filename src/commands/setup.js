@@ -3,6 +3,7 @@ require('pathlra-aliaser')();
 const { wrapInteraction, safeReply, safeError } = require('@interactions/flow/responder');
 const { setupQuranCategory } = require('@commands/setupCommands');
 const bootstrap = require('@bot/bootstrap');
+const { emoji, gif } = require('@helpers/emojis');
 
 module.exports = {
     async execute(interaction) {
@@ -56,14 +57,13 @@ module.exports = {
                     await safeReply(
                         interaction,
                         {
-                            content:
-                                'إعادة إعداد مكتشفة هذه القناة ستحذف قريباً الإعداد مستمر تحقق من الفئة الجديدة quran للوحة التحكم والتأكيد النهائي',
+                            content: `إعادة إعداد مكتشفة هذه القناة ستحذف قريباً الإعداد مستمر تحقق من الفئة الجديدة quran للوحة التحكم والتأكيد النهائي ${gif.loading}`,
                         },
                         'setup_re_setup_warn',
                     );
                     bootstrap.logger.info(`Guild ${guildId} Re-setup from doomed channel ${interaction.channelId} warned user`);
                 } else {
-                    await safeReply(interaction, { content: 'جاري إعداد فئة القرآن' }, 'setup_starting');
+                    await safeReply(interaction, { content: `جاري إعداد فئة القرآن ${gif.loading}` }, 'setup_starting');
                 }
                 const setupResult = await setupQuranCategory(interaction.guild, interaction, {
                     channelWillBeDeleted,
@@ -73,7 +73,7 @@ module.exports = {
                     embeds: [
                         {
                             color: 0x1e1f22,
-                            title: `${isReSetup ? 'إعادة إعداد' : 'إعداد'} فئة القرآن`,
+                            title: `${emoji.group} ${isReSetup ? 'إعادة إعداد' : 'إعداد'} فئة القرآن`,
                             description: `تم ${isReSetup ? 'تحديث' : 'إنشاء'} الفئة والقنوات بنجاح`,
                             fields: [
                                 {

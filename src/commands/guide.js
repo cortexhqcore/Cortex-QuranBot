@@ -2,6 +2,7 @@ require('pathlra-aliaser')();
 
 const { wrapInteraction, safeReply } = require('@interactions/flow/responder');
 const coreLoader = require('@bot/bootstrap');
+const { emoji, gif } = require('@helpers/emojis');
 
 module.exports = {
     async execute(interaction) {
@@ -14,7 +15,7 @@ module.exports = {
                     embeds: [
                         {
                             color: 0x1e1f22,
-                            title: 'دليل استخدام البوت',
+                            title: `${emoji.help} دليل استخدام البوت`,
                             description:
                                 '**/إعداد**: إعداد فئة القرآن الكريم (سيتم إنشاء قنوات تلقائيًا)\n' +
                                 '**/دخول**: الانضمام إلى الروم الصوتي (بعد الإعداد)\n' +
