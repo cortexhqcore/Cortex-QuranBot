@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function data() {
         try {
-            const response = await fetch('./core/json/reciters.json');
+            const response = await fetch('./core/src/reciters.json');
             if (!response.ok) throw new Error('Failed to load database');
             const data = await response.json();
             const cachedData = data.cached_data || data;
