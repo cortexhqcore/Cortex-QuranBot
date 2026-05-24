@@ -93,6 +93,7 @@
         "dotenv": "^17.4.2",
         "firebase": "^12.9.0",
         "firebase-admin": "^13.9.0",
+        "lavalink-client": "^2.10.2",
         "node-fetch": "^3.3.2",
         "pathlra-aliaser": "^4.4.1",
         "redis": "^5.12.1",

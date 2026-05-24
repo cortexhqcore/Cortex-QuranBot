@@ -7,9 +7,11 @@ const botClient = require('@startup/botSetup').client;
 const http = require('http');
 // const { markGuildAsLeft, markGuildAsPresent } = require('../database/firebase/services/retention.service');
 const retentiondb = require('@database/firebase/retention/retention');
+const { sendWelcome } = require('@events/guildWelcome');
 
 botClient.on('guildCreate', async (guild) => {
     logger.info('Bot Joined New Guild ' + guild.name + ' ' + guild.id);
+    await sendWelcome(guild);
     await retentiondb.markGuildAsPresent(guild.id);
 
     try {

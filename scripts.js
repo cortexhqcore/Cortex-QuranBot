@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // Corrected: querySelectorAll and forEach (was selectorall/forea)
     document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -45,9 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const showMoreRadiosBtn = document.getElementById('show-more-radios');
     const showMoreSurahsBtn = document.getElementById('show-more-surahs');
     const showMoreRewayahBtn = document.getElementById('show-more-rewayah');
-    // Corrected: querySelectorAll (was selectorall)
     const filterButtons = document.querySelectorAll('.filter-btn');
-
     let allReciters = [];
     let allRadios = [];
     let allSurahs = [];
@@ -167,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const items = allReciters.slice(displayedRecitersCount, displayedRecitersCount + count);
-        // Corrected: forEach (was forea)
         items.forEach((reciter) => {
             const card = createReciterCard(reciter);
             recitersGrid.appendChild(card);
@@ -182,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const items = allRadios.slice(displayedRadiosCount, displayedRadiosCount + count);
-        // Corrected: forEach (was forea)
         items.forEach((radio) => {
             const card = createRadioCard(radio);
             radiosGrid.appendChild(card);
@@ -196,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
             displayedSurahsCount = 0;
         }
         const items = surahs.slice(displayedSurahsCount, displayedSurahsCount + SURAH_REWAYAH_PER_PAGE);
-        // Corrected: forEach (was forea)
         items.forEach((surah) => {
             const card = createSurahCard(surah);
             surahsGrid.appendChild(card);
@@ -210,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
             displayedRewayahCount = 0;
         }
         const items = rewayahList.slice(displayedRewayahCount, displayedRewayahCount + SURAH_REWAYAH_PER_PAGE);
-        // Corrected: forEach (was forea)
         items.forEach((item) => {
             const card = createRewayahCard(item);
             rewayahGrid.appendChild(card);
@@ -313,10 +306,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updaterewayah();
     });
 
-    // Corrected: forEach (was forea)
     filterButtons.forEach((btn) => {
         btn.addEventListener('click', () => {
-            // Corrected: forEach (was forea)
             filterButtons.forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
             currentSurahFilter = btn.getAttribute('data-filter');
@@ -329,13 +320,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Corrected: querySelectorAll (was selectorall) and forEach (was forea)
     const faqItems = document.querySelectorAll('.faq-item');
     faqItems.forEach((item) => {
         const question = item.querySelector('.faq-question');
         question.addEventListener('click', () => {
             const isOpen = item.classList.contains('open');
-            // Corrected: forEach (was forea)
             faqItems.forEach((i) => i.classList.remove('open'));
             if (!isOpen) {
                 item.classList.add('open');

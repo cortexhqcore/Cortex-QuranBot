@@ -34,7 +34,7 @@ const {
 } = require('@registry/registry');
 const { loadData, saveSetupGuilds } = require('@data/data-manager');
 const { Client, GatewayIntentBits, REST } = require('discord.js');
-const { LavalinkManager } = require('../package/lavalink-client/dist/index');
+const { LavalinkManager } = require('lavalink-client');
 
 const token = process.env.DISCORD_TOKEN;
 const clientId = process.env.CLIENT_ID || token?.split('.')[0];

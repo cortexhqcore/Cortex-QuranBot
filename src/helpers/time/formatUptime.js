@@ -41,5 +41,4 @@ function formatTimeDuration(ms, lang = 'en') {
     return `${years} ${t.years}`;
 }
 
-// Export as CommonJS to match project require() usage and resolve TypeError
 module.exports = formatTimeDuration;
