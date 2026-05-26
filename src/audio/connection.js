@@ -6,7 +6,7 @@ const persistentState = require('../state/PersistentStateManager');
 const logger = require('@logging/logger');
 const voiceLogger = require('@logging/voiceLogger');
 const { time_constants } = require('@config/constants');
-const { getBestNode } = require('@startup/botSetup');
+const { getBestNode, nodeConfigs } = require('@startup/botSetup');
 
 if (!global.activeVoiceConnections) {
     global.activeVoiceConnections = 0;
@@ -135,19 +135,42 @@ async function initializeConnection(guildId, guildState, targetChannel, adapterC
             throw new Error('Lavalink manager not initialized');
         }
         voiceLogger.connection(guildId, 'Calling createPlayer', { selfDeaf: true });
-        const bestNode = getBestNode(client.lavalink);
+        let bestNode = null;
+        if (guildState.preferredLavalinkNode) {
+            const node = client.lavalink.nodeManager.nodes.get(guildState.preferredLavalinkNode);
+            if (node && node.connected) {
+                const config = nodeConfigs.get(node.id);
+                const playerCount = Array.from(client.lavalink.players.values()).filter((p) => p.node?.id === node.id).length;
+                const isFull = config && playerCount >= config.maxPlayers;
+
+                if (!isFull) {
+                    bestNode = node;
+                    voiceLogger.connection(guildId, `Using preferred node ${bestNode.id}`, {
+                        location: require('@startup/botSetup').nodeConfigs.get(bestNode.id)?.location,
+                    });
+                } else {
+                    voiceLogger.connection(guildId, `Preferred node ${node.id} is at full capacity, selecting alternative...`);
+                }
+            }
+        }
+        if (!bestNode) {
+            bestNode = getBestNode(client.lavalink);
+        }
+
+        if (!bestNode) {
+            throw new Error('All Lavalink nodes are currently at full capacity');
+        }
+
         const playerOptions = {
             guildId,
             voiceChannelId: targetChannel.id,
             textChannelId: targetChannel.isTextBased ? (targetChannel.isTextBased() ? targetChannel.id : null) : null,
             selfDeaf: true,
+            node: bestNode.id,
         };
-        if (bestNode) {
-            playerOptions.node = bestNode.id;
-            voiceLogger.connection(guildId, `Using node ${bestNode.id} for player creation`, {
-                location: require('@startup/botSetup').nodeConfigs.get(bestNode.id)?.location,
-            });
-        }
+        voiceLogger.connection(guildId, `Using node ${bestNode.id} for player creation`, {
+            location: require('@startup/botSetup').nodeConfigs.get(bestNode.id)?.location,
+        });
         // guildState.player = await client.lavalink.createPlayer({
         //     guildId,
         //    voiceChannelId: targetChannel.id,

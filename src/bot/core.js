@@ -110,7 +110,7 @@ async function updateStatus() {
         };
     } else {
         activity = {
-            name: 'مفتوح المصدر | github.com/hub-mgv/quranbot',
+            name: 'مفتوح المصدر | github.com/cortexhqcore/Cortex-QuranBot',
             type: ActivityType.Watching,
         };
     }

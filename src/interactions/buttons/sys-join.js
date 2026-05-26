@@ -38,8 +38,11 @@ async function joinVoiceChannelHandler(interaction, guildId, guildState) {
                 guildState.currentRadioUrl = global.quranRadios[guildState.currentRadioIndex]?.url || global.quranRadios[0].url;
             }
         }
-
-        await startPlayback(guildState, guildId);
+        const playSuccess = await startPlayback(guildState, guildId);
+        if (!playSuccess && guildState.playbackMode === 'radio') {
+            guildState.playbackMode = 'surah';
+            await startPlayback(guildState, guildId);
+        }
         await syncVoiceState(guildId, guildState);
 
         if (!global.setupGuilds) global.setupGuilds = {};
@@ -48,6 +51,11 @@ async function joinVoiceChannelHandler(interaction, guildId, guildState) {
         }
         return { success: true, voiceChannelId: targetChannelId };
     } catch (err) {
+        if (err.message && err.message.includes('maximum player capacity')) {
+            logger.warn('Guild ' + guildId + ' Join failed: Lavalink nodes at max capacity');
+            await teardownConnection(guildId, guildState);
+            return { success: false, error: 'جميع الخوادم الصوتية ممتلئة حالياً، يرجى المحاولة لاحقاً' };
+        }
         logger.error('Error Joining Via Button In Guild ' + guildId, err);
         await teardownConnection(guildId, guildState);
         return { success: false, error: ERRORS.JOIN_FAILED + ' ' + err.message };

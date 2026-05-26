@@ -15,16 +15,18 @@
             rel="stylesheet"
         />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-        <link rel="stylesheet" href="./style.css" />
+        <link rel="stylesheet" href="./site/css/style.css" />
     </head>
 
     <body>
-        <header class="site-header">
+        <div class="loader-bar-css" id="LoaderBar"></div>
+        <header class="site-header" id="site-nav">
             <div class="header-container">
-                <div class="header-brand">
-                    <i class="fas fa-mosque"></i>
+                <a href="/" class="header-brand">
+                    <i class="fa-solid fa-moon"></i>
                     <span>QuranBot</span>
-                </div>
+                </a>
+
                 <nav class="header-nav">
                     <a href="#features" class="nav-link">Features</a>
                     <a href="#commands" class="nav-link">Commands</a>
@@ -33,11 +35,18 @@
                     <a href="#surahs" class="nav-link">Surahs</a>
                     <a href="#faq" class="nav-link">FAQ</a>
                     <a href="#setup" class="nav-link">Setup</a>
-                    <a target="_blank" href="./privacy.html" class="nav-link">Privacy</a>
-                    <a target="_blank" href="./terms.html" class="nav-link">Terms</a>
-                    <a href="https://github.com/cortexhqcore/Cortex-QuranBot" target="_blank" class="nav-link"
-                        ><i class="fab fa-github"></i
-                    ></a>
+                    <a target="_blank" href="./site/privacy.html" class="nav-link">Privacy</a>
+                    <a target="_blank" href="./site/terms.html" class="nav-link">Terms</a>
+                    <a href="./site/docs.html" class="nav-link">docs</a>
+                    <a id="github-link" href="https://github.com/cortexhqcore/Cortex-QuranBot" target="_blank" class="nav-link github-link">
+                        <i class="fab fa-github"></i>
+                        <span class="github-stats">
+                            <i class="fas fa-star"></i>
+                            <span id="gh-stars"></span>
+                            <i class="fas fa-code-branch" style="margin-left: 10px"></i>
+                            <span id="gh-forks"></span>
+                        </span>
+                    </a>
                 </nav>
                 <button class="mobile-menu-toggle" aria-label="Toggle menu">
                     <i class="fas fa-bars"></i>
@@ -48,10 +57,6 @@
         <main class="main-content">
             <section class="hero-section">
                 <div class="hero-container">
-                    <div class="hero-badge">
-                        <i class="fas fa-star"></i>
-                        Open Source & Production Ready
-                    </div>
                     <h1 class="hero-title">
                         Advanced Quran & Islamic Companion<br />
                         <span class="text-accent">Built for Stability</span>
@@ -463,6 +468,7 @@
                     </h2>
                     <p class="section-subtitle">Engineered for 24/7 operation with automatic recovery and resource management</p>
                 </div>
+
                 <div class="features-grid">
                     <div class="feature-card">
                         <div class="feature-icon">
@@ -706,7 +712,7 @@
                             View Source Code
                         </a>
 
-                        <a href="https://discord.gg/Kf84XpD7u8" target="_blank" class="btn-outline btn-large">
+                        <a href="https://discord.gg/DwtAPzrbZS" target="_blank" class="btn-outline btn-large">
                             <i class="fab fa-discord"></i>
                             Support Server
                         </a>
@@ -727,7 +733,7 @@
                         everyone.
                     </p>
                     <div class="footer-social">
-                        <a href="https://discord.gg/Kf84XpD7u8" target="_blank" class="social-btn discord" title="Discord Support">
+                        <a href="https://discord.gg/DwtAPzrbZS" target="_blank" class="social-btn discord" title="Discord Support">
                             <i class="fab fa-discord"></i>
                         </a>
                         <a href="https://github.com/cortexhqcore/Cortex-QuranBot" target="_blank" class="social-btn github" title="GitHub">
@@ -736,13 +742,13 @@
                     </div>
                 </div>
                 <div class="footer-section">
-                    <h4><i class="fas fa-link"></i> Quick Links</h4>
+                    <h4><i class="fas fa-link"></i> Links</h4>
                     <div class="footer-links">
-                        <a href="./privacy.html" class="footer-link">
+                        <a href="./site/privacy.html" class="footer-link">
                             <i class="fas fa-shield-alt"></i>
                             Privacy Policy
                         </a>
-                        <a href="./terms.html" class="footer-link">
+                        <a href="./site/terms.html" class="footer-link">
                             <i class="fas fa-file-contract"></i>
                             Terms of Service
                         </a>
@@ -755,7 +761,7 @@
                 <div class="footer-section">
                     <h4><i class="fas fa-headset"></i> Support</h4>
                     <div class="footer-links">
-                        <a href="https://discord.gg/Kf84XpD7u8" target="_blank" class="footer-link">
+                        <a href="https://discord.gg/DwtAPzrbZS" target="_blank" class="footer-link">
                             <i class="fab fa-discord"></i>
                             Discord Support Server
                         </a>
@@ -778,6 +784,6 @@
         <button class="scroll-top-btn" aria-label="Scroll to top">
             <i class="fas fa-arrow-up"></i>
         </button>
-        <script src="./scripts.js"></script>
+        <script src="./site/js/scripts.js"></script>
     </body>
 </html>

@@ -16,7 +16,6 @@ dev/
 quranbot.zip/
 QuranBot.zip/
 core.zip/
-docs/
 testBot/
 Cortex-QuranBot-Redis/
 
@@ -29,6 +28,7 @@ bot-lavalink.js
 test-archiver.js
 knip.json
 application.yml
+QuranBot.code-workspace
 
 .vscode/*
 !.vscode/extensions.json

@@ -4,6 +4,7 @@ const logger = require('@logging/logger');
 const voiceLogger = require('@logging/voiceLogger');
 // const persistentState = require('@state/PersistentStateManager');
 const botClient = require('@startup/botSetup').client;
+const { voiceIdle } = require('@state/voice-idle');
 
 // Monitor voice state changes to handle external bot disconnections
 botClient.on('voiceStateUpdate', async (previousState, currentState) => {
@@ -63,5 +64,22 @@ botClient.on('voiceStateUpdate', async (previousState, currentState) => {
     } else if (!wasConnected && isCurrentlyConnected) {
         voiceLogger.connection(guildId, 'Bot joined voice channel externally');
     }
+    await voiceIdle(guildId, botClient);
 });
+
+botClient.on('voiceStateUpdate', async (previousState, currentState) => {
+    if (currentState.id === botClient.user.id) return;
+    const guildId = currentState.guild.id;
+    const guildState = global.guildStates.get(guildId);
+
+    if (!guildState?.channelId) return;
+
+    const userJoinedBotChannel = currentState.channelId === guildState.channelId;
+    const userLeftBotChannel = previousState.channelId === guildState.channelId;
+
+    if (userJoinedBotChannel || userLeftBotChannel) {
+        await voiceIdle(guildId, botClient);
+    }
+});
+
 module.exports = {};

@@ -14,6 +14,7 @@ const fetch = require('node-fetch').default;
 const { getCountries, getCitiesForCountry, getCountryByCode, getTimeFormatForCountry } = require('@data/prayerTimesData');
 const { getBrowserHeaders, TimeoutRequest } = require('@config/http');
 const { prayer_times_config } = require('@config/constants');
+const { emoji, gif } = require('@helpers/emojis');
 
 function truncateText(text, maxLength) {
     if (!text) return '';
@@ -99,7 +100,7 @@ function createCountryComponents(countries, currentPage, totalPages) {
     const startIndex = currentPage * ITEMS_PER_PAGE;
     const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, countries.length);
     const menuOptions = countries.slice(startIndex, endIndex).map((country) => {
-        const flag = country.flag || '🌍';
+        const flag = country.flag || `${emoji.globe}`;
         const label = truncateText(`${country.name}`, 100);
         const value = truncateText(country.code, 100);
         const description = truncateText(`${country.nameEn}`, 100);

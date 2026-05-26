@@ -29,8 +29,22 @@ async function ensurePlaybackStarted(guildState, guildId) {
                 guildState.pauseReason = null;
             } else if (guildState.currentRadioUrl) {
                 const { createRadioResource } = require('@audio');
-                const radioResource = await createRadioResource(guildState.currentRadioUrl, 0);
-                if (!radioResource) throw new Error('Radio resource creation returned undefined');
+                // const radioResource = await createRadioResource(guildState.currentRadioUrl, 0);
+                // if (!radioResource) throw new Error('Radio resource creation returned undefined');
+                let attempts = 0;
+                let radioResource = null;
+                while (!radioResource && attempts < Math.min(3, global.quranRadios?.length || 0)) {
+                    try {
+                        radioResource = await createRadioResource(guildState.currentRadioUrl);
+                    } catch (e) {
+                        attempts++;
+                        const nextIdx = (guildState.currentRadioIndex + attempts) % (global.quranRadios?.length || 1);
+                        guildState.currentRadioIndex = nextIdx;
+                        guildState.currentRadioUrl = global.quranRadios?.[nextIdx]?.url;
+                        guildState.currentRadioPage = Math.floor(nextIdx / 25);
+                    }
+                }
+                if (!radioResource) throw new Error('Radio stream invalid after retries');
                 guildState.player.play({ track: radioResource });
                 guildState.isPaused = false;
                 guildState.pauseReason = null;
@@ -43,6 +57,13 @@ async function ensurePlaybackStarted(guildState, guildId) {
         return true;
     } catch (error) {
         logger.error('Guild ' + guildId + ' Ensure Playback Failed', error);
+        if (guildState.playbackMode === 'radio' && !guildState.savedRadioState) {
+            guildState.savedRadioState = {
+                currentRadioIndex: guildState.currentRadioIndex || 0,
+                currentRadioPage: guildState.currentRadioPage || 0,
+            };
+        }
+        guildState.playbackMode = 'surah';
         return false;
     }
 }
@@ -58,7 +79,19 @@ async function startPlayback(guildState, guildId) {
             guildState.player.play({ track: audioResource });
         } else if (guildState.currentRadioUrl) {
             const { createRadioResource } = require('@audio');
-            const radioResource = await createRadioResource(guildState.currentRadioUrl, 0);
+            let attempts = 0;
+            let radioResource = null;
+            while (!radioResource && attempts < Math.min(3, global.quranRadios?.length || 0)) {
+                try {
+                    radioResource = await createRadioResource(guildState.currentRadioUrl);
+                } catch (e) {
+                    attempts++;
+                    const nextIdx = (guildState.currentRadioIndex + attempts) % (global.quranRadios?.length || 1);
+                    guildState.currentRadioIndex = nextIdx;
+                    guildState.currentRadioUrl = global.quranRadios?.[nextIdx]?.url;
+                    guildState.currentRadioPage = Math.floor(nextIdx / 25);
+                }
+            }
             if (!radioResource) {
                 throw new Error('Failed to fetch radio stream from Lavalink');
             }
@@ -71,6 +104,13 @@ async function startPlayback(guildState, guildId) {
         return true;
     } catch (error) {
         logger.error('Guild ' + guildId + ' Start Playback Failed', error);
+        if (guildState.playbackMode === 'radio' && !guildState.savedRadioState) {
+            guildState.savedRadioState = {
+                currentRadioIndex: guildState.currentRadioIndex || 0,
+                currentRadioPage: guildState.currentRadioPage || 0,
+            };
+        }
+        guildState.playbackMode = 'surah';
         return false;
     }
 }

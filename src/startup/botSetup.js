@@ -35,6 +35,8 @@ const {
 const { loadData, saveSetupGuilds } = require('@data/data-manager');
 const { Client, GatewayIntentBits, REST } = require('discord.js');
 const { LavalinkManager } = require('lavalink-client');
+const { buildLavalink, parseNodeConfig, clearNodeCache } = require('@config/lavalinkConfig');
+const { registerLavalinkEvents } = require('@audio/lavalinkEventBus');
 
 const token = process.env.DISCORD_TOKEN;
 const clientId = process.env.CLIENT_ID || token?.split('.')[0];
@@ -68,52 +70,11 @@ const client = new Client({
 
 const nodeConfigs = new Map();
 function build() {
-    let nodes = [];
-    let total = parseInt(process.env.LAVALINK_NODES || '1', 10);
-
-    for (let i = 1; i <= total; i++) {
-        const prefix = `LAVALINK_NODE_${i}`;
-        const host = process.env[`${prefix}_HOST`];
-        const port = process.env[`${prefix}_PORT`];
-        const password = process.env[`${prefix}_PASSWORD`];
-
-        if (!host || !port || !password) {
-            logger.warn(`Skipping node ${i} because config is incomplete`);
-            continue;
-        }
-
-        const nodeId = `node-${i}`;
-        const config = {
-            id: nodeId,
-            host,
-            port: Number(port),
-            password,
-            secure: process.env[`${prefix}_SECURE`] === 'true',
-            maxPlayers: parseInt(process.env[`${prefix}_MAX_PLAYERS`] || '100', 10),
-            location: process.env[`${prefix}_LOCATION`] || 'Unknown',
-            flag: process.env[`${prefix}_FLAG`] || '',
-            playerCreateDelay: parseInt(process.env[`${prefix}_PLAYER_CREATE_DELAY`] || '0', 10),
-        };
-
-        nodeConfigs.set(nodeId, config);
-
-        nodes.push({
-            id: config.id,
-            host: config.host,
-            port: config.port,
-            authorization: config.password,
-            secure: config.secure,
-            retryAmount: 10,
-            retryDelay: 5000,
-        });
-
-        logger.lavalink(
-            `Configured ${nodeId} | ${config.host}:${config.port} | Max Players: ${config.maxPlayers} | ${config.location} ${config.flag}`,
-        );
-    }
-
-    if (!nodes.length) {
-        logger.error('No Lavalink nodes configured');
+    clearNodeCache();
+    const nodes = buildLavalink();
+    for (const node of nodes) {
+        const config = parseNodeConfig(node.id);
+        if (config) nodeConfigs.set(config.id, config);
     }
 
     return nodes;
@@ -173,25 +134,7 @@ const manager = new LavalinkManager({
     },
 });
 
-manager.nodeManager.on('connect', (node) => {
-    const config = nodeConfigs.get(node.id);
-    logger.lavalink(`Lavalink node "${node.id}" connected | ${config?.location || 'Unknown'} ${config?.flag || ''}`);
-});
-
-manager.nodeManager.on('disconnect', (node, reason) => {
-    logger.error(`Node "${node.id}" disconnected`, reason?.message || reason);
-});
-
-manager.nodeManager.on('error', (node, error) => {
-    logger.error(`Node "${node.id}" error`, error);
-});
-
-manager.on('playerCreate', (player) => {
-    const nodeId = player.node?.id || 'unknown';
-    const config = nodeConfigs.get(nodeId);
-    const players = Array.from(manager.players.values()).filter((p) => p.node?.id === nodeId).length;
-    logger.lavalink(`Player created | Guild: ${player.guildId} | Node: ${nodeId} | Load: ${players}/${config?.maxPlayers || 'N/A'}`);
-});
+registerLavalinkEvents(manager, nodeConfigs, getBestNode);
 
 client.lavalink = manager;
 global.client = client;

@@ -15,6 +15,7 @@ const { calculatePagination, createPaginationRow } = require('@ui/pagination');
 // Import config for consistent pagination limits
 const { prayer_times_config } = require('@config/constants');
 const coreLoader = require('@bot/bootstrap');
+const { emoji, gif } = require('@helpers/emojis');
 
 function truncateText(text, maxLength) {
     if (!text) return '';
@@ -48,7 +49,7 @@ module.exports = {
                 const pagination = calculatePagination(availableCountries.length, 0, ITEMS_PER_PAGE);
                 const itemsSlice = availableCountries.slice(pagination.startIndex, pagination.endIndex);
                 const countryMenuOptions = itemsSlice.map((country) => {
-                    const flag = country.flag || '🌍';
+                    const flag = country.flag || `${emoji.globe}`;
                     const label = truncateText(`${country.name}`, 100);
                     const value = truncateText(country.code, 100);
                     const description = truncateText(`${country.nameEn}`, 100);

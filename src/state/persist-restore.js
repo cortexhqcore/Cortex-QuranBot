@@ -1,6 +1,7 @@
 require('pathlra-aliaser')();
 
 const logger = require('@logging/logger');
+const { cleanState } = require('@state/persist-defaults');
 
 function shouldRestore(state) {
     if (!state) return false;
@@ -52,7 +53,7 @@ function setManualDisconnect(guildId, guildStates, scheduleSaveFn, value) {
     // if (value === true) {
     //     state.connectionStatus = false;
     // }
-    scheduleSaveFn(guildId, guildStates, null);
+    scheduleSaveFn(guildId, guildStates, cleanState);
     logger.info('Manual Disconnect Flag For Guild ' + guildId + ' Set To ' + value);
 }
 

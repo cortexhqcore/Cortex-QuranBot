@@ -11,22 +11,22 @@
             rel="stylesheet"
         />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-        <link rel="stylesheet" href="./style.css" />
+        <link rel="stylesheet" href="./css/style.css" />
     </head>
 
     <body>
         <header class="site-header">
             <div class="header-container">
-                <div class="header-brand">
-                    <i class="fas fa-mosque"></i>
+                <a href="/" class="header-brand">
+                    <i class="fa-solid fa-moon"></i>
                     <span>QuranBot</span>
-                </div>
+                </a>
                 <nav class="header-nav">
-                    <a href="./index.html" class="nav-link">Home</a>
+                    <a href="../index.html" class="nav-link">Home</a>
                     <a target="_blank" href="./terms.html" class="nav-link">Terms</a>
-                    <a href="https://github.com/cortexhqcore/Cortex-QuranBot" target="_blank" class="nav-link"
-                        ><i class="fab fa-github"></i
-                    ></a>
+                    <a id="github-link" href="https://github.com/cortexhqcore/Cortex-QuranBot" target="_blank" class="nav-link github-link">
+                        <i class="fab fa-github"></i>
+                    </a>
                 </nav>
                 <button class="mobile-menu-toggle" aria-label="Toggle menu">
                     <i class="fas fa-bars"></i>
@@ -311,7 +311,7 @@
                     <li>
                         <strong>Right to Deletion:</strong> Request immediate data deletion by contacting us directly on our
                         <a
-                            href="https://discord.gg/5qYXAucMpc"
+                            href="https://discord.gg/DwtAPzrbZS"
                             style="color: var(--text-accent); text-decoration: none; font-weight: 600"
                             target="_blank"
                             >Discord Support Server</a
@@ -412,7 +412,7 @@
                     </p>
                     <p style="margin: 8px 0">
                         <a
-                            href="https://discord.gg/5qYXAucMpc"
+                            href="https://discord.gg/DwtAPzrbZS"
                             style="color: var(--text-accent); text-decoration: none; font-weight: 600"
                             target="_blank"
                             >Join Discord Support Server</a
@@ -426,7 +426,7 @@
                     <p style="margin: 0; font-size: 13px; color: var(--text-dim)">
                         <i class="fas fa-gavel" style="color: var(--accent-main); margin-right: 6px"></i>For legal inquiries or abuse
                         reports, join:
-                        <a href="https://discord.gg/5qYXAucMpc" style="color: var(--text-accent)" target="_blank">Discord Support Server</a>
+                        <a href="https://discord.gg/DwtAPzrbZS" style="color: var(--text-accent)" target="_blank">Discord Support Server</a>
                     </p>
                 </div>
             </div>
@@ -449,8 +449,8 @@
         </button>
         <footer class="page-footer">
             <p>
-                <i class="fas fa-code"></i> &copy; 2026 QuranBot. Made By mgv150 | Powered By Cortex HQ <a href="index.html">Home</a> |
-                <a href="https://discord.gg/5qYXAucMpc" target="_blank">Contact via Discord</a> |
+                <i class="fas fa-code"></i> &copy; 2026 QuranBot. Made By mgv150 | Powered By Cortex HQ <a href="../index.html">Home</a> |
+                <a href="https://discord.gg/DwtAPzrbZS" target="_blank">Contact via Discord</a> |
                 <a
                     href="https://discord.com/oauth2/authorize?client_id=1505646575962292314&permissions=8&integration_type=0&scope=bot+applications.commands"
                     target="_blank"
@@ -461,6 +461,6 @@
                 <a target="_blank" href="terms.html">Terms of Service</a>
             </p>
         </footer>
-        <script src="./scripts.js"></script>
+        <!--<script src="./js/scripts.js"></script>-->
     </body>
 </html>

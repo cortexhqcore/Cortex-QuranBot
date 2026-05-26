@@ -3,6 +3,7 @@ require('pathlra-aliaser')();
 const logger = require('@logging/logger');
 const { getGuildStateById, deleteGuildState } = require('@state/guild-state-store');
 const { decrementVoiceConnections } = require('@state/guild-state-voice');
+const { clearGuildIdleTimerVc } = require('@state/voice-idle');
 
 // Remove guild state and clean up associated resources
 function removeGuildState(guildId) {
@@ -15,6 +16,7 @@ function removeGuildState(guildId) {
         if (state.connection && !state.connection.destroyed) {
             decrementVoiceConnections();
         }
+        clearGuildIdleTimerVc(guildId);
         deleteGuildState(guildId);
         logger.info('Cleaned Up State For Guild ' + guildId);
     } catch (error) {
@@ -42,6 +44,7 @@ function cleanupGuildState(guildId) {
             decrementVoiceConnections();
             state.connection.destroy();
         }
+        clearGuildIdleTimerVc(guildId);
         deleteGuildState(guildId);
         logger.info('Cleaned Up State For Guild ' + guildId);
     } catch (error) {

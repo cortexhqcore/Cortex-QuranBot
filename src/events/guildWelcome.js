@@ -61,7 +61,7 @@ ${emoji.edit} **للبدء سريعًا**
         .setTimestamp();
 
     const buttons = new ActionRowBuilder().addComponents(
-        new ButtonBuilder().setLabel('سيرفر الدعم').setStyle(ButtonStyle.Link).setURL('https://discord.gg/5qYXAucMpc'),
+        new ButtonBuilder().setLabel('سيرفر الدعم').setStyle(ButtonStyle.Link).setURL('https://discord.gg/DwtAPzrbZS'),
 
         new ButtonBuilder().setLabel('GitHub').setStyle(ButtonStyle.Link).setURL('https://github.com/cortexhqcore/Cortex-QuranBot'),
     );

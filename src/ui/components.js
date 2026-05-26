@@ -145,7 +145,7 @@ function createNavigationRow(st, guildId) {
     const totalRec = Math.ceil(Object.keys(global.reciters || {}).length / PER_PAGE);
     const isSurah = st.playbackMode === 'surah';
 
-    const nav = new ActionRowBuilder().addComponents(
+    const navComponents = [
         new ButtonBuilder()
             .setCustomId('prev_page')
             .setLabel(truncateText('صفحة سابقة سور', 80))
@@ -166,8 +166,12 @@ function createNavigationRow(st, guildId) {
             .setLabel(truncateText('صفحة تالية قراء', 80))
             .setStyle(ButtonStyle.Secondary)
             .setDisabled(!(st.currentReciterPage < totalRec - 1 && isSurah)),
-    );
-
+        new ButtonBuilder()
+            .setCustomId('lavalink_status')
+            .setLabel(truncateText('حالة خادم الصوت (Lavalink)', 80))
+            .setStyle(ButtonStyle.Secondary),
+    ];
+    const nav = new ActionRowBuilder().addComponents(navComponents);
     const toggle = new ButtonBuilder()
         .setCustomId('toggle_control_mode')
         .setLabel(truncateText(st.controlMode === 'everyone' ? 'وضع التحكم تبديل إلى أدمنز فقط' : 'وضع التحكم تبديل إلى الجميع', 80))
@@ -197,6 +201,10 @@ function createNavigationRow(st, guildId) {
                 .setLabel(truncateText('صفحة تالية راديو', 80))
                 .setStyle(ButtonStyle.Secondary)
                 .setDisabled(!(curRadio < totalRadio - 1)),
+            new ButtonBuilder()
+                .setCustomId('lavalink_status')
+                .setLabel(truncateText('حالة خادم الصوت (Lavalink)', 80))
+                .setStyle(ButtonStyle.Secondary),
         );
         rows.push(radioNav);
     }

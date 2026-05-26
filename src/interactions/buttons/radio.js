@@ -36,29 +36,102 @@ module.exports = {
                                 guildState.player.play(radioAudio);
                   **/
                     try {
+                        const currentPosition = guildState.player && !guildState.player.destroyed ? guildState.player.position || 0 : 0;
                         if (guildState.player && !guildState.player.destroyed) {
                             guildState.player.stopPlaying();
                         }
                         if (guildState.playbackMode === 'surah') {
+                            guildState.savedQuranState = {
+                                currentSurah: guildState.currentSurah,
+                                currentReciter: guildState.currentReciter,
+                                currentPage: guildState.currentPage,
+                                currentReciterPage: guildState.currentReciterPage,
+                                playedOffset: currentPosition,
+                            };
                             guildState.playbackMode = 'radio';
-                            guildState.currentRadioIndex = guildState.currentRadioIndex ?? 0;
+                            // guildState.currentRadioIndex = guildState.currentRadioIndex ?? 0;
+                            const savedRadio = guildState.savedRadioState || { currentRadioIndex: 0, currentRadioPage: 0 };
+                            guildState.currentRadioIndex = savedRadio.currentRadioIndex;
+                            guildState.currentRadioPage = savedRadio.currentRadioPage;
                             if (!global.quranRadios || global.quranRadios.length === 0) {
                                 throw new Error('No radio stations loaded');
                             }
+
                             guildState.currentRadioUrl =
                                 global.quranRadios[guildState.currentRadioIndex]?.url ?? global.quranRadios[0]?.url;
-                            const radioTrack = await createRadioResource(guildState.currentRadioUrl);
-                            if (!radioTrack) throw new Error('Failed to fetch radio track');
+
+                            let radioTrack = null;
+                            let attempts = 0;
+                            const maxAttempts = Math.min(3, global.quranRadios.length);
+                            while (!radioTrack && attempts < maxAttempts) {
+                                try {
+                                    radioTrack = await createRadioResource(guildState.currentRadioUrl);
+                                } catch (e) {
+                                    attempts++;
+                                    const nextIdx = (guildState.currentRadioIndex + attempts) % global.quranRadios.length;
+                                    guildState.currentRadioIndex = nextIdx;
+                                    guildState.currentRadioPage = Math.floor(nextIdx / 25);
+                                    guildState.currentRadioUrl = global.quranRadios[nextIdx]?.url;
+                                }
+                            }
+                            if (!radioTrack) {
+                                logger.warn(`Radio stream unavailable for guild ${guildId}, switching to surah mode`);
+                                guildState.playbackMode = 'surah';
+                                guildState.currentRadioUrl = null;
+                                const availableReciters = Object.keys(global.reciters || {});
+                                if (guildState.savedQuranState) {
+                                    guildState.currentSurah = guildState.savedQuranState.currentSurah;
+                                    guildState.currentReciter = guildState.savedQuranState.currentReciter;
+                                    guildState.currentPage = guildState.savedQuranState.currentPage;
+                                    guildState.currentReciterPage = guildState.savedQuranState.currentReciterPage;
+                                    guildState.playedOffset = guildState.savedQuranState.playedOffset || 0;
+                                } else {
+                                    guildState.currentSurah = 1;
+                                    guildState.currentReciter = availableReciters?.[0] || 'reciter_1_ar';
+                                    guildState.currentPage = 0;
+                                    guildState.currentReciterPage = 0;
+                                    guildState.playedOffset = 0;
+                                }
+                                if (typeof global.saveRuntimeStates === 'function') await global.saveRuntimeStates();
+                                await rebuildAndSendControlPanel(interaction, guildState, guildId);
+                                return;
+                            }
                             guildState.player.play({ track: radioTrack });
                         } else {
+                            guildState.savedRadioState = {
+                                currentRadioIndex: guildState.currentRadioIndex,
+                                currentRadioPage: guildState.currentRadioPage,
+                                playedOffset: currentPosition,
+                            };
                             guildState.playbackMode = 'surah';
-                            guildState.currentRadioUrl = null;
+                            const savedQuran = guildState.savedQuranState;
+                            const availableReciters = Object.keys(global.reciters || {});
+                            if (savedQuran) {
+                                guildState.currentSurah = savedQuran.currentSurah;
+                                guildState.currentReciter = savedQuran.currentReciter;
+                                guildState.currentPage = savedQuran.currentPage;
+                                guildState.currentReciterPage = savedQuran.currentReciterPage;
+                                guildState.playedOffset = savedQuran.playedOffset || 0;
+                            } else {
+                                guildState.currentSurah = 1;
+                                guildState.currentReciter = availableReciters?.[0] || 'reciter_1_ar';
+                                guildState.currentPage = 0;
+                                guildState.currentReciterPage = 0;
+                                guildState.playedOffset = 0;
+                            }
                             if (guildState.currentSurah < 1 || guildState.currentSurah > 114) {
                                 guildState.currentSurah = 1;
                             }
                             const surahTrack = await createSurahResource(guildState, guildState.currentSurah - 1);
                             if (!surahTrack) throw new Error('Failed to fetch surah track');
                             guildState.player.play({ track: surahTrack });
+                            if (guildState.playedOffset > 0 && guildState.player && !guildState.player.destroyed) {
+                                setTimeout(() => {
+                                    if (guildState.player && !guildState.player.destroyed) {
+                                        guildState.player.seek(guildState.playedOffset).catch(() => {});
+                                    }
+                                }, 500);
+                            }
                         }
 
                         guildState.isPaused = false;

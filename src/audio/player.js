@@ -49,6 +49,40 @@ async function queueNextTrack(player, state) {
         return false;
     } catch (error) {
         logger.error(`Failed to queue next track for guild ${player.guildId}: ${error.message}`);
+        if (state.playbackMode === 'radio' && global.quranRadios?.length) {
+            const currentIndex = state.currentRadioIndex || 0;
+            const nextIndex = (currentIndex + 1) % global.quranRadios.length;
+            state.currentRadioIndex = nextIndex;
+            state.currentRadioUrl = global.quranRadios[nextIndex]?.url;
+            state.currentRadioPage = Math.floor(nextIndex / 25);
+            try {
+                if (state.currentRadioUrl) {
+                    const retryTrack = await global.createRadioResource(state.currentRadioUrl);
+                    if (retryTrack) {
+                        await player.queue.add(retryTrack);
+                        voiceLogger.player(player.guildId, 'Pre-loaded next track (fallback radio)', {
+                            mode: 'radio',
+                            index: retryTrack.info?.identifier,
+                        });
+                        return true;
+                    }
+                }
+            } catch (retryErr) {
+                logger.warn(`Fallback radio ${nextIndex} also failed: ${retryErr.message}`);
+                state.playbackMode = 'surah';
+                if (!state.savedRadioState) {
+                    state.savedRadioState = { currentRadioIndex: currentIndex, currentRadioPage: Math.floor(currentIndex / 25) };
+                }
+                try {
+                    const surahIndex = state.currentSurah >= (global.surahNames?.length || 114) ? 0 : state.currentSurah;
+                    const surahTrack = await global.createSurahResource(state, surahIndex);
+                    if (surahTrack) {
+                        await player.queue.add(surahTrack);
+                        return true;
+                    }
+                } catch {}
+            }
+        }
         return false;
     }
 }

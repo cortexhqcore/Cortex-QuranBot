@@ -57,7 +57,7 @@ function getAudioStreamHeaders(customUserAgent) {
 
 function getApiHeaders() {
     return getBaseHeaders({
-        userAgent: default_user_agent,
+        userAgent: bot_user_agent,
         acceptType: 'json',
     });
 }

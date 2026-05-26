@@ -42,29 +42,46 @@ async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
             voiceLogger.recovery(guildId, 'Attempting voice reconnection');
             await initializeConnection(guildId, guildState, targetVoiceChannel, guild.voiceAdapterCreator);
             voiceLogger.recovery(guildId, 'Voice connection re-established');
-            guildState.playbackMode = 'radio';
-            guildState.controlMode = 'everyone';
+
             const storedState = persistentStateManager.getGuildState(guildId);
-            const savedRadioIndex = storedState?.currentRadioIndex;
-            const savedRadioUrl = storedState?.currentRadioUrl;
-            if (global.quranRadios && global.quranRadios.length > 0) {
-                if (savedRadioIndex !== undefined && savedRadioIndex >= 0 && savedRadioIndex < global.quranRadios.length && savedRadioUrl) {
-                    guildState.currentRadioIndex = savedRadioIndex;
-                    guildState.currentRadioUrl = savedRadioUrl;
-                } else {
+
+            guildState.playbackMode = storedState?.playbackMode || 'radio';
+            guildState.controlMode = storedState?.controlMode || 'everyone';
+            if (guildState.playbackMode === 'radio') {
+                const savedRadio = guildState.savedRadioState;
+                if (savedRadio && global.quranRadios?.[savedRadio.currentRadioIndex]) {
+                    guildState.currentRadioIndex = savedRadio.currentRadioIndex;
+                    guildState.currentRadioPage = savedRadio.currentRadioPage;
+                    guildState.currentRadioUrl = savedRadio.currentRadioUrl || global.quranRadios[savedRadio.currentRadioIndex].url;
+                    guildState.playedOffset = savedRadio.playedOffset || 0;
+                } else if (global.quranRadios && global.quranRadios.length > 0) {
                     guildState.currentRadioIndex = 0;
+                    guildState.currentRadioPage = 0;
                     guildState.currentRadioUrl = global.quranRadios[0].url;
+                    guildState.playedOffset = 0;
                 }
             } else {
-                logger.warn('No radio stations loaded, cannot play radio mode');
-                guildState.isPaused = true;
-                guildState.pauseReason = 'no_radios_loaded';
+                const savedQuran = guildState.savedQuranState;
+                const availableReciters = Object.keys(global.reciters || {});
+                if (savedQuran) {
+                    guildState.currentReciter = savedQuran.currentReciter;
+                    guildState.currentSurah = savedQuran.currentSurah;
+                    guildState.currentPage = savedQuran.currentPage;
+                    guildState.currentReciterPage = savedQuran.currentReciterPage;
+                    guildState.playedOffset = savedQuran.playedOffset || 0;
+                } else {
+                    guildState.currentReciter = availableReciters.length > 0 ? availableReciters[0] : 'reciter_1_ar';
+                    guildState.currentSurah = 1;
+                    guildState.currentPage = 0;
+                    guildState.currentReciterPage = 0;
+                    guildState.playedOffset = storedState?.playedOffset || 0;
+                }
             }
             guildState.isPaused = false;
             guildState.pauseReason = null;
             guildState.playbackStartTime = Date.now();
             guildState.lastActivity = Date.now();
-            guildState.playedOffset = 0;
+
             guildState.currentRadioPage = Math.floor(guildState.currentRadioIndex / 25);
             voiceLogger.recovery(guildId, 'Restored playback state', {
                 mode: guildState.playbackMode,
@@ -88,16 +105,13 @@ async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
                     guildState.isPaused = false;
                     guildState.pauseReason = null;
                     voiceLogger.recovery(guildId, 'Started playback after recovery');
-                    await new Promise((resolve) => setTimeout(resolve, 3000));
-                    if (guildState.player.state?.status === 'idle') {
-                        voiceLogger.recovery(guildId, 'Started playback after recovery');
-                        if (guildState.playbackMode === 'radio') {
-                            const retryResource = await global.createRadioResource(guildState.currentRadioUrl);
-                            if (retryResource) guildState.player.play({ track: retryResource });
-                        } else {
-                            const retryResource = await global.createSurahResource(guildState, guildState.currentSurah - 1);
-                            if (retryResource) guildState.player.play({ track: retryResource });
-                        }
+
+                    if (guildState.playbackMode === 'surah' && guildState.playedOffset > 0) {
+                        setTimeout(() => {
+                            if (guildState.player && !guildState.player.destroyed) {
+                                guildState.player.seek(guildState.playedOffset).catch(() => {});
+                            }
+                        }, 1500);
                     }
                 }
             } catch (playbackError) {

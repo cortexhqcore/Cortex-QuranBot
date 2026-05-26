@@ -9,6 +9,8 @@ const bootstrap = require('@bot/bootstrap');
 const os = require('os');
 const path = require('path');
 const fs = require('fs');
+const { getAllNodesInfo, parseNodeConfig } = require('@config/lavalinkConfig');
+const { getApiHeaders, TimeoutRequest } = require('@config/http');
 
 // Baseline for bandwidth delta calculations — set once at load
 let netBytesPrev = 0;
@@ -40,7 +42,7 @@ function getCpuLoadPct() {
     const elapsedMicros = Number(elapsedNanos) / 1000;
     const totalCpuMicros = (currentUsage.user + currentUsage.system) / 1000;
     if (elapsedMicros <= 0) {
-        return `0.00% / ${cores * 100}%`;
+        return `0.00%`;
     }
     const cpuPercent = ((totalCpuMicros / elapsedMicros) * 100).toFixed(2);
     // Removed ${cores * 100}%
@@ -132,28 +134,17 @@ async function LavalinkNode(host, port, secure, password, location, flag, id) {
 }
 
 function getLavalink() {
-    const nodes = [];
-    const nodeCount = parseInt(process.env.LAVALINK_NODES, 10) || 0;
-    for (let i = 1; i <= nodeCount; i++) {
-        let host = process.env[`LAVALINK_NODE_${i}_HOST`];
-        let port = parseInt(process.env[`LAVALINK_NODE_${i}_PORT`], 10);
-        let password = process.env[`LAVALINK_NODE_${i}_PASSWORD`];
-        let secure = process.env[`LAVALINK_NODE_${i}_SECURE`] === 'true';
-        let location = process.env[`LAVALINK_NODE_${i}_LOCATION`] || 'Unknown Location';
-        let flag = process.env[`LAVALINK_NODE_${i}_FLAG`] || '';
-        if (host && port && password) {
-            nodes.push({
-                id: i,
-                host,
-                port,
-                password,
-                secure,
-                location,
-                flag,
-            });
-        }
-    }
-    return nodes;
+    const nodes = getAllNodesInfo();
+    if (nodes.length === 0) return [];
+    return nodes.map((n) => ({
+        id: n.index,
+        host: n.host,
+        port: n.port,
+        password: n.password,
+        secure: n.secure,
+        location: n.location,
+        flag: n.flag,
+    }));
 }
 
 async function pingAll() {
@@ -175,12 +166,14 @@ function _formLavalink_(result) {
     const uptime = result.success && result.uptime != null ? formatTimeDuration(result.uptime, 'en') : 'N/A';
     // Display players count from Lavalink node stats (active voice connections)
     const players = result.success && result.players != null ? result.players : 0;
+    const nodeConfig = parseNodeConfig(result.id);
+    const maxPlayers = nodeConfig?.maxPlayers || 'N/A';
 
     return [
         `> ${flag} ${status} Node ${result.id}`,
         `**  Location: ${result.location}**`,
         `*  Ping: ${latency}`,
-        `*  Players: ${players}`,
+        `*  Players: ${players}/${maxPlayers}`,
         `*  Uptime: ${uptime}`,
         '',
     ].join('\n');

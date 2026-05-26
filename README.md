@@ -112,7 +112,7 @@ NODE_ENV=development pnpm run dev
 
 Cortex QuranBot is created and maintained by **mgv150** and is backed by the team at **Cortex HQ**.
 
-- **Official Support Server:** Join our Discord for assistance, feature suggestions, and status updates: [Discord Support](https://discord.gg/5qYXAucMpc)
+- **Official Support Server:** Join our Discord for assistance, feature suggestions, and status updates: [Discord Support](https://discord.gg/DwtAPzrbZS)
 - **Home Website:** Explore details and landing features: [Cortex Quran Portal](https://quran.cortexhq.net)
 - **GitHub Repository:** View source and open pull requests: [Cortex-QuranBot Repo](https://github.com/cortexhqcore/Cortex-QuranBot)
 

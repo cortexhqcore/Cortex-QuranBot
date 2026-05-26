@@ -41,6 +41,8 @@ const adminConfirmKickButton = require('@interactions/buttons/adminConfirmKick')
 const adminBotStatsButton = require('@interactions/buttons/adminBotStats');
 const adminSelectGuildMenu = require('@interactions/menus/adminSelectGuild');
 const adminSendMessageModal = require('@interactions/modals/adminSendMessageModal');
+const lavalinkNodesButton = require('@interactions/buttons/lavalinkNodes');
+const lavalinkNodesMenu = require('@interactions/menus/lavalinkNodes');
 const { updateControlPanel } = require('@ui/controlpanel');
 const { createControlEmbed } = require('@ui/embeds');
 const {
@@ -197,3 +199,5 @@ module.exports.incrementCommandStats = incrementCommandStats;
 module.exports.getStatisticsTracker = getStatisticsTracker;
 module.exports.moreFeaturesButton = moreFeaturesButton;
 module.exports.backToMainButton = backToMainButton;
+module.exports.lavalinkNodesButton = lavalinkNodesButton;
+module.exports.lavalinkNodesMenu = lavalinkNodesMenu;

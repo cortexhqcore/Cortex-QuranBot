@@ -1,8 +1,8 @@
 {
     "name": "cortex-quranbot",
-    "version": "2.8.30",
+    "version": "2.9.35",
     "description": "Cortex QuranBot is an advanced Discord bot for Quran recitation, Azkar, prayer times, and Islamic radio streaming with a control panel and stable voice.",
-    "lastUpdated": "2026-05-22",
+    "lastUpdated": "2026-05-26",
     "lastUpdateNote": "Last Update",
     "main": "src/bot/core.js",
     "packageManager": "pnpm@8.15.0",
@@ -19,7 +19,7 @@
         "url": "https://github.com/cortexhqcore/Cortex-QuranBot/issues"
     },
     "support": {
-        "discord": "https://discord.gg/5qYXAucMpc"
+        "discord": "https://discord.gg/DwtAPzrbZS"
     },
     "author": {
         "name": "mgv150 | Powered By Cortex HQ"
@@ -31,6 +31,11 @@
             "name": "mgv150 | Powered By Cortex HQ"
         }
     ],
+    "branding": {
+        "developedBy": "hub-mgv",
+        "poweredBy": "The team at Cortex HQ",
+        "type": "partnership"
+    },
     "features": [
         "Quran recitation",
         "Azkar system",
@@ -52,6 +57,7 @@
         "install:clean": "rd /s /q node_modules && del pnpm-lock.yaml && pnpm install",
         "rebuild": "pnpm clean && pnpm install",
         "clean": "rd /s /q node_modules",
+        "lint": "eslint .",
         "test": "jest"
     },
     "path_aliaser_": {
@@ -62,7 +68,6 @@
         "@auth": "./src/auth",
         "@audio": "./src/audio",
         "@logging": "./src/logging",
-        "@utils": "./src/utils",
         "@ui": "./src/ui",
         "@state": "./src/state",
         "@runtime": "./src/runtime",
@@ -103,6 +108,7 @@
         "@babel/core": "^7.29.0",
         "@babel/preset-env": "^7.29.5",
         "babel-jest": "^30.4.1",
+        "eslint": "^10.4.0",
         "jest": "^30.4.1",
         "knip": "^6.12.1",
         "libsodium-wrappers": "^0.8.4",

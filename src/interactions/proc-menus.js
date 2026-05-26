@@ -6,6 +6,7 @@ const MENU_HANDLERS = {
     select_surah: 'surahMenu',
     select_radio: 'radioMenu',
     admin_select_guild: 'adminSelectGuildMenu',
+    select_lavalink_node: 'lavalinkNodesMenu',
 };
 
 function isMenuInteraction(interaction) {

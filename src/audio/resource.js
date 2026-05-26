@@ -72,7 +72,7 @@ async function createSurahResource(state, index) {
                   bestNode || client.lavalink.nodeManager.leastUsedNodes('players').filter((n) => n.connected)[0];
             if (!searchNode) throw new Error('No connected Lavalink nodes available');
 
-            const result = await searchNode.search({ query: url, source: 'http' }, client.user);
+            const result = await searchNode.search({ query: url, source: 'http' }, null);
             if (!result || !result.tracks || result.tracks.length === 0) {
                 throw new Error('Track not found on Lavalink');
             }
@@ -123,7 +123,7 @@ async function createRadioResource(url) {
     if (!nodes.length) throw new Error('No connected Lavalink nodes available');
 
     const searchNode = nodes[0];
-    const result = await searchNode.search({ query: url, source: 'http' }, client.user);
+    const result = await searchNode.search({ query: url, source: 'http' }, null);
     if (!result || !result.tracks || result.tracks.length === 0) throw new Error('Radio stream invalid');
     return result.tracks[0];
 }

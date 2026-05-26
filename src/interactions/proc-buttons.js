@@ -23,6 +23,7 @@ const ROUTE_GROUPS = {
     adminResponseModalButton: ['admin_response_modal'],
     moreFeaturesButton: ['more_features'],
     backToMainButton: ['back_to_main'],
+    lavalinkNodesButton: ['lavalink_status'],
 };
 
 const PREFIX_ROUTES = {
