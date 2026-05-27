@@ -9,7 +9,7 @@ const link = {
     website: 'https://cortex-quranbot.pages.dev/',
     github: 'https://github.com/cortexhqcore/Cortex-QuranBot',
     support: 'https://discord.gg/DwtAPzrbZS',
-    invite: 'https://discord.com/oauth2/authorize?client_id=1505646575962292314&permissions=8&integration_type=0&scope=bot+applications.commands',
+    invite: 'https://discord.com/oauth2/authorize?client_id=1436018817988825138&permissions=8&integration_type=0&scope=bot+applications.commands',
     privacy: 'https://cortex-quranbot.pages.dev/site/privacy',
     terms: 'https://cortex-quranbot.pages.dev/site/terms',
     topgg: 'https://top.gg/bot/1436018817988825138',
