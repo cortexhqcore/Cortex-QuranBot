@@ -25,6 +25,11 @@ const config = {
             screenRotation: '<:screenRotation:1508254182208180234>',
             exclamation: '<:exclamation:1508254743955509388>',
             barChart: '<:barChart:1508258436939382857>',
+            link: '<:link:1508985291828891678>',
+            chat: '<:chat:1508987141252841713>',
+            code: '<:chat:1508987835083128862>',
+            policy: '<:chat:1508988874171617421>',
+            support: '<:support:1507977182817816678>',
         },
         gif: {
             loading: '<a:loading:1507429386075504792>',
@@ -55,6 +60,11 @@ const config = {
             screenRotation: '<:screenRotation:1508254200713314435>',
             exclamation: '<:exclamation:1508254767401402442>',
             barChart: '<:barChart:1508258455427878912>',
+            link: '<:link:1508985265006317689>',
+            chat: '<:chat:1508987156125843647>',
+            code: '<:chat:1508987820960649309>',
+            policy: '<:chat:1508988860430815473>',
+            support: '<:support:1507977168490074173>',
         },
         gif: {
             loading: '<a:loading:1507426304708968588>',

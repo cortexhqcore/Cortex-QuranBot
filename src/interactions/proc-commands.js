@@ -3,7 +3,7 @@ require('pathlra-aliaser')();
 const coreLoader = require('@bot/bootstrap');
 const { getErrorType } = require('@interactions/interactionErrors');
 // Categorize commands by access level and execution context
-const public_commands = ['مصادر', 'مواقيت_الصلاة', 'سرعة', 'دليل', 'تحديثات'];
+const public_commands = ['مصادر', 'مواقيت_الصلاة', 'سرعة', 'دليل', 'تحديثات', 'مساعدة'];
 // const admin_commands = ['خروج', 'دخول', 'دخول_قناة', 'إعداد'];
 const admin_commands = ['خروج', 'دخول', 'إعداد'];
 const control_commands = ['تحكم'];
@@ -126,6 +126,8 @@ async function executeCommand(interaction, commandName) {
             return await coreLoader.sourcesCommand.execute(interaction);
         case 'تحديثات':
             return await coreLoader.changelogCommand.execute(interaction);
+        case 'مساعدة':
+            return await coreLoader.helpCommand.execute(interaction);
         default:
             if (!interaction.replied && !interaction.deferred) {
                 await interaction.editReply({

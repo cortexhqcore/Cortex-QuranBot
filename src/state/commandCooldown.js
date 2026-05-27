@@ -17,6 +17,7 @@ const COMMAND_COOLDOWNS = {
     setup: { duration: 60000, type: 'server' },
     sources: { duration: 10000, type: 'user' },
     changelog: { duration: 15000, type: 'user' },
+    help: { duration: 3000, type: 'user' },
 };
 
 const CMD_MAP = {
@@ -31,6 +32,7 @@ const CMD_MAP = {
     إعداد: 'setup',
     مصادر: 'sources',
     تحديثات: 'changelog',
+    مساعدة: 'help',
 };
 
 function getCmdKey(name) {
