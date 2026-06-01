@@ -28,7 +28,6 @@ bot-lavalink.js
 test-archiver.js
 knip.json
 application.yml
-QuranBot.code-workspace
 
 .vscode/*
 !.vscode/extensions.json
@@ -43,6 +42,7 @@ storage
 *.zip
 *.7z
 *.rar
+*.code-workspace
 
 ui-*.css
 
