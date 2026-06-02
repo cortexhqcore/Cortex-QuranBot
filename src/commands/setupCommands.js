@@ -235,9 +235,7 @@ async function setupQuranCategory(guild, ix, opts = {}) {
             content:
                 'تم ' +
                 (isReSetup ? 'إعادة ' : '') +
-                'إعداد فئة القرآن بواسطة <@' +
-                ix.user.id +
-                '> استخدم اللوحة أدناه للتحكم الأدمنز تحكم كامل دائماً',
+               'إعداد فئة القرآن بواسطة أحد مسؤولي هذا الخادم. استخدم اللوحة أدناه.',
             embeds: [embed],
             components: rows,
         });
