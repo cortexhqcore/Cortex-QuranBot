@@ -22,13 +22,19 @@
         "discord": "https://discord.gg/DwtAPzrbZS"
     },
     "author": {
-        "name": "mgv150 | Powered By Cortex HQ"
+        "name": "hub-mgv"
     },
     "homepage": "https://quran.cortexhq.net",
     "license": "MIT",
     "contributors": [
         {
-            "name": "mgv150 | Powered By Cortex HQ"
+            "name": "hub-mgv"
+        },
+        {
+            "name": "SEJED-DEV"
+        },
+        {
+            "name": "cortexhqcore"
         }
     ],
     "branding": {
