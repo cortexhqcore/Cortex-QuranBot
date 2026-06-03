@@ -65,21 +65,28 @@ module.exports = {
                 //        joinResult,
                 //    });
                 //    throw new Error('Connection initialization failed');
-                try {
-                    const joinResult = await initializeConnection(guildId, guildState, voiceChannel, interaction.guild.voiceAdapterCreator);
-                    if (!joinResult.success) {
-                        voiceLogger.error(guildId, 'Connection initialization failed', null, {
-                            joinResult,
-                        });
-                        throw new Error('Connection initialization failed');
+                const botMember = interaction.guild.members.me;
+                const isAlreadyInChannel = botMember?.voice?.channelId === targetChannelId;
+
+                if (!isAlreadyInChannel) {
+                    try {
+                        const joinResult = await initializeConnection(guildId, guildState, voiceChannel, interaction.guild.voiceAdapterCreator);
+                        if (!joinResult.success) {
+                            voiceLogger.error(guildId, 'Connection initialization failed', null, {
+                                joinResult,
+                            });
+                            throw new Error('Connection initialization failed');
+                        }
+                    } catch (err) {
+                        if (err.message && err.message.includes('maximum player capacity')) {
+                            logger.warn('Guild ' + guildId + ' Join failed: Lavalink nodes at max capacity');
+                            await safeError(interaction, 'جميع الخوادم الصوتية ممتلئة حالياً، يرجى المحاولة لاحقاً');
+                            return;
+                        }
+                        throw err;
                     }
-                } catch (err) {
-                    if (err.message && err.message.includes('maximum player capacity')) {
-                        logger.warn('Guild ' + guildId + ' Join failed: Lavalink nodes at max capacity');
-                        await safeError(interaction, 'جميع الخوادم الصوتية ممتلئة حالياً، يرجى المحاولة لاحقاً');
-                        return;
-                    }
-                    throw err;
+                } else {
+                    voiceLogger.connection(guildId, 'Bot already in target channel');
                 }
                 // guildState.playbackMode = guildState.playbackMode || 'surah';
                 // const availableReciters = Object.keys(global.reciters || {});

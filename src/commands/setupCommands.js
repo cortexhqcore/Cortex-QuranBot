@@ -58,7 +58,10 @@ async function setupQuranCategory(guild, ix, opts = {}) {
         } catch (e) {
             logger.info('Unsubscribe skip in ' + gid, e);
         }
+        st.connection = null;
     }
+    st.player = null;
+    st.voiceChannelId = null;
     if (st.azkarTimer) {
         clearInterval(st.azkarTimer);
         st.azkarTimer = null;
