@@ -70,7 +70,12 @@ module.exports = {
 
                 if (!isAlreadyInChannel) {
                     try {
-                        const joinResult = await initializeConnection(guildId, guildState, voiceChannel, interaction.guild.voiceAdapterCreator);
+                        const joinResult = await initializeConnection(
+                            guildId,
+                            guildState,
+                            voiceChannel,
+                            interaction.guild.voiceAdapterCreator,
+                        );
                         if (!joinResult.success) {
                             voiceLogger.error(guildId, 'Connection initialization failed', null, {
                                 joinResult,
