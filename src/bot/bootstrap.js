@@ -44,6 +44,7 @@ const adminSelectGuildMenu = require('@interactions/menus/adminSelectGuild');
 const adminSendMessageModal = require('@interactions/modals/adminSendMessageModal');
 const lavalinkNodesButton = require('@interactions/buttons/lavalinkNodes');
 const lavalinkNodesMenu = require('@interactions/menus/lavalinkNodes');
+// const adminWarnSetupButton = require('@interactions/buttons/adminWarnSetup');
 const { updateControlPanel } = require('@ui/controlpanel');
 const { createControlEmbed } = require('@ui/embeds');
 const {
@@ -203,3 +204,4 @@ module.exports.moreFeaturesButton = moreFeaturesButton;
 module.exports.backToMainButton = backToMainButton;
 module.exports.lavalinkNodesButton = lavalinkNodesButton;
 module.exports.lavalinkNodesMenu = lavalinkNodesMenu;
+// module.exports.adminWarnSetupButton = adminWarnSetupButton;

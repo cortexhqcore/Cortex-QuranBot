@@ -2,15 +2,13 @@ require('pathlra-aliaser')();
 
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ChannelType } = require('discord.js');
 const logger = require('@logging/logger');
+const { isSpecialUser } = require('@auth/auth-manager');
 
 module.exports = {
     customId: 'admin_select_guild',
 
     async execute(interaction) {
-        const requesterId = interaction.user.id;
-        const hasDeveloperAccess = global.SPE_USER_IDS.includes(requesterId);
-
-        if (!hasDeveloperAccess) {
+        if (!isSpecialUser(interaction.user.id)) {
             return interaction.reply({
                 content: 'This feature is available for the developer only',
                 flags: 64,
@@ -89,10 +87,7 @@ module.exports = {
             );
 
         const managementButtons = new ActionRowBuilder().addComponents(
-            //new ButtonBuilder()
-            //   .setCustomId(`admin_send_msg_${targetGuild.id}`)
-            //   .setLabel('Send Message')
-            //   .setStyle(ButtonStyle.Secondary),
+            // new ButtonBuilder().setCustomId(`admin_warn_setup_${targetGuild.id}`).setLabel('Warn Setup').setStyle(ButtonStyle.Secondary),
             new ButtonBuilder().setCustomId(`admin_kick_bot_${targetGuild.id}`).setLabel('Kick Bot').setStyle(ButtonStyle.Secondary),
             new ButtonBuilder().setCustomId('admin_back_to_servers').setLabel('Back to List').setStyle(ButtonStyle.Secondary),
             new ButtonBuilder().setCustomId('admin_back_to_panel').setLabel('Control Panel').setStyle(ButtonStyle.Secondary),

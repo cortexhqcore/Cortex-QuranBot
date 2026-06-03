@@ -232,10 +232,7 @@ async function setupQuranCategory(guild, ix, opts = {}) {
         }
         rows.push(createButtonRow(st), ...createNavigationRow(st, gid));
         const msg = await text.send({
-            content:
-                'تم ' +
-                (isReSetup ? 'إعادة ' : '') +
-               'إعداد فئة القرآن بواسطة أحد مسؤولي هذا الخادم. استخدم اللوحة أدناه.',
+            content: 'تم ' + (isReSetup ? 'إعادة ' : '') + 'إعداد فئة القرآن بواسطة أحد مسؤولي هذا الخادم. استخدم اللوحة أدناه.',
             embeds: [embed],
             components: rows,
         });

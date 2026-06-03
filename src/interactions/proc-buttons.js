@@ -29,6 +29,7 @@ const ROUTE_GROUPS = {
 const PREFIX_ROUTES = {
     admin_kick_bot_: 'adminKickBotButton',
     admin_confirm_kick_: 'adminConfirmKickButton',
+    // admin_warn_setup_: 'adminWarnSetupButton',
 };
 
 function getButtonHandler(customId) {
