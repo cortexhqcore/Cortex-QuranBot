@@ -17,14 +17,16 @@ async function validateAndFixSetupData(guild, setupData) {
             adhkarChannel = await guild.channels.fetch(setupData.azkarChannelId).catch(() => null);
         }
         if (!adhkarChannel || !adhkarChannel.isTextBased()) {
-            const fallbackChannel = guild.channels.cache.find((c) => c.name === '🌙︱الأذكار' && c.type === ChannelType.GuildText);
+            const fallbackChannel =
+                guild.channels.cache.find((c) => c.name === '🌙︱الأذكار' && c.type === ChannelType.GuildText) ||
+                guild.channels.cache.find((c) => c.name.includes('أذكار') && c.type === ChannelType.GuildText);
             if (fallbackChannel) {
                 correctedData.azkarChannelId = fallbackChannel.id;
                 requiresUpdate = true;
                 logger.info('Guild ' + guildId + ' Fixed Azkar Channel ID To ' + fallbackChannel.id);
             } else {
-                correctedData.azkarChannelId = null;
-                requiresUpdate = true;
+                //  correctedData.azkarChannelId = null;
+                //  requiresUpdate = true;
                 logger.warn('Guild ' + guildId + ' Azkar Channel Not Found Cleared ID');
             }
         }

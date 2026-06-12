@@ -41,11 +41,11 @@ botClient.on('voiceStateUpdate', async (previousState, currentState) => {
         guildState.isPaused = true;
         guildState.pauseReason = 'external_disconnect';
         // Clear any active adhkar timer to prevent orphaned intervals
-        if (guildState.azkarTimer) {
-            clearInterval(guildState.azkarTimer);
-            guildState.azkarTimer = null;
-            voiceLogger.connection(guildId, 'Cleared azkar timer after external disconnect');
-        }
+        //   if (guildState.azkarTimer) {
+        //       clearInterval(guildState.azkarTimer);
+        //       guildState.azkarTimer = null;
+        //       voiceLogger.connection(guildId, 'Cleared azkar timer after external disconnect');
+        //   }
         // const storedState = persistentState.getGuildState(guildId);
         // if (storedState) {
         // storedState.connectionStatus = false;

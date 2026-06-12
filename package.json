@@ -1,8 +1,8 @@
 {
     "name": "cortex-quranbot",
-    "version": "2.9.35",
+    "version": "2.9.36",
     "description": "Cortex QuranBot is an advanced Discord bot for Quran recitation, Azkar, prayer times, and Islamic radio streaming with a control panel and stable voice.",
-    "lastUpdated": "2026-05-26",
+    "lastUpdated": "2026-06-12",
     "lastUpdateNote": "Last Update",
     "main": "src/bot/core.js",
     "packageManager": "pnpm@8.15.0",

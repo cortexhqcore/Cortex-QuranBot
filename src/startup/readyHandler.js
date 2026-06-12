@@ -68,7 +68,7 @@ loadData()
                     const fixedSetupData = await validateAndFixSetupData(guild, setupData);
                     await recoverAzkarTimers(guild, fixedSetupData, guildId);
                     await recoverVoiceConnection(guild, fixedSetupData, guildId);
-                }, i * 500);
+                }, i * 1000);
             }
 
             //const staleGuildIds = allSetupGuildIds.filter((gid) => !actualBotGuilds.has(gid));

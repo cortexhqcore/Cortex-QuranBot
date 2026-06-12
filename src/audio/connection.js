@@ -53,13 +53,13 @@ async function teardownConnection(guildId, guildState) {
         voiceLogger.connection(guildId, 'Teardown skipped - no guild state');
         return;
     }
-    // Stop adhkar timer to prevent orphaned intervals after disconnect
-    if (guildState.azkarTimer) {
-        clearInterval(guildState.azkarTimer);
-        guildState.azkarTimer = null;
-        guildState.azkarChannelId = null;
-        voiceLogger.connection(guildId, 'Cleared azkar timer during teardown');
-    }
+    //  Stop adhkar timer to prevent orphaned intervals after disconnect
+    //  if (guildState.azkarTimer) {
+    //      clearInterval(guildState.azkarTimer);
+    //      guildState.azkarTimer = null;
+    //      guildState.azkarChannelId = null;
+    //      voiceLogger.connection(guildId, 'Cleared azkar timer during teardown');
+    //  }
 
     if (guildState.player && !guildState.player.destroyed) {
         try {

@@ -39,8 +39,8 @@ async function recoverAzkarTimers(guild, fixedSetupData, guildId) {
             const guildState = getGuildState(guildId);
             if (guildState) {
                 const storedState = persistentStateManager.getGuildState(guildId);
-                guildState.azkarChannelId = null;
-                storedState.azkarChannelId = null;
+                guildState.azkarChannelId = fixedSetupData.azkarChannelId;
+                storedState.azkarChannelId = fixedSetupData.azkarChannelId;
             }
         }
     }
