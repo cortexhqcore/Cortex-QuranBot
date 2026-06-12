@@ -89,23 +89,50 @@ function getTotalListeners() {
     return totalListeners;
 }
 
+function AllUsers() {
+    let totalUsers = 0;
+    client.guilds.cache.forEach((guild) => {
+        totalUsers += guild.memberCount || 0;
+    });
+
+    return totalUsers;
+}
+
+function allAzkarRooms() {
+    let count = 0;
+    if (global.setupGuilds) {
+        for (const data of Object.values(global.setupGuilds)) {
+            if (data?.azkarChannelId) count++;
+        }
+    }
+    return count;
+}
+
 // rotate status every 30s: prayer reminder, stats, github
 async function updateStatus() {
     const hour = getCairoHour();
     const guildCount = client.guilds.cache.size;
     const voiceCount = getConnectedVoiceCount();
     const listenerCount = getTotalListeners();
+    const totalUsers = AllUsers();
+    const azkarRooms = allAzkarRooms();
+
     let status;
     let activity;
 
-    if (activityIndex % 3 === 0) {
+    if (activityIndex % 4 === 0) {
         activity = {
             name: 'صلِّ على النبي ﷺ',
             type: ActivityType.Watching,
         };
-    } else if (activityIndex % 3 === 1) {
+    } else if (activityIndex % 4 === 1) {
         activity = {
-            name: `${guildCount} servers | ${voiceCount} Voice | ${listenerCount} Listeners`,
+            name: `${guildCount} Servers | ${totalUsers} Users`,
+            type: ActivityType.Watching,
+        };
+    } else if (activityIndex % 4 === 2) {
+        activity = {
+            name: `${voiceCount} Voice | ${listenerCount} Listeners | ${azkarRooms} Azkar chnl`,
             type: ActivityType.Watching,
         };
     } else {
