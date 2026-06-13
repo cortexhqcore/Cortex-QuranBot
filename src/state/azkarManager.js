@@ -241,11 +241,8 @@ async function handleAzkarDeliveryFailure(result) {
     }
 }
 
-
-
 const azkarSendQueue = [];
 let isProcessingQueue = false;
-
 
 async function Azkarqueue() {
     if (isProcessingQueue || azkarSendQueue.length === 0) return;
@@ -265,12 +262,10 @@ async function Azkarqueue() {
     isProcessingQueue = false;
 }
 
-
 function queueAzkarSend(cid, gid, maxRetry = 5, forceImg = false) {
     azkarSendQueue.push({ cid, gid, maxRetry, forceImg });
     Azkarqueue();
 }
-
 
 async function executeAzkarSend(cid, gid, maxRetry = azkar_max_retry_attempts, forceImg = false) {
     let ch = global.client.channels.cache.get(cid);
@@ -324,7 +319,6 @@ async function executeAzkarSend(cid, gid, maxRetry = azkar_max_retry_attempts, f
 
     return { success: false, reason: 'All send methods failed' };
 }
-
 
 function startAzkarTimerForGuild(gid, cid, isFirst = true) {
     const { getGuildState } = require('../state/GuildStateManager');
