@@ -37,8 +37,9 @@ async function safeReply(interaction, options, ctx = 'unknown') {
     const hasComponentsV2 = sendOptions.components?.some((c) => c.type === 17 || c.type === 10 || c.type === 14 || c.type === 12);
     const hasContent = !!sendOptions.content;
     const hasEmbeds = !!sendOptions.embeds?.length;
+    const hasFiles = !!sendOptions.files?.length;
 
-    if (hasContent && !hasComponentsV2 && !hasEmbeds) {
+    if (hasContent && !hasComponentsV2 && !hasEmbeds && !hasFiles) {
         sendOptions.components = wrapContentInV2(sendOptions.content);
         delete sendOptions.content;
     }
