@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { loadGuildStatesFromFirebase, saveGuildStatesToFirebase } = require('@database/firebase');
 

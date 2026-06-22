@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { interactionCache, max_interaction_cache_size, interaction_cache_ttl_ms } = require('@interactions/interactionCache');
 const coreLoader = require('@bot/bootstrap');
 

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { wrapInteraction, safeError } = require('@interactions/flow/deferReply');
 const { checkAuthorization, resolveGuildState } = require('@auth/guard');
 const { rebuildAndSendControlPanel } = require('@ui/controlPanelBuilder');
@@ -51,6 +49,8 @@ module.exports = {
                         guildState.pauseReason = 'manual';
                         guildState.lastActivity = Date.now();
                         if (typeof global.saveRuntimeStates === 'function') global.saveRuntimeStates();
+                        const { updateVoiceStatus } = require('@audio/voiceStatus');
+                        await updateVoiceStatus(guildId, guildState, global.client);
                     }
                     await rebuildAndSendControlPanel(interaction, guildState, guildId);
                     return;
@@ -63,6 +63,8 @@ module.exports = {
                         guildState.pauseReason = null;
                         guildState.lastActivity = Date.now();
                         if (typeof global.saveRuntimeStates === 'function') global.saveRuntimeStates();
+                        const { updateVoiceStatus } = require('@audio/voiceStatus');
+                        await updateVoiceStatus(guildId, guildState, global.client);
                     }
                     await rebuildAndSendControlPanel(interaction, guildState, guildId);
                     return;

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 // const { createAudioPlayer } = require('@discordjs/voice');
 const logger = require('@logging/logger');
 let _store, _voice, _player, _events, _auth, _cleanup, _persistent;

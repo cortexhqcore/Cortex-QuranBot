@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const logger = require('@logging/logger');
 const { calculatePagination, createPaginationRow } = require('@ui/pagination');
@@ -18,7 +16,7 @@ module.exports = {
         const { isSpecialUser } = require('@auth/auth-manager');
         if (!isSpecialUser(requesterId)) {
             return interaction.reply({
-                content: 'This feature is available for the developer only',
+                content: 'This feature is available for the developers only',
                 flags: 64,
             });
         }
@@ -54,7 +52,7 @@ module.exports = {
                 const paginationData = calculatePagination(activeVoiceConnections.length, pageIndex, ITEMS_PER_PAGE);
                 const visibleChannels = activeVoiceConnections.slice(paginationData.startIndex, paginationData.endIndex);
                 const voiceEmbed = new EmbedBuilder()
-                    .setColor(0x1e1f22)
+                    .setColor(0xfefdfe)
                     .setTitle('Active Voice Channels')
                     .setDescription(`**Total Voice Channels: ${activeVoiceConnections.length}**`);
                 for (const conn of visibleChannels) {

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { ChannelType, PermissionsBitField } = require('discord.js');
 const logger = require('@logging/logger');
 const { channel_names, permissions_config } = require('@config/constants');

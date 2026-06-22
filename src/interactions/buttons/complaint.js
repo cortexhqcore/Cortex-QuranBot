@@ -1,7 +1,4 @@
-require('pathlra-aliaser')();
-
 const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-// Replaced inline global.SPE_USER_IDS check with centralized isSpecialUser helper
 const { isSpecialUser } = require('@auth/auth-manager');
 const { createStandardEmbed } = require('@ui/embedFactory');
 

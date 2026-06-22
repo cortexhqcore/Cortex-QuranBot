@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { fetchAdhkarData } = require('@data-loader-http-core_data');
 const { validateAdhkarData } = require('@data-loader-validator-core_data');

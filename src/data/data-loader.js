@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { initializeGlobalLanguages } = require('@data-loader-config-core_data');
 const { loadSurahNames } = require('@data-loader-surah-core_data');

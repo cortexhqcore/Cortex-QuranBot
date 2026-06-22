@@ -1,6 +1,3 @@
-// Advice: Do not modify this file and also + core/audio/player.js
-require('pathlra-aliaser')();
-
 // const { joinVoiceChannel } = require('@discordjs/voice');
 const persistentState = require('../state/PersistentStateManager');
 const logger = require('@logging/logger');
@@ -16,14 +13,14 @@ let lavalinkrequest = time_constants.request_timeout_ms_30s;
 let connection_time = 15000; // Later with @configConstants
 
 function canJoinVoice() {
-    if (!global.max_voice_connections_per_shard) {
-        voiceLogger.debug('Voice capacity check: no limit configured, allowing join');
-        return true;
-    }
+    //  if (!global.max_voice_connections_per_shard) {
+    //      voiceLogger.debug('Voice capacity check: no limit configured, allowing join');
+    //      return true;
+    //  }
     const current = global.activeVoiceConnections || 0;
-    const canJoin = current < global.max_voice_connections_per_shard;
-    voiceLogger.debug(`Voice capacity check: ${current}/${global.max_voice_connections_per_shard} - canJoin: ${canJoin}`);
-    return canJoin;
+    //  const canJoin = current < global.max_voice_connections_per_shard;
+    //  voiceLogger.debug(`Voice capacity check: ${current}/${global.max_voice_connections_per_shard} - canJoin: ${canJoin}`);
+    return true;
 }
 
 function incrementVoiceConnections() {
@@ -84,9 +81,15 @@ async function teardownConnection(guildId, guildState) {
             });
         }
     }
+    const channelIdToClear = guildState.channelId;
     guildState.player = null; // 1
     guildState.channelId = null; // 2
     guildState.connection = null; // 3
+    if (channelIdToClear) {
+        const { setVoiceChannelStatus } = require('./voiceStatus');
+        const client = require('@startup/botSetup').client;
+        setVoiceChannelStatus(channelIdToClear, '', client);
+    }
     voiceLogger.connection(guildId, 'Teardown complete - state cleared');
 }
 
@@ -195,6 +198,8 @@ async function initializeConnection(guildId, guildState, targetChannel, adapterC
         incrementVoiceConnections();
         logger.info(`Guild ${guildId} Voice Connection Established`);
         voiceLogger.connection(guildId, 'Player connected to channel and counters updated');
+        const { updateVoiceStatus } = require('./voiceStatus');
+        updateVoiceStatus(guildId, guildState, client);
         return { success: true, connection: guildState.player };
     } catch (err) {
         voiceLogger.error(guildId, 'Failed Lavalink connection', err, {

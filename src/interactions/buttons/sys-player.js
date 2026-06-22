@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { resetPlayer, stopPlayer } = require('@audio');
 const logger = require('@logging/logger');
 

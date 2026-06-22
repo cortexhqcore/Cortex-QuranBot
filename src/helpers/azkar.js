@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 // remove annotation chars from dhikr text
 function clean_Dhikr(text) {
     if (!text || typeof text != 'string') return text;

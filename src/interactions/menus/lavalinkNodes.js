@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { wrapInteraction } = require('@interactions/flow/deferReply');
 const { resolveGuildState } = require('@auth/guard');
 const { createStandardEmbed } = require('@ui/embedFactory');
@@ -111,14 +109,22 @@ module.exports = {
                 }
                 resultText += `\nسيتم توجيه جميع اتصالات الصوت الجديدة إلى هذه العقدة لضمان أفضل أداء.`;
 
-                const embed = createStandardEmbed()
-                    .setTitle(migrationFailed ? 'فشل تغيير العقدة الصوتية' : 'تم تغيير العقدة الصوتية بنجاح')
-                    .setDescription(resultText)
-                    .setTimestamp();
+                const components = [
+                    {
+                        type: 17,
+                        accent_color: 0xfefdfe,
+                        components: [
+                            {
+                                type: 10,
+                                content: `### ${migrationFailed ? `فشل تغيير العقدة الصوتية` : `تم تغيير العقدة الصوتية بنجاح`}\n${resultText}`,
+                            },
+                        ],
+                    },
+                ];
 
                 await interaction.followUp({
-                    embeds: [embed],
-                    flags: 64,
+                    components,
+                    flags: 32832,
                 });
             },
             { context: { label: 'select_lavalink_node_menu', logger } },

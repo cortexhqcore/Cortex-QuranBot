@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const {
     EmbedBuilder,
     ButtonBuilder,
@@ -16,7 +14,7 @@ module.exports = {
     async execute(interaction) {
         if (!global.SPE_USER_IDS.includes(interaction.user.id)) {
             return interaction.reply({
-                content: 'This feature is available for the developer only',
+                content: 'This feature is available for the developers only',
                 flags: 64,
             });
         }
@@ -72,7 +70,7 @@ module.exports = {
             });
 
             const serverListEmbed = new EmbedBuilder()
-                .setColor(0x1e1f22)
+                .setColor(0xfefdfe)
                 .setTitle('Bot Server List')
                 .setDescription(
                     `**Total Servers: ${serverList.length}**\nSelect a server from the list below to view details and manage it`,

@@ -1,5 +1,3 @@
-require('dotenv').config();
-require('pathlra-aliaser')();
 const pathlra = require('path');
 const { logging_config } = require('@config/constants');
 const {

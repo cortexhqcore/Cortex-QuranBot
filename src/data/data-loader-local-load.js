@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const fs = require('fs').promises;
 const path = require('path');
 const logger = require('@logging/logger');

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { channel_names } = require('@config/constants');
 
 const player_config = {

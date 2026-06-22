@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { PermissionsBitField } = require('discord.js');
 const { safeError } = require('@interactions/flow/deferReply');
 const logger = require('@logging/logger');
@@ -93,8 +91,9 @@ function isPublicFeature(interaction) {
     const { customId } = interaction;
 
     // azkar buttons
-    if (interaction.isButton() && customId.startsWith('play_azkar_')) return true;
+    if (interaction.isButton() && (customId.startsWith('play_azkar_') || customId === 'azkar_get_role')) return true;
 
+    if (customId.startsWith('search_') || customId.startsWith('tafseer_') || customId.startsWith('tasbih_')) return true;
     // prayer buttons
     if (interaction.isButton()) {
         if (

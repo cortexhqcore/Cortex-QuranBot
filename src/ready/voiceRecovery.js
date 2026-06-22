@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const voiceLogger = require('@logging/voiceLogger');
 const { ChannelType } = require('discord.js');
@@ -14,8 +12,13 @@ async function recoverVoiceConnection(guild, fixedSetupData, guildId) {
         hasSetupData: !!fixedSetupData,
     });
     if (!fixedSetupData || !fixedSetupData.voiceChannelId) {
-        voiceLogger.recovery(guildId, 'Recovery skipped no voice channel ID in setup');
-        return;
+        const storedState = persistentStateManager.getGuildState(guildId);
+        if (storedState?.voiceChannelId) {
+            fixedSetupData = { ...(fixedSetupData || {}), voiceChannelId: storedState.voiceChannelId };
+        } else {
+            voiceLogger.recovery(guildId, 'Recovery skipped no voice channel ID in setup');
+            return;
+        }
     }
     let targetVoiceChannel = null;
     try {

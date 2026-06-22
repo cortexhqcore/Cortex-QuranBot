@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { loadControlIdsFromFirebase, saveControlIdsToFirebase } = require('@database/firebase');
 

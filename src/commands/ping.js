@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { EmbedBuilder } = require('discord.js');
 const fetch = require('node-fetch').default;
 const logger = require('@logging/logger');
@@ -11,6 +9,7 @@ const path = require('path');
 const fs = require('fs');
 const { getAllNodesInfo, parseNodeConfig } = require('@config/lavalinkConfig');
 const { getApiHeaders, TimeoutRequest } = require('@config/http');
+const redis = require('@database/redis');
 
 // Baseline for bandwidth delta calculations — set once at load
 let netBytesPrev = 0;
@@ -96,6 +95,18 @@ function sanitizeError(message) {
     sanitized = sanitized.replace(/\[[0-9a-f:]+\]/gi, '[REDACTED]');
     sanitized = sanitized.replace(/\b[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/gi, '[REDACTED]');
     return sanitized;
+}
+
+async function pingRedis() {
+    if (!redis.isRedisReady) return { success: false, latency: null };
+    try {
+        const client = redis.getRedisClient();
+        const start = Date.now();
+        await client.ping();
+        return { success: true, latency: Date.now() - start };
+    } catch {
+        return { success: false, latency: null };
+    }
 }
 
 async function LavalinkNode(host, port, secure, password, location, flag, id) {
@@ -208,12 +219,20 @@ module.exports = {
         const voiceCxns = fbStats?.voiceConnections ?? countVoiceCxns();
         const cpuUsage = getCpuLoadPct();
         const lavalink = await pingAll();
+        const Redisping = await pingRedis();
+        const botFlag = process.env.BOT_FLAG;
+        const redisFlag = process.env.REDIS_FLAG;
 
         const status = new EmbedBuilder()
-            .setColor(0x1e1f22)
+            .setColor(0xfefdfe)
             .setTitle('Bot Status')
             .addFields(
-                { name: 'Bot Latency', value: `${botLat} ms`, inline: true },
+                { name: botFlag ? `${botFlag} Bot Latency` : 'Bot Latency', value: `${botLat} ms`, inline: true },
+                {
+                    name: redisFlag ? `${redisFlag} Redis Ping` : 'Redis Ping',
+                    value: Redisping.success ? `${Redisping.latency} ms` : 'Offline',
+                    inline: true,
+                },
                 { name: 'WebSocket Ping', value: `${wsLat} ms`, inline: true },
                 { name: 'Discord API', value: `${apiLat} ms`, inline: true },
                 { name: 'Uptime', value: uptimeFmt, inline: true },
@@ -232,14 +251,16 @@ module.exports = {
             );
 
         if (lavalink.length > 0) {
-            let pingLines_n = lavalink.map(_formLavalink_).join('\n');
+            const lavalinkDisplay = lavalink.slice(0, 5);
+            let pingLines_n = lavalinkDisplay.map(_formLavalink_).join('\n');
+
             status.addFields({
-                name: 'Servers Lavalink',
+                name: `Servers Lavalink (${lavalinkDisplay.length}/${lavalink.length})`,
                 value: pingLines_n || 'No nodes configured',
                 inline: false,
             });
         }
-        status.setFooter({ text: 'QuranBot © 2026 • Made by mgv150 • Powered by Cortex HQ' });
+        status.setFooter({ text: 'QuranBot © 2026 • Made by mgv-hub • Powered by Cortex HQ' });
         await ix.editReply({ content: null, embeds: [status] });
     },
 };

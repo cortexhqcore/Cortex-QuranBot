@@ -1,5 +1,6 @@
-require('../config/envSwitcher.js');
 require('pathlra-aliaser')();
+
+require('../config/envSwitcher.js');
 require('@startup/botSetup');
 // require('@voiceHandlers');
 require('@events/voiceStateHandler');
@@ -108,6 +109,14 @@ function allAzkarRooms() {
     return count;
 }
 
+async function pullFirebase() {
+    const { db, isFirebaseReady } = require('@database/firebase');
+    if (!isFirebaseReady || !db) return null;
+    const { get, ref } = require('firebase/database');
+    const snap = await get(ref(db, 'bot_statistics'));
+    return snap.exists() ? snap.val() : null;
+}
+
 // rotate status every 30s: prayer reminder, stats, github
 async function updateStatus() {
     const hour = getCairoHour();
@@ -116,23 +125,30 @@ async function updateStatus() {
     const listenerCount = getTotalListeners();
     const totalUsers = AllUsers();
     const azkarRooms = allAzkarRooms();
+    const statsFirebase = await pullFirebase();
+    const sentAzkar = statsFirebase?.azkarSent;
 
     let status;
     let activity;
 
-    if (activityIndex % 4 === 0) {
+    if (activityIndex % 5 === 0) {
         activity = {
             name: 'صلِّ على النبي ﷺ',
             type: ActivityType.Watching,
         };
-    } else if (activityIndex % 4 === 1) {
+    } else if (activityIndex % 5 === 1) {
         activity = {
             name: `${guildCount} Servers | ${totalUsers} Users`,
             type: ActivityType.Watching,
         };
-    } else if (activityIndex % 4 === 2) {
+    } else if (activityIndex % 5 === 2) {
         activity = {
             name: `${voiceCount} Voice | ${listenerCount} Listeners | ${azkarRooms} Azkar chnl`,
+            type: ActivityType.Watching,
+        };
+    } else if (activityIndex % 5 === 3) {
+        activity = {
+            name: `📿 ${sentAzkar} Azkar Sent`,
             type: ActivityType.Watching,
         };
     } else {
@@ -156,14 +172,3 @@ client.once('clientReady', () => {
 });
 
 logger.info('Bot initialized');
-
-if (client.lavalink?.nodeManager) {
-    client.lavalink.nodeManager.on('error', (node, error) => {
-        logger.error(`Lavalink NodeManager error for node "${node?.id || 'unknown'}":`, {
-            message: error?.message || String(error),
-            code: error?.code,
-            isAlive: node?.isAlive,
-            reconnectionState: node?.reconnectionState,
-        });
-    });
-}

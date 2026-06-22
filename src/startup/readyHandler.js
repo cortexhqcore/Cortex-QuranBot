@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { loadData } = require('@data/data-manager');
 const client = require('@startup/botSetup').client;
@@ -11,9 +9,10 @@ const { recoverVoiceConnection } = require('@ready/voiceRecovery');
 const { restoreGuildStates } = require('@ready/stateRestoration');
 const { registerAllCommands, startMemoryCleanup } = require('@ready/commandRegistration');
 const { initializeStats, startStatsTracker } = require('@statistics/StatisticsTracker');
+const { setupNotificationRoles } = require('@events/notificationRoles');
 const databaseCleaner = require('../database/firebase/maintenance/databaseCleaner');
 const retentiondb = require('@database/firebase/retention/retention');
-require('@database/local/localBackup');
+require('@database/local/database-backup');
 const { attachManagerEvents } = require('@audio');
 
 attachManagerEvents(client.lavalink);
@@ -30,6 +29,7 @@ loadData()
             } catch (err) {
                 logger.error('Failed to initialize Lavalink Manager', err);
             }
+            await setupNotificationRoles(client);
 
             const runtimeStates = require('@runtime/runtime_states');
             await runtimeStates.restoreRuntimeStates(client);
@@ -74,7 +74,7 @@ loadData()
             //const staleGuildIds = allSetupGuildIds.filter((gid) => !actualBotGuilds.has(gid));
             //if (staleGuildIds.length > 0) {
             //}
-            await restoreGuildStates(client, actualBotGuilds);
+            //await restoreGuildStates(client, actualBotGuilds);
             await registerAllCommands(client);
             startMemoryCleanup();
             logger.info('Serving ' + client.guilds.cache.size + ' Guilds');

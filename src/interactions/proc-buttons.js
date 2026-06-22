@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const coreLoader = require('@bot/bootstrap');
 
 /**
@@ -24,12 +22,29 @@ const ROUTE_GROUPS = {
     moreFeaturesButton: ['more_features'],
     backToMainButton: ['back_to_main'],
     lavalinkNodesButton: ['lavalink_status'],
+    notificationRolesButton: ['notify_all', 'notify_major', 'notify_minor'],
+    tafseerRestartButton: ['tafseer_restart'],
+    azkarSettingsButton: ['azkar_settings', 'azkar_get_role', 'azkar_toggle_mention', 'azkar_create_role', 'azkar_remove_role'],
+    spreadBotButton: ['spread_bot'],
+    spreadBotContinueButton: ['spread_bot_continue'],
+    spreadBotCancelButton: ['spread_bot_cancel'],
+    assignChannelsButton: ['assign_channels', 'assign_start', 'assign_save'],
 };
 
 const PREFIX_ROUTES = {
     admin_kick_bot_: 'adminKickBotButton',
     admin_confirm_kick_: 'adminConfirmKickButton',
     // admin_warn_setup_: 'adminWarnSetupButton',
+    tafseer_surah_prev_: 'tafseerPaginationButton',
+    tafseer_surah_next_: 'tafseerPaginationButton',
+    tafseer_verse_prev_: 'tafseerPaginationButton',
+    tafseer_verse_next_: 'tafseerPaginationButton',
+    search_: 'searchPaginationButton',
+    tasbih_: 'tasbihCounterButton',
+    spread_bot_send_: 'spreadBotSendButton',
+    save_join_channel_: 'joinChannelPromptButton',
+    temp_join_channel_: 'joinChannelPromptButton',
+    download_backup_: 'adminBackupDownloadButton',
 };
 
 function getButtonHandler(customId) {

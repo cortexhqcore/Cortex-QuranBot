@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { ChannelType } = require('discord.js');
 const { loadSetupGuildsFromFirebase, saveSetupGuildsToFirebase } = require('@database/firebase');
@@ -21,14 +19,11 @@ async function validateSetupData(guildId, setupData, guild) {
                 changed = true;
                 logger.db('Guild ' + guildId + ' Fixed Category ID To ' + found.id);
             } else {
-                ok = false;
+                fixed.categoryId = null;
+                changed = true;
                 logger.db('Guild ' + guildId + ' Category Deleted And Not Found');
-                return { valid: false, hasChanges: false, data: setupData };
             }
         }
-    } else {
-        ok = false;
-        return { valid: false, hasChanges: false, data: setupData };
     }
 
     // helper to validate a channel entry

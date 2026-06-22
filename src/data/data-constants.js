@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const path = require('path');
 
 // Base CDN path for Quran data resources

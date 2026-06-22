@@ -1,4 +1,3 @@
-require('pathlra-aliaser');
 // const { createAudioPlayer } = require('@discordjs/voice');
 const logger = require('@logging/logger');
 const inactivity_threshold_ms = 30 * 60 * 1000;

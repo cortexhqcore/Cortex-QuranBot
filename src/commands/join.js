@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { wrapInteraction, safeError } = require('@interactions/flow/deferReply');
 const { resolveGuildState } = require('@auth/guard');
 const { initializeConnection, syncVoiceState } = require('@audio');

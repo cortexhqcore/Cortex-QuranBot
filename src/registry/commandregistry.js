@@ -1,47 +1,67 @@
-require('pathlra-aliaser')();
-
 const { ChannelType, PermissionsBitField, SlashCommandBuilder, Routes, REST } = require('discord.js');
 const logger = require('@logging/logger');
 
+const setup = String(
+    PermissionsBitField.Flags.Connect |
+        PermissionsBitField.Flags.Speak |
+        PermissionsBitField.Flags.ManageChannels |
+        PermissionsBitField.Flags.ManageRoles |
+        PermissionsBitField.Flags.ViewChannel,
+);
+
+const control = String(
+    PermissionsBitField.Flags.Connect |
+        PermissionsBitField.Flags.Speak |
+        PermissionsBitField.Flags.SendMessages |
+        PermissionsBitField.Flags.ManageChannels |
+        PermissionsBitField.Flags.ViewChannel,
+);
+
+const connect = String(
+    PermissionsBitField.Flags.ViewChannel |
+        PermissionsBitField.Flags.SendMessages |
+        PermissionsBitField.Flags.Connect |
+        PermissionsBitField.Flags.Speak |
+        PermissionsBitField.Flags.ManageChannels |
+        PermissionsBitField.Flags.ManageRoles,
+);
+
 async function registerCommands() {
     const cmds = [
-        new SlashCommandBuilder().setName('دليل').setDescription('دليل استخدام البوت وخيارات الإعداد').setDefaultMemberPermissions('0'),
+        new SlashCommandBuilder().setName('دليل').setDescription('دليل استخدام البوت وخيارات الإعداد'),
         new SlashCommandBuilder()
             .setName('دخول')
             .setDescription('الانضمام إلى الروم الصوتي المعد من الإعداد')
-            .setDefaultMemberPermissions('8'),
-        /**
-            new SlashCommandBuilder()
+            .setDefaultMemberPermissions(connect),
+        new SlashCommandBuilder()
             .setName('دخول_قناة')
             .setDescription('الانضمام إلى غرفة صوتية محددة')
             .addChannelOption((opt) =>
                 opt.setName('قناة').setDescription('اختر الغرفة الصوتية').addChannelTypes(ChannelType.GuildVoice).setRequired(true),
             )
-            .setDefaultMemberPermissions('8'),
-              **/
-        new SlashCommandBuilder().setName('خروج').setDescription('الخروج من الروم الصوتي').setDefaultMemberPermissions('8'),
-        new SlashCommandBuilder().setName('تحكم').setDescription('لوحة التحكم للقرآن').setDefaultMemberPermissions('0'),
+            .setDefaultMemberPermissions(control),
         new SlashCommandBuilder()
-            .setName('إعداد')
-            .setDescription('إعداد فئة القرآن مع القنوات للإداريين فقط')
-            .setDefaultMemberPermissions('8'),
+            .setName('تعيين_القنوات')
+            .setDescription('تعيين أو إصلاح قنوات البوت (الصوت، التحكم، الأذكار) بدون الحاجة لإعادة الإعداد')
+            .setDefaultMemberPermissions(setup),
+        new SlashCommandBuilder().setName('خروج').setDescription('الخروج من الروم الصوتي').setDefaultMemberPermissions(connect),
+        new SlashCommandBuilder().setName('تحكم').setDescription('لوحة التحكم للقرآن').setDefaultMemberPermissions(control),
+        new SlashCommandBuilder().setName('إعداد').setDescription('إعداد فئة القرآن مع القنوات').setDefaultMemberPermissions(setup),
+        new SlashCommandBuilder().setName('سرعة').setDescription('يعرض سرعة البوت ومدة التشغيل والساعات وعدد السيرفرات الحالي'),
+        new SlashCommandBuilder().setName('مواقيت_الصلاة').setDescription('عرض مواقيت الصلاة لجميع الدول والمناطق'),
+        new SlashCommandBuilder().setName('مصادر').setDescription('عرض مصادر المعلومات والروابط التي يستخدمها البوت'),
+        new SlashCommandBuilder().setName('تحديثات').setDescription('عرض سجل التحديثات الأخيرة والتغييرات المعمارية في البوت'),
+        new SlashCommandBuilder().setName('مساعدة').setDescription('عرض جميع الروابط الرسمية للبوت'),
+        new SlashCommandBuilder().setName('تفسير').setDescription('عرض آية من القرآن مع التفسير'),
+        //   new SlashCommandBuilder()
+        //       .setName('بحث')
+        //       .setDescription('البحث في نصوص التفسير وعرض عدد النتائج')
+        //       .addStringOption((opt) => opt.setName('كلمة').setDescription('الكلمة المراد البحث عنها').setRequired(true).setMaxLength(50)),
         new SlashCommandBuilder()
-            .setName('سرعة')
-            .setDescription('يعرض سرعة البوت ومدة التشغيل والساعات وعدد السيرفرات الحالي')
-            .setDefaultMemberPermissions('0'),
-        new SlashCommandBuilder()
-            .setName('مواقيت_الصلاة')
-            .setDescription('عرض مواقيت الصلاة لجميع الدول والمناطق')
-            .setDefaultMemberPermissions('0'),
-        new SlashCommandBuilder()
-            .setName('مصادر')
-            .setDescription('عرض مصادر المعلومات والروابط التي يستخدمها البوت')
-            .setDefaultMemberPermissions('0'),
-        new SlashCommandBuilder()
-            .setName('تحديثات')
-            .setDescription('عرض سجل التحديثات الأخيرة والتغييرات المعمارية في البوت')
-            .setDefaultMemberPermissions('0'),
-        new SlashCommandBuilder().setName('مساعدة').setDescription('عرض جميع الروابط الرسمية للبوت').setDefaultMemberPermissions('0'),
+            .setName('سورة')
+            .setDescription('عرض النص الكامل لسورة من القرآن الكريم')
+            .addStringOption((opt) => opt.setName('سورة').setDescription('اسم أو رقم السورة (1-114)').setRequired(true)),
+        new SlashCommandBuilder().setName('المسباح').setDescription('عرض صيغة من صيغ التسبيح والأذكار مع إمكانية العد والتكرار'),
     ].map((c) => c.toJSON());
 
     const rest = new REST({ version: '10' }).setToken(global.token);
@@ -56,7 +76,7 @@ async function applyCommandPermissions(guild) {
     const rest = new REST({ version: '10' }).setToken(global.token);
     try {
         const guildCmds = await rest.get(Routes.applicationGuildCommands(global.clientId, guild.id));
-        const restricted = ['دخول', 'دخول_قناة', 'خروج', 'إعداد', 'مواقيت_الصلاة'];
+        const restricted = ['دخول', 'دخول_قناة', 'خروج', 'إعداد'];
 
         for (const cmd of guildCmds) {
             if (!restricted.includes(cmd.name)) continue;

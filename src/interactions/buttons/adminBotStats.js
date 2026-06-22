@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const formatTimeDuration = require('@helpers/time/formatUptime');
 const logger = require('@logging/logger');
@@ -15,7 +13,7 @@ module.exports = {
 
         if (!isAuthorized) {
             return interaction.reply({
-                content: 'This feature is available for the developer only',
+                content: 'This feature is available for the developers only',
                 flags: 64,
             });
         }
@@ -34,7 +32,7 @@ module.exports = {
         const runtimeVersion = process.version;
 
         const statsEmbed = new EmbedBuilder()
-            .setColor(0x1e1f22)
+            .setColor(0xfefdfe)
             .setTitle('Detailed Bot Statistics')
             .setDescription('**Bot and Server Information**')
             .addFields(

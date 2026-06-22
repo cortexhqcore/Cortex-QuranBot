@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { wrapInteraction, safeReply } = require('@interactions/flow/responder');
 const { createStandardEmbed } = require('@ui/embedFactory');
 const { emoji, gif } = require('@helpers/emojis');
@@ -19,7 +17,7 @@ const msg = [
     },
     {
         title: `${emoji.globe} الدعم الفني والعلامة التجارية الجديدة`,
-        value: '• استبدال قنوات الدعم عبر البريد الإلكتروني بروابط مباشرة لسيرفر الدعم الفني على Discord لسرعة الاستجابة.\n• تحديث شامل لسياسة الخصوصية وشروط الخدمة وتوجيهها للمستودع الجديد.\n• تحديث توقيع وإسناد البوت الرسمي: **Made By mgv150 | Powered By Cortex HQ**.',
+        value: '• استبدال قنوات الدعم عبر البريد الإلكتروني بروابط مباشرة لسيرفر الدعم الفني على Discord لسرعة الاستجابة.\n• تحديث شامل لسياسة الخصوصية وشروط الخدمة وتوجيهها للمستودع الجديد.\n• تحديث توقيع وإسناد البوت الرسمي: **Made By mgv-hub | Powered By Cortex HQ**.',
     },
 ];
 
@@ -28,21 +26,48 @@ module.exports = {
         await wrapInteraction(
             ix,
             async () => {
-                const embed = createStandardEmbed()
-                    .setTitle(`${emoji.change} سجل التحديثات والتغييرات الأخيرة`)
-                    .setDescription(
-                        'تم ترقية البنية التحتية للبوت بالكامل لضمان تشغيل مستقر وعلى مدار الساعة لأكثر من 5,000 سيرفر بكفاءة عالية.',
-                    )
-                    .addFields(
-                        ...msg.map((u) => ({
-                            name: u.title,
-                            value: u.value,
-                            inline: false,
-                        })),
-                    )
-                    .setFooter({ text: 'Made By mgv150 | Powered By Cortex HQ' });
-
-                await safeReply(ix, { embeds: [embed], flags: 64 }, 'changelog_cmd');
+                const changelogText = msg.map((u) => `### ${u.title}\n${u.value}`).join('\n\n');
+                const components = [
+                    {
+                        type: 17,
+                        accent_color: 0xfefdfe,
+                        components: [
+                            {
+                                type: 10,
+                                content: `### ${emoji.change} سجل التحديثات والتغييرات الأخيرة`,
+                            },
+                            {
+                                type: 14,
+                                divider: true,
+                                spacing: 1,
+                            },
+                            {
+                                type: 10,
+                                content:
+                                    'تم ترقية البنية التحتية للبوت بالكامل لضمان تشغيل مستقر وعلى مدار الساعة لأكثر من 5,000 سيرفر بكفاءة عالية.',
+                            },
+                            {
+                                type: 14,
+                                divider: false,
+                                spacing: 2,
+                            },
+                            {
+                                type: 10,
+                                content: changelogText,
+                            },
+                            {
+                                type: 14,
+                                divider: true,
+                                spacing: 1,
+                            },
+                            {
+                                type: 10,
+                                content: '*Made By mgv-hub | Powered By Cortex HQ*',
+                            },
+                        ],
+                    },
+                ];
+                await safeReply(ix, { components, flags: 32832 }, 'changelog_cmd');
             },
             { ephemeral: true, label: 'changelog_cmd' },
         );

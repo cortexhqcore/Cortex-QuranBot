@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { emoji } = require('@helpers/emojis');
 
@@ -98,8 +96,8 @@ function buildLavalink() {
         port: node.port,
         authorization: node.password,
         secure: node.secure,
-        retryAmount: 10,
-        retryDelay: 5000,
+        retryAmount: 999999,
+        retryDelay: 30000,
     }));
 }
 

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { player_config } = require('@interactions/buttons/sys-config');
 
 function getAvailableSurahIndex(guildState, maxAttempts = player_config.MAX_SURAH_ATTEMPTS) {

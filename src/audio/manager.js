@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 // const { getGuildStateById } = require('../state/guild-state-store');
 const { initializeConnection, teardownConnection, syncVoiceState } = require('./connection');
 // const { stopPlayer } = require('./player');
@@ -159,6 +157,8 @@ async function handlePlaybackControl(guildId, guildState, action) {
                 guildState.isPaused = true;
                 guildState.pauseReason = 'manual';
             }
+            const { updateVoiceStatus } = require('./voiceStatus');
+            updateVoiceStatus(guildId, guildState, global.client);
             break;
         }
         /**
@@ -301,23 +301,10 @@ async function handlePlaybackControl(guildId, guildState, action) {
                 guildState.pauseReason = null;
                 if (typeof global.saveRuntimeStates === 'function') await global.saveRuntimeStates();
             } catch (err) {
-                logger.error('Toggle Radio Error in manager.js', err);
-                guildState.playbackMode = 'surah';
-                guildState.currentRadioUrl = null;
-                guildState.isPaused = false;
-                guildState.pauseReason = null;
+                logger.error(`Toggle Radio Error Guild: ${guildId} URL: ${guildState.currentRadioUrl} Reason: ${err.message}`);
+                guildState.isPaused = true;
+                guildState.pauseReason = 'radio_stream_failed';
                 if (typeof global.saveRuntimeStates === 'function') await global.saveRuntimeStates();
-                try {
-                    const fallbackTrack = await global.createSurahResource(guildState, 0);
-                    if (fallbackTrack) {
-                        guildState.player.queue.add(fallbackTrack);
-                        if (!guildState.player.playing && !guildState.player.paused) {
-                            await guildState.player.play();
-                        }
-                    }
-                } catch (fallbackErr) {
-                    logger.error('Fallback playback also failed', fallbackErr);
-                }
             }
             break;
         }

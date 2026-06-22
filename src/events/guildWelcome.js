@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const logger = require('@logging/logger');
 const { emoji } = require('@helpers/emojis');
@@ -30,46 +28,99 @@ async function sendWelcome(guild) {
         logger.warn(`No writable channel found in ${guild.name} (${guild.id})`);
         return;
     }
-    const embed = new EmbedBuilder()
-        .setColor('#1e1f22')
-        .setTitle(`${emoji.welcome} أهلاً بك في بوت القرآن الكريم`)
-        .setDescription(
-            `
-مرحبًا بك، وشكرًا لإضافة البوت إلى سيرفرك.
 
-${emoji.features} **ماذا يوفر البوت؟**
+    const components = [
+        {
+            type: 17,
+            accent_color: 0xfefdfe,
+            components: [
+                {
+                    type: 10,
+                    content: `### ${emoji.welcome} أهلاً بك في بوت القرآن الكريم`,
+                },
+                {
+                    type: 14,
+                    divider: true,
+                    spacing: 1,
+                },
+                {
+                    type: 10,
+                    content: 'مرحبًا بك، وشكرًا لإضافة البوت إلى سيرفرك.',
+                },
+                {
+                    type: 14,
+                    divider: false,
+                    spacing: 2,
+                },
+                {
+                    type: 10,
+                    content:
+                        `${emoji.features} **ماذا يوفر البوت؟**\n\n` +
+                        `${emoji.book} بث قرآني مستمر بجودة عالية مع دعم أكثر من 150 قارئ\n` +
+                        `${emoji.radio} إذاعات قرآنية مباشرة على مدار الساعة\n` +
+                        `${emoji.prayer_times} مواقيت صلاة دقيقة لجميع المناطق\n` +
+                        `${emoji.crescent_moon} أذكار وتنبيهات تفاعلية\n` +
+                        `لوحة تحكم سهلة لإدارة التشغيل`,
+                },
+                {
+                    type: 14,
+                    divider: true,
+                    spacing: 1,
+                },
+                {
+                    type: 10,
+                    content:
+                        `${emoji.edit} **للبدء سريعًا**\n\n` +
+                        '`/إعداد` — تجهيز القنوات تلقائيًا\n' +
+                        '`/دخول` — تشغيل البوت داخل الروم الصوتي\n' +
+                        '`/تحكم` — فتح لوحة التحكم\n' +
+                        '`/دليل` — عرض جميع الأوامر`',
+                },
+                {
+                    type: 14,
+                    divider: false,
+                    spacing: 2,
+                },
+                {
+                    type: 10,
+                    content: 'يعتمد البوت على بنية صوتية مستقرة لضمان تشغيل متواصل بدون انقطاع.',
+                },
+                {
+                    type: 14,
+                    divider: true,
+                    spacing: 1,
+                },
+                {
+                    type: 10,
+                    content: '*Made by mgv-hub • Powered by Cortex HQ*',
+                },
+                {
+                    type: 14,
+                    divider: true,
+                    spacing: 1,
+                },
+                {
+                    type: 1,
+                    components: [
+                        {
+                            type: 2,
+                            label: 'سيرفر الدعم',
+                            style: 5,
+                            url: 'https://discord.gg/DwtAPzrbZS',
+                        },
+                        {
+                            type: 2,
+                            label: 'GitHub',
+                            style: 5,
+                            url: 'https://github.com/cortexhqcore/Cortex-QuranBot',
+                        },
+                    ],
+                },
+            ],
+        },
+    ];
 
-${emoji.book} بث قرآني مستمر بجودة عالية مع دعم أكثر من 150 قارئ
-${emoji.radio} إذاعات قرآنية مباشرة على مدار الساعة
-${emoji.prayer_times} مواقيت صلاة دقيقة لجميع المناطق
-${emoji.crescent_moon} أذكار وتنبيهات تفاعلية
-لوحة تحكم سهلة لإدارة التشغيل
-
-${emoji.edit} **للبدء سريعًا**
-
-\`/إعداد\` — تجهيز القنوات تلقائيًا
-\`/دخول\` — تشغيل البوت داخل الروم الصوتي
-\`/تحكم\` — فتح لوحة التحكم
-\`/دليل\` — عرض جميع الأوامر
-
-يعتمد البوت على بنية صوتية مستقرة لضمان تشغيل متواصل بدون انقطاع.
-        `,
-        )
-        .setFooter({
-            text: 'Made by mgv150 • Powered by Cortex HQ',
-        })
-        .setTimestamp();
-
-    const buttons = new ActionRowBuilder().addComponents(
-        new ButtonBuilder().setLabel('سيرفر الدعم').setStyle(ButtonStyle.Link).setURL('https://discord.gg/DwtAPzrbZS'),
-
-        new ButtonBuilder().setLabel('GitHub').setStyle(ButtonStyle.Link).setURL('https://github.com/cortexhqcore/Cortex-QuranBot'),
-    );
-
-    await channel.send({
-        embeds: [embed],
-        components: [buttons],
-    });
+    await channel.send({ components, flags: 32768 });
 }
 
 module.exports = {

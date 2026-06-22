@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { PermissionsBitField } = require('discord.js');
 const logger = require('@logging/logger');
 const { isSpecialUser } = require('@auth/auth-manager');

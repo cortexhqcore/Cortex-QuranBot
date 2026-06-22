@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { wrapInteraction, safeReply, safeError } = require('@interactions/flow/responder');
 const {
     ActionRowBuilder,
@@ -67,21 +65,32 @@ module.exports = {
                 const paginationButtons = paginationRow.components;
                 const cancelBtn = new ButtonBuilder().setCustomId('cancel_prayer').setLabel('إلغاء').setStyle(ButtonStyle.Secondary);
                 const paginationWithCancel = new ActionRowBuilder().addComponents(paginationButtons[0], paginationButtons[1], cancelBtn);
-                const prayerTimesEmbed = new EmbedBuilder()
-                    .setColor(0x1e1f22)
-                    .setTitle('مواقيت الصلاة')
-                    .setDescription('اختر الدولة من القائمة أدناه لعرض مواقيت الصلاة')
-                    .addFields({
-                        name: 'طريقة الاستخدام',
-                        value: '1- اضغط على قائمة الدول\n2- اختر دولتك\n3- اختر المدينة\n4- عرض المواقيت',
-                        inline: false,
-                    });
+
+                const components = [
+                    {
+                        type: 17,
+                        accent_color: 0xfefdfe,
+                        components: [
+                            { type: 10, content: '### مواقيت الصلاة' },
+                            { type: 14, divider: true, spacing: 1 },
+                            { type: 10, content: 'اختر الدولة من القائمة أدناه لعرض مواقيت الصلاة' },
+                            { type: 14, divider: false, spacing: 2 },
+                            {
+                                type: 10,
+                                content: '**طريقة الاستخدام**\n1- اضغط على قائمة الدول\n2- اختر دولتك\n3- اختر المدينة\n4- عرض المواقيت',
+                            },
+                            { type: 14, divider: true, spacing: 1 },
+                            selectRow.toJSON(),
+                            paginationWithCancel.toJSON(),
+                        ],
+                    },
+                ];
+
                 await safeReply(
                     interaction,
                     {
-                        embeds: [prayerTimesEmbed],
-                        components: [selectRow, paginationWithCancel],
-                        flags: MessageFlags.Ephemeral,
+                        components,
+                        flags: 32832,
                     },
                     'prayer_times_menu',
                 );

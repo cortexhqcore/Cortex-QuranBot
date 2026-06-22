@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { removeGuildState, applyCommandPermissions } = require('@registry/registry');
 const { ChannelType } = require('discord.js');
@@ -19,17 +17,18 @@ botClient.on('guildCreate', async (guild) => {
         const trackingChannel = guild.channels.cache.find(
             (channel) => channel.type === ChannelType.GuildText && channel.permissionsFor(botClient.user).has('CreateInstantInvite'),
         );
-        if (!trackingChannel) {
-            logger.warn('No Suitable Text Channel Found In Guild ' + guild.id);
-            return;
+
+        if (trackingChannel) {
+            const trackingInvite = await trackingChannel.createInvite({
+                maxAge: 0,
+                maxUses: 0,
+                unique: true,
+                reason: 'Permanent invite for tracking',
+            });
+            logger.info('Tracked New Guild ' + guild.id + ' With Invite ' + trackingInvite.url);
+        } else {
+            // logger.warn('No Suitable Text Channel Found In Guild ' + guild.id);
         }
-        const trackingInvite = await trackingChannel.createInvite({
-            maxAge: 0,
-            maxUses: 0,
-            unique: true,
-            reason: 'Permanent invite for tracking',
-        });
-        logger.info('Tracked New Guild ' + guild.id + ' With Invite ' + trackingInvite.url);
     } catch (err) {
         logger.error('Error Tracking Guild ' + guild.id);
     }
@@ -74,7 +73,7 @@ botClient.on('guildCreate', async (guild) => {
 botClient.on('guildDelete', async (guild) => {
     const guildId = guild.id;
     await retentiondb.markGuildAsLeft(guildId);
-    logger.info(`Bot left guild ${guild.name} (${guildId}). Data retained for 15 days.`);
+    //logger.info(`Bot left guild ${guild.name} (${guildId}). Data retained for 15 days.`);
     //if (global.guildStates) global.guildStates.delete(guildId);
     // Remove from local cache data persists in Firebase for 15 days
     //if (global.setupGuilds && global.setupGuilds[guildId]) {

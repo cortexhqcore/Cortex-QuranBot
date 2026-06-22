@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { isFirebaseReady, db } = require('../index');
 const retentiondb = require('@database/firebase/retention/retention');

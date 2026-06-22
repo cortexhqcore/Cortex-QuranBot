@@ -1,13 +1,17 @@
-require('pathlra-aliaser')();
-
 const coreLoader = require('@bot/bootstrap');
 const { handleInteractionError } = require('@interactions/interactionErrors');
 const azkar_prefix = 'play_azkar_';
+const tasbih_prefix = 'tasbih_';
 const prayer_buttons = ['prayer_times', 'home_prayer', 'refresh_prayer', 'back_country_prayer', 'cancel_prayer'];
 const prayer_menus = ['select_country_prayer', 'select_city_prayer'];
 function isAzkarInteraction(interaction) {
     const { customId } = interaction;
     return interaction.isButton() && customId.startsWith(azkar_prefix);
+}
+
+function isTasbihInteraction(interaction) {
+    const { customId } = interaction;
+    return interaction.isButton() && customId.startsWith(tasbih_prefix);
 }
 
 function isPrayerButtonInteraction(interaction) {
@@ -44,8 +48,8 @@ function isPublicFeature(interaction) {
     const isPrayerMenu = interaction.isStringSelectMenu() && (customId === 'select_country_prayer' || customId === 'select_city_prayer');
 
     const isMoreFeatures = customId === 'more_features' || customId === 'back_to_main';
-
-    return isAzkar || isPrayer || isPrayerMenu || isMoreFeatures;
+    const isTasbih = isTasbihInteraction(interaction);
+    return isAzkar || isPrayer || isPrayerMenu || isMoreFeatures || isTasbih;
 }
 
 // Handle public feature interactions with error recovery
@@ -84,7 +88,15 @@ async function handlePublicInteraction(interaction) {
             await coreLoader.azkarAudioButton.execute(interaction);
             return true;
         }
+        if (isTasbihInteraction(interaction)) {
+            await coreLoader.tasbihCounterButton.execute(interaction);
+            return true;
+        }
 
+        if (customId === 'azkar_get_role') {
+            await coreLoader.azkarSettingsButton.execute(interaction);
+            return true;
+        }
         if (customId === 'more_features') {
             await coreLoader.moreFeaturesButton.execute(interaction);
             return true;
@@ -102,6 +114,7 @@ async function handlePublicInteraction(interaction) {
 }
 
 module.exports.isAzkarInteraction = isAzkarInteraction;
+module.exports.isTasbihInteraction = isTasbihInteraction;
 module.exports.isPrayerButtonInteraction = isPrayerButtonInteraction;
 module.exports.isPrayerMenuInteraction = isPrayerMenuInteraction;
 module.exports.isPublicFeature = isPublicFeature;

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const fetch = require('node-fetch').default;
 const logger = require('@logging/logger');
 const { getBrowserHeaders, TimeoutRequest } = require('@config/http');

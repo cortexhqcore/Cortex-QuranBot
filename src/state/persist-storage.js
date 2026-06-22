@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { saveGuildStatesToFirebase, loadGuildStatesFromFirebase } = require('@database/firebase');
 const { isPlainObject, deepCloneForFirebase, deepMerge } = require('@state/persist-utils');

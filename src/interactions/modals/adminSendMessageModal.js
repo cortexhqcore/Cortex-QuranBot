@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { isSpecialUser } = require('@auth/auth-manager');
 const { createStandardEmbed } = require('@ui/embedFactory');

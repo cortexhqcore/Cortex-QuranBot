@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 // Create the baseline state object for a guild
 function createDefaultState() {
     return {
@@ -29,6 +27,9 @@ function createDefaultState() {
         playedOffset: 0,
         disconnectAfterCurrentTrack: false,
         azkarFail: 0,
+        azkarMentionRoleId: null,
+        azkarMentionEnabled: false,
+        azkarMentionRoleAutoCreated: false,
         // State preservation for independent modes
         savedQuranState: null,
         savedRadioState: null,

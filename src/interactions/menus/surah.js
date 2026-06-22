@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { wrapInteraction, safeError } = require('@interactions/flow/deferReply');
 const { checkAuthorization, resolveGuildState } = require('@auth/guard');
 const { rebuildAndSendControlPanel } = require('@ui/controlPanelBuilder');
@@ -21,10 +19,10 @@ module.exports = {
                     return;
                 }
 
-                if (guildState.playbackMode !== 'surah') {
-                    await safeError(interaction, 'اختيار السورة غير متاح في وضع الراديو');
-                    return;
-                }
+                //  if (guildState.playbackMode !== 'surah') {
+                //      await safeError(interaction, 'اختيار السورة غير متاح في وضع الراديو');
+                //      return;
+                //  }
                 if (!global.surahNames) {
                     await safeError(interaction, 'البيانات غير محملة بعد انتظر قليلا');
                     return;
@@ -32,6 +30,7 @@ module.exports = {
 
                 const selectedSurahNum = parseInt(interaction.values[0]);
                 if (selectedSurahNum >= 1 && selectedSurahNum <= global.surahNames.length) {
+                    guildState.playbackMode = 'surah';
                     const surahIndex = selectedSurahNum - 1;
                     if (!isSurahAvailable(guildState, surahIndex)) {
                         const availableTotal = getAvailableSurahCount(guildState);
@@ -39,7 +38,6 @@ module.exports = {
                         const reciterDisplayName = reciterInfo?.name || guildState.currentReciter;
 
                         await safeError(
-                            // Example of a message {السورة غير متاحة القارئ الحالي أخيل عبدالحي روا لا يملك هذه السورة هذا القارئ لديه 4 سورة فقط}
                             interaction,
                             'السورة غير متاحة القارئ الحالي ' +
                                 reciterDisplayName +

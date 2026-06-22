@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { urls } = require('@config/constants');
 
 function initializeGlobalLanguages() {

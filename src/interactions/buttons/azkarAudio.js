@@ -1,10 +1,8 @@
-require('pathlra-aliaser')();
-
 const { wrapInteraction, safeError, safeReply } = require('@interactions/flow/responder');
 const { MessageFlags } = require('discord.js');
 const { clean_Dhikr } = require('@helpers/azkar');
 
-const azkar_request_expiry = 10 * 24 * 60 * 60 * 1000;
+// const azkar_request_expiry = 10 * 24 * 60 * 60 * 1000;
 
 module.exports = {
     customId: 'azkar_audio',
@@ -13,28 +11,28 @@ module.exports = {
             interaction,
             async () => {
                 const buttonId = interaction.customId;
-                let requestTimestamp = null;
+                // let requestTimestamp = null;
                 let parsedFilename = null;
 
                 if (buttonId && buttonId.startsWith('play_azkar_')) {
                     const idParts = buttonId.split('_');
                     const lastPart = idParts[idParts.length - 1];
                     if (lastPart && !isNaN(lastPart)) {
-                        requestTimestamp = parseInt(lastPart, 10);
+                        // requestTimestamp = parseInt(lastPart, 10);
                         parsedFilename = idParts.slice(2, idParts.length - 1).join('_');
                     } else {
                         parsedFilename = buttonId.replace('play_azkar_', '');
                     }
                 }
 
-                if (requestTimestamp && Date.now() - requestTimestamp > azkar_request_expiry) {
-                    await safeError(
-                        interaction,
-                        'عذراً هذا الذكر قديم جداً (أكثر من 10 أيام) لا يمكن تشغيل الصوت للرسائل القديمة',
-                        'azkar_expiry',
-                    );
-                    return;
-                }
+                // if (requestTimestamp && Date.now() - requestTimestamp > azkar_request_expiry) {
+                //     await safeError(
+                //         interaction,
+                //         'عذراً هذا الذكر قديم جداً (أكثر من 10 أيام) لا يمكن تشغيل الصوت للرسائل القديمة',
+                //         'azkar_expiry',
+                //     );
+                //     return;
+                // }
 
                 let audioInfo = require('../../state/azkarManager').getAzkarAudioUrl(buttonId);
                 let dhikrDisplayText = 'ذكر';

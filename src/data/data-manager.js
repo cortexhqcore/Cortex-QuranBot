@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { loadCachedData } = require('@data/data-cache');
 const { fetchSurahs, fetchReciters, fetchRiwayat, fetchMoshaf, fetchRadios, fetchTafasir } = require('@data/data-fetchers');

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ChannelType } = require('discord.js');
 const logger = require('@logging/logger');
 const { isSpecialUser } = require('@auth/auth-manager');
@@ -10,7 +8,7 @@ module.exports = {
     async execute(interaction) {
         if (!isSpecialUser(interaction.user.id)) {
             return interaction.reply({
-                content: 'This feature is available for the developer only',
+                content: 'This feature is available for the developers only',
                 flags: 64,
             });
         }
@@ -63,7 +61,7 @@ module.exports = {
         const serverAgeDays = Math.floor((Date.now() - targetGuild.createdTimestamp) / 86400000);
 
         const guildInfoEmbed = new EmbedBuilder()
-            .setColor(0x1e1f22)
+            .setColor(0xfefdfe)
             .setTitle(targetGuild.name)
             .setThumbnail(targetGuild.iconURL({ size: 256 }) || null)
             .setDescription(`**Server Information**`)

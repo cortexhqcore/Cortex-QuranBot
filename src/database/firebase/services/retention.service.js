@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const retentiondb = require('@database/firebase/retention/retention');
 
 module.exports.markGuildAsLeft = retentiondb.markGuildAsLeft;

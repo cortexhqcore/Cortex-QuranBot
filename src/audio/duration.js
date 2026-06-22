@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 function parseDurationToSeconds(duration) {
     if (typeof duration === 'number') return duration;
     if (typeof duration === 'string') {

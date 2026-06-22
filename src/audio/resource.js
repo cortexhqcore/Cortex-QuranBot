@@ -1,5 +1,4 @@
-require('pathlra-aliaser')();
-
+const fetch = require('node-fetch').default;
 const { getGuildStateById } = require('../state/guild-state-store');
 const logger = require('@logging/logger');
 const voiceLogger = require('@logging/voiceLogger');
@@ -34,9 +33,50 @@ function findWorkingReciter(excludeReciter = null) {
     return available.length > 0 ? available[Math.floor(Math.random() * available.length)] : null;
 }
 
+// Nginx and some other proxy setups will randomly throw a 500 or just drop the connection on a cold start.
+// This just sends a quick Range request to wake the endpoint up before Lavalink actually tries to play it.
+// Without this, half the radio stations fail on the first attempt and we get stuck in a retry loop.
+async function warmUpRadioUrl(url, maxAttempts = 3) {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 8000);
+
+            const res = await fetch(url, {
+                method: 'GET',
+                signal: controller.signal,
+                headers: {
+                    'User-Agent': 'QuranBot/1.0',
+                    Accept: 'audio/*, */*;q=0.8',
+                    'Icy-MetaData': '1',
+                    Range: 'bytes=0-0',
+                },
+            });
+            clearTimeout(timeout);
+
+            if (res.ok || res.status === 206 || res.status === 200) {
+                return;
+            }
+
+            if (res.status >= 500 && attempt < maxAttempts) {
+                await new Promise((resolve) => setTimeout(resolve, 1500 * attempt));
+                continue;
+            }
+
+            throw new Error(`HTTP ${res.status}`);
+        } catch (err) {
+            if (attempt === maxAttempts) {
+                throw new Error(`Stream warm-up failed after ${maxAttempts} attempts: ${err.message}`);
+            }
+            await new Promise((resolve) => setTimeout(resolve, 1500 * attempt));
+        }
+    }
+}
+
 async function validateStreamUrl(url) {
     if (!url?.startsWith('http')) return { valid: false, reason: 'Invalid URL' };
     try {
+        await warmUpRadioUrl(url);
         const client = require('@startup/botSetup').client;
         if (!client.lavalink) return { valid: false, reason: 'Lavalink unavailable' };
         const bestNode = getBestNode(client.lavalink);
@@ -114,7 +154,10 @@ async function createSurahResource(state, index) {
 }
 
 async function createRadioResource(url) {
-    if (!url?.startsWith('http')) throw new Error('Invalid Radio URL');
+    if (!url?.startsWith('http')) throw new Error(`Invalid Radio URL ${url}`);
+
+    await warmUpRadioUrl(url);
+
     const client = require('@startup/botSetup').client;
     if (!client.lavalink) throw new Error('Lavalink manager not initialized');
     const bestNode = getBestNode(client.lavalink);
@@ -123,9 +166,16 @@ async function createRadioResource(url) {
     if (!nodes.length) throw new Error('No connected Lavalink nodes available');
 
     const searchNode = nodes[0];
-    const result = await searchNode.search({ query: url, source: 'http' }, null);
-    if (!result || !result.tracks || result.tracks.length === 0) throw new Error('Radio stream invalid');
-    return result.tracks[0];
+
+    try {
+        const result = await searchNode.search({ query: url, source: 'http' }, null);
+        if (!result || !result.tracks || result.tracks.length === 0) {
+            throw new Error(`Lavalink returned no tracks for URL: ${url}`);
+        }
+        return result.tracks[0];
+    } catch (error) {
+        throw new Error(`Failed to load radio stream [${url}]: ${error.message}`);
+    }
 }
 
 function isSurahAvailable(state, index) {

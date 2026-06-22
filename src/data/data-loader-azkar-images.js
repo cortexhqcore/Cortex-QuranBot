@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { azkar_image_urls } = require('@data/data-loader-constants');
 

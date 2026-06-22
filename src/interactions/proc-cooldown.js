@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const coreLoader = require('@bot/bootstrap');
 
 // List of interaction types that require voice-specific cooldown enforcement

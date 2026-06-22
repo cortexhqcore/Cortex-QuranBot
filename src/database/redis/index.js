@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const clientManager = require('./client');
 const logger = require('@logging/logger');
 

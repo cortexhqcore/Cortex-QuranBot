@@ -1,8 +1,5 @@
-require('pathlra-aliaser')();
-
 const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require('discord.js');
 const logger = require('@logging/logger');
-// Replaced inline global.SPE_USER_IDS check with centralized isSpecialUser helper
 const { isSpecialUser } = require('@auth/auth-manager');
 
 module.exports = {
@@ -10,7 +7,7 @@ module.exports = {
     async execute(interaction) {
         if (!isSpecialUser(interaction.user.id)) {
             return interaction.reply({
-                content: 'This feature is available for the developer only',
+                content: 'This feature is available for the developers only',
                 flags: 64,
             });
         }

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const coreLoader = require('@bot/bootstrap');
 const { cache_config, memory_config, limits } = require('@config/constants');
 

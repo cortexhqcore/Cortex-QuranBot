@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 // List of interaction types allowed even when bot is not in a voice channel
 const allowed_when_not_in_voice = [
     'join_vc',
@@ -35,6 +33,17 @@ function isBotInVoice(guildState) {
 }
 
 function isAllowedWithoutVoice(interactionType) {
+    if (interactionType && interactionType.startsWith('notify_')) return true;
+    if (interactionType && interactionType.startsWith('tafseer_')) return true;
+    if (interactionType && interactionType.startsWith('search_')) return true;
+    if (interactionType && interactionType.startsWith('tasbih_')) return true;
+    if (interactionType && interactionType.startsWith('prayer_')) return true;
+    if (interactionType && interactionType.startsWith('download_backup_')) return true;
+    if (interactionType === 'select_country_prayer' || interactionType === 'select_city_prayer') return true;
+    if (interactionType && interactionType.startsWith('spread_bot')) return true;
+    if (interactionType && interactionType.startsWith('save_join_channel_')) return true;
+    if (interactionType && interactionType.startsWith('temp_join_channel_')) return true;
+    if (interactionType && interactionType.startsWith('assign_')) return true;
     return allowed_when_not_in_voice.includes(interactionType);
 }
 

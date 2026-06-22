@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require('discord.js');
 const logger = require('@logging/logger');
 const fetch = require('node-fetch').default;
@@ -86,40 +84,92 @@ module.exports = {
             const selectedCity = citiesList[cityIndex];
             if (!selectedCity) {
                 return interaction.editReply({
-                    content: 'المدينة غير متاحة',
-                    flags: 64,
+                    components: [
+                        {
+                            type: 17,
+                            accent_color: 0xfefdfe,
+                            components: [{ type: 10, content: 'المدينة غير متاحة' }],
+                        },
+                    ],
+                    flags: 32832,
                 });
             }
             // Show loading state while fetching prayer data
-            const loadingEmbed = createLoadingEmbed(`المدينة: ${selectedCity.name}\nيرجى الانتظار...`);
+
             await interaction.editReply({
-                embeds: [loadingEmbed],
-                components: [],
-                flags: MessageFlags.Ephemeral,
+                components: [
+                    {
+                        type: 17,
+                        accent_color: 0xfefdfe,
+                        components: [
+                            { type: 10, content: '### جاري التحميل' },
+                            { type: 14, divider: true, spacing: 1 },
+                            { type: 10, content: `المدينة: ${selectedCity.name}\nيرجى الانتظار...` },
+                        ],
+                    },
+                ],
+                flags: 32832,
             });
             const prayerInfo = await fetchPrayerTimes(selectedCity.lat, selectedCity.lng, selectedCity.name, targetCountryCode);
             if (!prayerInfo) {
                 return interaction.editReply({
-                    content: 'فشل في جلب مواقيت الصلاة. يرجى المحاولة لاحقاً',
-                    flags: 64,
+                    components: [
+                        {
+                            type: 17,
+                            accent_color: 0xfefdfe,
+                            components: [{ type: 10, content: 'فشل في جلب مواقيت الصلاة. يرجى المحاولة لاحقاً' }],
+                        },
+                    ],
+                    flags: 32832,
                 });
             }
-            const prayerEmbed = createPrayerTimesDisplay(prayerInfo.cityName, prayerInfo.countryCode, prayerInfo);
             const homeBtn = new ButtonBuilder().setCustomId('home_prayer').setLabel('الرئيسية').setStyle(ButtonStyle.Secondary);
             const refreshBtn = new ButtonBuilder().setCustomId('refresh_prayer').setLabel('تحديث').setStyle(ButtonStyle.Secondary);
             const actionRow = new ActionRowBuilder().addComponents(homeBtn, refreshBtn);
 
             await interaction.editReply({
-                embeds: [prayerEmbed],
-                components: [actionRow],
-                flags: MessageFlags.Ephemeral,
+                components: [
+                    {
+                        type: 17,
+                        accent_color: 0xfefdfe,
+                        components: [
+                            { type: 10, content: `### 🕌 مواقيت الصلاة` },
+                            { type: 14, divider: true, spacing: 1 },
+                            { type: 10, content: `**${prayerInfo.cityName} - ${prayerInfo.countryCode}**` },
+                            { type: 14, divider: false, spacing: 2 },
+                            {
+                                type: 10,
+                                content: `**الفجر:** ${prayerInfo.fajr}\n**الظهر:** ${prayerInfo.dhuhr}\n**العصر:** ${prayerInfo.asr}\n\n**المغرب:** ${prayerInfo.maghrib}\n**العشاء:** ${prayerInfo.isha}`,
+                            },
+                            { type: 14, divider: false, spacing: 1 },
+                            {
+                                type: 10,
+                                content: `**التاريخ الهجري:** ${prayerInfo.hijriDate}\n**التاريخ الميلادي:** ${prayerInfo.gregorianDate}`,
+                            },
+                            { type: 14, divider: true, spacing: 1 },
+                            {
+                                type: 10,
+                                content: `*تحذير: هذه المعلومات من api.aladhan.com - يرجى التحقق من الموقع الرسمي لمواقيت الصلاة في بلدك للمواعيد الدقيقة | المصدر: https://aladhan.com/prayer-times*`,
+                            },
+                            { type: 14, divider: true, spacing: 1 },
+                            actionRow.toJSON(),
+                        ],
+                    },
+                ],
+                flags: 32832,
             });
         } catch (error) {
             logger.error('Error in city select', error);
             try {
                 await interaction.editReply({
-                    content: 'حدث خطأ',
-                    flags: 64,
+                    components: [
+                        {
+                            type: 17,
+                            accent_color: 0xfefdfe,
+                            components: [{ type: 10, content: 'حدث خطأ' }],
+                        },
+                    ],
+                    flags: 32832,
                 });
             } catch (replyErr) {
                 logger.error('Error replying to interaction', replyErr);

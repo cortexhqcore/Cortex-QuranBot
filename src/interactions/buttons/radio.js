@@ -1,10 +1,9 @@
-require('pathlra-aliaser')();
-
 const { wrapInteraction, safeError } = require('@interactions/flow/deferReply');
 const { checkAuthorization, resolveGuildState } = require('@auth/guard');
 const { rebuildAndSendControlPanel } = require('@ui/controlPanelBuilder');
 const { createRadioResource, createSurahResource, stopPlayer } = require('@audio');
 const logger = require('@logging/logger');
+const { emoji, gif } = require('@helpers/emojis');
 
 module.exports = {
     customId: 'radio',
@@ -62,11 +61,16 @@ module.exports = {
 
                             let radioTrack = null;
                             let attempts = 0;
+                            let lastError = null;
                             const maxAttempts = Math.min(3, global.quranRadios.length);
                             while (!radioTrack && attempts < maxAttempts) {
                                 try {
                                     radioTrack = await createRadioResource(guildState.currentRadioUrl);
                                 } catch (e) {
+                                    lastError = e;
+                                    logger.warn(
+                                        `Radio stream failed Guild: ${guildId} URL: ${guildState.currentRadioUrl} Reason: ${e.message}`,
+                                    );
                                     attempts++;
                                     const nextIdx = (guildState.currentRadioIndex + attempts) % global.quranRadios.length;
                                     guildState.currentRadioIndex = nextIdx;
@@ -75,24 +79,38 @@ module.exports = {
                                 }
                             }
                             if (!radioTrack) {
-                                logger.warn(`Radio stream unavailable for guild ${guildId}, switching to surah mode`);
-                                guildState.playbackMode = 'surah';
-                                guildState.currentRadioUrl = null;
-                                const availableReciters = Object.keys(global.reciters || {});
-                                if (guildState.savedQuranState) {
-                                    guildState.currentSurah = guildState.savedQuranState.currentSurah;
-                                    guildState.currentReciter = guildState.savedQuranState.currentReciter;
-                                    guildState.currentPage = guildState.savedQuranState.currentPage;
-                                    guildState.currentReciterPage = guildState.savedQuranState.currentReciterPage;
-                                    guildState.playedOffset = guildState.savedQuranState.playedOffset || 0;
-                                } else {
-                                    guildState.currentSurah = 1;
-                                    guildState.currentReciter = availableReciters?.[0] || 'reciter_1_ar';
-                                    guildState.currentPage = 0;
-                                    guildState.currentReciterPage = 0;
-                                    guildState.playedOffset = 0;
+                                //   logger.warn(`Radio stream unavailable for guild ${guildId}, switching to surah mode`);
+                                //   guildState.playbackMode = 'surah';
+                                //   guildState.currentRadioUrl = null;
+                                //   const availableReciters = Object.keys(global.reciters || {});
+                                //   if (guildState.savedQuranState) {
+                                //       guildState.currentSurah = guildState.savedQuranState.currentSurah;
+                                //       guildState.currentReciter = guildState.savedQuranState.currentReciter;
+                                //       guildState.currentPage = guildState.savedQuranState.currentPage;
+                                //       guildState.currentReciterPage = guildState.savedQuranState.currentReciterPage;
+                                //       guildState.playedOffset = guildState.savedQuranState.playedOffset || 0;
+                                //   } else {
+                                //       guildState.currentSurah = 1;
+                                //       guildState.currentReciter = availableReciters?.[0] || 'reciter_1_ar';
+                                //       guildState.currentPage = 0;
+                                //       guildState.currentReciterPage = 0;
+                                //       guildState.playedOffset = 0;
+                                const failedUrl = guildState.currentRadioUrl;
+                                logger.error(
+                                    `All radio streams unavailable | Guild: ${guildId} | Last URL: ${failedUrl} | Reason: ${lastError?.message || 'Unknown'}`,
+                                );
+
+                                if (guildState.player && !guildState.player.destroyed) {
+                                    guildState.player.stopPlaying();
                                 }
-                                if (typeof global.saveRuntimeStates === 'function') await global.saveRuntimeStates();
+
+                                await interaction
+                                    .followUp({
+                                        content: `${emoji.close} فشل تشغيل الراديو، اختر رابط آخر.`,
+                                        flags: 64,
+                                    })
+                                    .catch(() => {});
+
                                 await rebuildAndSendControlPanel(interaction, guildState, guildId);
                                 return;
                             }
@@ -139,11 +157,10 @@ module.exports = {
                         if (typeof global.saveRuntimeStates === 'function') await global.saveRuntimeStates();
                         await rebuildAndSendControlPanel(interaction, guildState, guildId);
                     } catch (err) {
-                        logger.error('Toggle Radio Playback Error', err);
-                        guildState.playbackMode = 'surah';
-                        guildState.currentRadioUrl = null;
-                        guildState.isPaused = false;
-                        guildState.pauseReason = null;
+                        logger.error(`Toggle Radio Error Guild: ${guildId} URL: ${guildState.currentRadioUrl} Reason: ${err.message}`);
+                        guildState.isPaused = true;
+                        guildState.pauseReason = 'radio_stream_failed';
+
                         if (typeof global.saveRuntimeStates === 'function') await global.saveRuntimeStates();
                         await rebuildAndSendControlPanel(interaction, guildState, guildId);
                     }

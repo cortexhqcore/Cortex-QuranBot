@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { urls, voice_config, time_constants } = require('@config/constants');
 
 const default_user_agent =

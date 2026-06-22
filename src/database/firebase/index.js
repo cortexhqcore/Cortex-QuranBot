@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const client = require('./client');
 
 Object.defineProperty(module.exports, 'db', {
@@ -22,6 +20,7 @@ const cache = require('./services/cache.service');
 const trackedGuilds = require('./services/trackedGuilds.service');
 const backup = require('./services/backup.service');
 const retention = require('./services/retention.service');
+const notificationRoles = require('./services/notificationRoles.service');
 
 module.exports.firebaseAdminConfig = client.firebaseAdminConfig;
 module.exports.initializeFirebase = client.initializeFirebase;

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { ChannelType } = require('discord.js');
 const logger = require('@logging/logger');
 const { loadTrackedGuildsFromFirebase, saveTrackedGuildsToFirebase } = require('@database/firebase');
@@ -114,7 +112,7 @@ botClient.on('guildCreate', async (guild) => {
 
 botClient.on('guildDelete', async (guild) => {
     await retentiondb.markGuildAsLeft(guild.id);
-    logger.info(`Bot left guild ${guild.name} (${guild.id}). Tracked data retained for 15 days.`);
+    // logger.info(`Bot left guild ${guild.name} (${guild.id}). Tracked data retained for 15 days.`);
 });
 
 if (process.env.NODE_ENV !== 'test' && process.env.SKIP_AUTO_INIT !== 'true') {

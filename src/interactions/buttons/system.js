@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { getGuildState } = require('../../state/GuildStateManager');
 const logger = require('@logging/logger');
 const { checkInteractionAuth } = require('@interactions/buttons/sys-perms');

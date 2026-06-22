@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const voiceLogger = require('@logging/voiceLogger');
 // const persistentState = require('@state/PersistentStateManager');
@@ -63,6 +61,17 @@ botClient.on('voiceStateUpdate', async (previousState, currentState) => {
         voiceLogger.connection(guildId, 'External disconnect cleanup completed');
     } else if (!wasConnected && isCurrentlyConnected) {
         voiceLogger.connection(guildId, 'Bot joined voice channel externally');
+        guildState.channelId = currentState.channelId;
+        if (guildState.player && !guildState.player.destroyed) {
+            guildState.connection = guildState.player;
+            guildState.isPaused = false;
+            guildState.pauseReason = null;
+        }
+    } else if (wasConnected && isCurrentlyConnected && previousState.channelId !== currentState.channelId) {
+        guildState.channelId = currentState.channelId;
+        if (guildState.player && !guildState.player.destroyed) {
+            guildState.connection = guildState.player;
+        }
     }
     await voiceIdle(guildId, botClient);
 });

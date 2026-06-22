@@ -1,12 +1,10 @@
-require('pathlra-aliaser')();
-
 const { EmbedBuilder } = require('discord.js');
 
 const prayer_times_footer =
     'تحذير: هذه المعلومات من api.aladhan.com - يرجى التحقق من الموقع الرسمي لمواقيت الصلاة في بلدك للمواعيد الدقيقة المصدر https://aladhan.com/prayer-times';
 
 function createStandardEmbed() {
-    return new EmbedBuilder().setColor(0x1e1f22);
+    return new EmbedBuilder().setColor(0xfefdfe);
 }
 
 function createLoadingEmbed(desc) {

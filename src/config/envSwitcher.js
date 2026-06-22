@@ -1,9 +1,8 @@
-require('pathlra-aliaser')();
-
 const path = require('path');
 const dotenv = require('dotenv');
 const logger = require('@logging/logger');
 const fs = require('fs');
+require('dotenv').config();
 
 const baseEnvFilePath = path.resolve(__dirname, '../../.env');
 let baseEnvConfig = {};

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { createControlEmbed } = require('@ui/embeds');
 const { createReciterRow, createSelectRow, createButtonRow, createNavigationRow, createRadioRow } = require('@ui/components');
 const { updateControlMessage, saveControlId } = require('@interactions/flow/messageUpdater');

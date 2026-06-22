@@ -1,5 +1,3 @@
-require('dotenv').config();
-require('pathlra-aliaser')();
 const fs = require('fs').promises;
 const pathlra = require('path');
 const { Mutex } = require('async-mutex');

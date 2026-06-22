@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { getGuildState, isAuthorized } = require('../../state/GuildStateManager');
 const { createControlEmbed } = require('@ui/controlpanel');
 const {
@@ -18,7 +16,7 @@ const { EmbedBuilder } = require('discord.js');
 async function sendChannelError(interaction, errorMessage) {
     await interaction.deferUpdate().catch(() => {});
 
-    const errorEmbed = new EmbedBuilder().setColor(0x1e1f22).setDescription(errorMessage);
+    const errorEmbed = new EmbedBuilder().setColor(0xfefdfe).setDescription(errorMessage);
 
     await interaction.channel.send({ embeds: [errorEmbed] }).catch(() => {});
 }

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const {
     ActionRowBuilder,
     ButtonBuilder,
@@ -23,8 +21,14 @@ module.exports = {
             const availableCities = getCitiesForCountry(selectedCountryCode);
             if (availableCities.length === 0) {
                 return interaction.editReply({
-                    content: 'لا توجد مدن متاحة لهذه الدولة',
-                    flags: 64,
+                    components: [
+                        {
+                            type: 17,
+                            accent_color: 0xfefdfe,
+                            components: [{ type: 10, content: 'لا توجد مدن متاحة لهذه الدولة' }],
+                        },
+                    ],
+                    flags: 32832,
                 });
             }
             const cityMenuOptions = availableCities.map((city, index) =>
@@ -41,28 +45,41 @@ module.exports = {
             const cityRow = new ActionRowBuilder().addComponents(citySelect);
             const backBtn = new ButtonBuilder().setCustomId('back_country_prayer').setLabel('رجوع للدول').setStyle(ButtonStyle.Secondary);
             const backRow = new ActionRowBuilder().addComponents(backBtn);
-            const countryEmbed = createStandardEmbed()
-                .setTitle(`مواقيت الصلاة`)
-                .setDescription(`**الدولة المختارة:** ${countryFlag} ${countryInfo?.name || ''}\n**اختر المدينة من القائمة أدناه**`)
-                .addFields(
-                    {
-                        name: 'الدولة',
-                        value: `${countryFlag} ${countryInfo?.name} (${countryInfo?.nameEn})`,
-                        inline: true,
-                    },
-                    { name: 'عدد المدن', value: `${availableCities.length} مدينة`, inline: true },
-                );
+
             await interaction.editReply({
-                embeds: [countryEmbed],
-                components: [cityRow, backRow],
-                flags: MessageFlags.Ephemeral,
+                components: [
+                    {
+                        type: 17,
+                        accent_color: 0xfefdfe,
+                        components: [
+                            { type: 10, content: `### مواقيت الصلاة` },
+                            { type: 14, divider: true, spacing: 1 },
+                            {
+                                type: 10,
+                                content: `**الدولة المختارة:** ${countryFlag} ${countryInfo?.name || ''}\n**اختر المدينة من القائمة أدناه**`,
+                            },
+                            { type: 14, divider: false, spacing: 2 },
+                            { type: 10, content: `**عدد المدن:** ${availableCities.length} مدينة` },
+                            { type: 14, divider: true, spacing: 1 },
+                            cityRow.toJSON(),
+                            backRow.toJSON(),
+                        ],
+                    },
+                ],
+                flags: 32832,
             });
         } catch (error) {
             logger.error('Error in country select', error);
             try {
                 await interaction.editReply({
-                    content: 'حدث خطأ',
-                    flags: 64,
+                    components: [
+                        {
+                            type: 17,
+                            accent_color: 0xfefdfe,
+                            components: [{ type: 10, content: 'حدث خطأ' }],
+                        },
+                    ],
+                    flags: 32832,
                 });
             } catch (replyErr) {
                 logger.error('Error replying to interaction', replyErr);

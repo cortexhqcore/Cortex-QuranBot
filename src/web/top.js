@@ -1,6 +1,3 @@
-require('dotenv').config();
-require('pathlra-aliaser')();
-
 const Topgg = require('@top-gg/sdk');
 const logger = require('@logging/logger');
 const { client } = require('@startup/botSetup');

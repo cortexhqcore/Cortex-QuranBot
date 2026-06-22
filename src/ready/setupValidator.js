@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { ChannelType } = require('discord.js');
 const { saveSetupGuildsToFirebase } = require('@database/firebase');
@@ -11,6 +9,27 @@ async function validateAndFixSetupData(guild, setupData) {
     let correctedData = { ...setupData };
 
     // Validate adhkar channel ID
+    if (setupData.categoryId) {
+        let category = guild.channels.cache.get(setupData.categoryId);
+        if (!category) {
+            category = await guild.channels.fetch(setupData.categoryId).catch(() => null);
+        }
+        if (!category || category.type !== ChannelType.GuildCategory) {
+            const fallbackCategory = guild.channels.cache.find(
+                (c) => c.name === '🕋︱القُرآن الكريم' && c.type === ChannelType.GuildCategory,
+            );
+            if (fallbackCategory) {
+                correctedData.categoryId = fallbackCategory.id;
+                requiresUpdate = true;
+                logger.info('Guild ' + guildId + ' Fixed Category ID To ' + fallbackCategory.id);
+            } else {
+                correctedData.categoryId = null;
+                requiresUpdate = true;
+                logger.info('Guild ' + guildId + ' Category Not Found Cleared ID, keeping channels');
+            }
+        }
+    }
+
     if (setupData.azkarChannelId) {
         let adhkarChannel = guild.channels.cache.get(setupData.azkarChannelId);
         if (!adhkarChannel) {
@@ -70,28 +89,6 @@ async function validateAndFixSetupData(guild, setupData) {
                 correctedData.textChannelId = null;
                 requiresUpdate = true;
                 logger.info('Guild ' + guildId + ' Text Channel Not Found Cleared ID');
-            }
-        }
-    }
-
-    // Validate category ID for bot channels
-    if (setupData.categoryId) {
-        let category = guild.channels.cache.get(setupData.categoryId);
-        if (!category) {
-            category = await guild.channels.fetch(setupData.categoryId).catch(() => null);
-        }
-        if (!category || category.type !== ChannelType.GuildCategory) {
-            const fallbackCategory = guild.channels.cache.find(
-                (c) => c.name === '🕋︱القُرآن الكريم' && c.type === ChannelType.GuildCategory,
-            );
-            if (fallbackCategory) {
-                correctedData.categoryId = fallbackCategory.id;
-                requiresUpdate = true;
-                logger.info('Guild ' + guildId + ' Fixed Category ID To ' + fallbackCategory.id);
-            } else {
-                correctedData.categoryId = null;
-                requiresUpdate = true;
-                logger.warn('Guild ' + guildId + ' Category Not Found Cleared ID');
             }
         }
     }

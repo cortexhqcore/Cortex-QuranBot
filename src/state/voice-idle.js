@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const voiceLogger = require('@logging/voiceLogger');
 const logger = require('@logging/logger');
 const { getGuildStateById } = require('@state/guild-state-store');
@@ -32,11 +30,13 @@ async function pause(state, guildId, client) {
         state.isPaused = true;
         state.pauseReason = 'inactivity';
         if (global.saveRuntimeStates) await global.saveRuntimeStates();
+        const { updateVoiceStatus } = require('@audio/voiceStatus');
+        await updateVoiceStatus(guildId, state, client);
         voiceLogger.player(guildId, 'auto stop (empty vc)', {
             reason: 'no_users_30s',
             mode: state.playback,
         });
-        logger.user(`auto stop (empty vc) ${guildName} id ${guildId}`);
+        logger.info(`auto stop (empty vc) ${guildName} id ${guildId}`);
     } catch (e) {
         voiceLogger.error(guildId, 'pause failed', e);
     }
@@ -51,6 +51,8 @@ async function resume(state, guildId) {
         state.isPaused = false;
         state.pauseReason = null;
         if (global.saveRuntimeStates) await global.saveRuntimeStates();
+        const { updateVoiceStatus } = require('@audio/voiceStatus');
+        await updateVoiceStatus(guildId, state, global.client);
         voiceLogger.player(guildId, 'auto resume (users back)', {
             reason: 'users_returned',
             mode: state.playback,

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const coreLoader = require('@bot/bootstrap');
 const botClient = global.client;
 const { handleInteraction } = require('@interactions/interactionProcessor');
@@ -20,7 +18,13 @@ setInterval(() => {
 
 botClient.on('interactionCreate', async (interaction) => {
     try {
-        if (!interaction.isCommand() && !interaction.isButton() && !interaction.isStringSelectMenu() && !interaction.isModalSubmit()) {
+        const isAnySelectMenu =
+            interaction.isStringSelectMenu() ||
+            interaction.isChannelSelectMenu() ||
+            interaction.isRoleSelectMenu() ||
+            interaction.isUserSelectMenu() ||
+            interaction.isMentionableSelectMenu();
+        if (!interaction.isCommand() && !interaction.isButton() && !isAnySelectMenu && !interaction.isModalSubmit()) {
             return;
         }
         if (interaction.user.id === botClient.user.id) {

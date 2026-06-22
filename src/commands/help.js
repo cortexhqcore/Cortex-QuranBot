@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { wrapInteraction, safeReply } = require('@interactions/flow/responder');
 const { createStandardEmbed } = require('@ui/embedFactory');
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
@@ -20,61 +18,80 @@ module.exports = {
         await wrapInteraction(
             interaction,
             async () => {
-                const embed = createStandardEmbed()
-                    .setTitle(`${emoji.link} روابط البوت`)
-                    .setDescription('جميع الروابط الرسمية المتعلقة ببوت القرآن الكريم')
-                    .addFields(
-                        {
-                            name: `${emoji.globe} الموقع الرسمي`,
-                            value: `[زيارة الموقع](${link.website})`,
-                            inline: true,
-                        },
-                        {
-                            name: `${emoji.chat} سيرفر الدعم`,
-                            value: `[انضم الآن](${link.support})`,
-                            inline: true,
-                        },
-                        {
-                            name: `${emoji.chat} إضافة البوت`,
-                            value: `[دعوة البوت](${link.invite})`,
-                            inline: true,
-                        },
-                        {
-                            name: `${emoji.code} كود المصدر`,
-                            value: `[GitHub](${link.github})`,
-                            inline: true,
-                        },
-                        {
-                            name: `${emoji.globe} Top.gg`,
-                            value: `[تصويت ودعم](${link.topgg})`,
-                            inline: true,
-                        },
-                        {
-                            name: `${emoji.globe} سياسة الخصوصية`,
-                            value: `[اقرأ المزيد](${link.privacy})`,
-                            inline: true,
-                        },
-                        {
-                            name: `شروط الخدمة`,
-                            value: `[اقرأ المزيد](${link.terms})`,
-                            inline: true,
-                        },
-                        {
-                            name: `${emoji.book} دليل الاستخدام`,
-                            value: `استخدم الأمر **/دليل** لعرض جميع أوامر البوت مع شرح كل أمر بالتفصيل`,
-                            inline: false,
-                        },
-                    )
-                    .setFooter({ text: 'Made By mgv150 | Powered By Cortex HQ' });
-
-                const row = new ActionRowBuilder().addComponents(
-                    new ButtonBuilder().setLabel('الموقع').setStyle(ButtonStyle.Link).setURL(link.website),
-                    new ButtonBuilder().setLabel(`الدعم`).setStyle(ButtonStyle.Link).setURL(link.support),
-                    new ButtonBuilder().setLabel('GitHub').setStyle(ButtonStyle.Link).setURL(link.github),
-                    new ButtonBuilder().setLabel('دعوة البوت').setStyle(ButtonStyle.Link).setURL(link.invite),
-                );
-
-                await safeReply(interaction, { embeds: [embed], components: [row], flags: 64 }, 'help_command');
+                const components = [
+                    {
+                        type: 17,
+                        accent_color: 0xfefdfe,
+                        components: [
+                            {
+                                type: 10,
+                                content: `### ${emoji.link} روابط البوت`,
+                            },
+                            {
+                                type: 14,
+                                divider: true,
+                                spacing: 1,
+                            },
+                            {
+                                type: 10,
+                                content: 'جميع الروابط الرسمية المتعلقة ببوت القرآن الكريم',
+                            },
+                            {
+                                type: 14,
+                                divider: false,
+                                spacing: 2,
+                            },
+                            {
+                                type: 10,
+                                content: `${emoji.globe} **الموقع الرسمي**\n[زيارة الموقع](${link.website})\n\n${emoji.chat} **سيرفر الدعم**\n[انضم الآن](${link.support})\n\n${emoji.chat} **إضافة البوت**\n[دعوة البوت](${link.invite})\n\n${emoji.code} **كود المصدر**\n[GitHub](${link.github})\n\n${emoji.globe} **Top.gg**\n[تصويت ودعم](${link.topgg})\n\n${emoji.globe} **سياسة الخصوصية**\n[اقرأ المزيد](${link.privacy})\n\n**شروط الخدمة**\n[اقرأ المزيد](${link.terms})`,
+                            },
+                            {
+                                type: 14,
+                                divider: true,
+                                spacing: 1,
+                            },
+                            {
+                                type: 10,
+                                content: `${emoji.book} **دليل الاستخدام**\nاستخدم الأمر **/دليل** لعرض جميع أوامر البوت مع شرح كل أمر بالتفصيل`,
+                            },
+                            {
+                                type: 14,
+                                divider: true,
+                                spacing: 1,
+                            },
+                            {
+                                type: 1,
+                                components: [
+                                    {
+                                        type: 2,
+                                        label: 'الموقع',
+                                        style: 5,
+                                        url: link.website,
+                                    },
+                                    {
+                                        type: 2,
+                                        label: 'الدعم',
+                                        style: 5,
+                                        url: link.support,
+                                    },
+                                    {
+                                        type: 2,
+                                        label: 'GitHub',
+                                        style: 5,
+                                        url: link.github,
+                                    },
+                                    {
+                                        type: 2,
+                                        label: 'دعوة البوت',
+                                        style: 5,
+                                        url: link.invite,
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ];
+                await safeReply(interaction, { components, flags: 32832 }, 'help_command');
             },
             { ephemeral: true, label: 'help_command' },
         );

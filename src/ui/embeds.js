@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { EmbedBuilder } = require('discord.js');
 const { getCurrentDurations, formatDurationText, parseDurationToSeconds, getDurationForSurah } = require('@audio');
 const logger = require('@logging/logger');
@@ -32,7 +30,7 @@ function createControlEmbed(st, guildId) {
     try {
         if (!st || !global.surahNames?.length || !Object.keys(global.reciters || {}).length) {
             logger.warn('Missing data for guild ' + guildId);
-            return new EmbedBuilder().setColor(0x1e1f22).setTitle('لوحة التحكم').setDescription('جاري تحميل البيانات يرجى الانتظار');
+            return new EmbedBuilder().setColor(0xfefdfe).setTitle('لوحة التحكم').setDescription('جاري تحميل البيانات يرجى الانتظار');
         }
 
         // cache key based on state
@@ -128,7 +126,7 @@ function createControlEmbed(st, guildId) {
         const status = st.isPaused ? 'متوقف مؤقتا' : 'يعمل الآن';
 
         let embed = new EmbedBuilder()
-            .setColor(0x1e1f22)
+            .setColor(0xfefdfe)
             .setTitle(isSurah ? 'وضع القرآن الكريم' : 'وضع الاذاعة القرانية')
             .setDescription(desc)
             .addFields(
@@ -148,7 +146,7 @@ function createControlEmbed(st, guildId) {
     } catch (err) {
         logger.error('Error Creating Control Panel For Guild ' + guildId, err);
         return new EmbedBuilder()
-            .setColor(0x1e1f22)
+            .setColor(0xfefdfe)
             .setTitle('خطأ في لوحة التحكم')
             .setDescription('حدث خطأ في تحميل البيانات يرجى استخدام control مرة أخرى')
             .setFooter({ text: 'يرجى المحاولة لاحقا' });

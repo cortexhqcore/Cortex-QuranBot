@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { db, isFirebaseReady } = require('@database/firebase');
 const { deepCloneForFirebase } = require('@database/firebase/utils/clone');
@@ -35,7 +33,7 @@ async function markGuildAsLeft(guildId) {
     if (global.guildStates) global.guildStates.delete(guildId);
 
     if (global.setupGuilds) delete global.setupGuilds[guildId];
-    logger.db(`Guild ${guildId} marked as left in retention index at ${now}`);
+    // logger.db(`Guild ${guildId} marked as left in retention index at ${now}`);
 }
 
 async function markGuildAsPresent(guildId) {
@@ -204,7 +202,6 @@ async function cleanupInvalidSetupGuilds(client) {
                     continue;
                 }
                 let changed = false;
-                let isValid = true;
 
                 const fixedData = {
                     ...guildData,
@@ -222,16 +219,10 @@ async function cleanupInvalidSetupGuilds(client) {
                             fixedData.categoryId = fallbackCategory.id;
                             changed = true;
                         } else {
-                            isValid = false;
+                            fixedData.categoryId = null;
+                            changed = true;
                         }
                     }
-                } else {
-                    isValid = false;
-                }
-
-                if (!isValid) {
-                    removed++;
-                    continue;
                 }
 
                 const validateChannel = async (fieldName, channelKey, expectedType) => {

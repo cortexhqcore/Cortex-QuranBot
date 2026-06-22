@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { isAuthorized, isPublicFeature, authorizeInteraction } = require('@auth/auth-manager');
 
 // Consolidated public feature detection and exemption logic
@@ -10,7 +8,12 @@ function isExcludedFromAuth(interactionType) {
 }
 
 async function checkAuthorization(interaction, guildState, interactionType) {
-    if (isPublicFeature(interaction) || isExcludedFromAuth(interactionType)) {
+    if (
+        isPublicFeature(interaction) ||
+        isExcludedFromAuth(interactionType) ||
+        (interactionType && interactionType.startsWith('notify_')) ||
+        (interactionType && interactionType.startsWith('download_backup_'))
+    ) {
         return true;
     }
     return await authorizeInteraction(interaction, guildState, interactionType);

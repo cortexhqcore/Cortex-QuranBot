@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const persistentState = require('@state/PersistentStateManager');
 const { teardownConnection, syncVoiceState, stopPlayer } = require('@audio');

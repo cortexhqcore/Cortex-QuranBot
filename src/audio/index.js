@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 let _connection, _player, _resource, _duration, _recovery, _validation;
 function getConnection() {
     if (!_connection) _connection = require('./connection');

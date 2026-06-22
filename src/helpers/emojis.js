@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const config = {
     development: {
         emoji: {
@@ -18,7 +16,7 @@ const config = {
             crescent_moon: '<:crescent_moon:1507975468501045388>',
             edit: '<:edit:1507976280321036349>',
             hub: '<:hub:1507976696584863904>',
-            bulb: '<:bulb:1507977759396331711>',
+            bulb___: '<:bulb___:1507976696584863904>',
             offline: '<:offline:1508238291336691742>',
             online: '<:online:1508238289704976515>',
             check: '<:check:1508253364230553661>',
@@ -30,6 +28,13 @@ const config = {
             code: '<:chat:1508987835083128862>',
             policy: '<:chat:1508988874171617421>',
             support: '<:support:1507977182817816678>',
+            pause: '<:pause:1511325600306954280>',
+            settings: '<:settings:1517300537148838049>',
+            close: '<:close:1517323722690658324>',
+            headphones: '<:headphones:1517641836238213220>',
+            search: '<:search:1517680169374978099>',
+            horizontal: '<:horizontal:1517706398316757002>',
+            timer: '<:timer:1510288066500235264>',
         },
         gif: {
             loading: '<a:loading:1507429386075504792>',
@@ -53,7 +58,7 @@ const config = {
             crescent_moon: '<:crescent_moon:1507975453598547978>',
             edit: '<:edit:1507976265343434805>',
             hub: '<:hub:1507976682634739792>',
-            bulb: '<:bulb:1507977773547782194>',
+            bulb___: '<:bulb___:1507977759396331711>',
             offline: '<:offline:1508238272223117415>',
             online: '<:online:1508238250425323741>',
             check: '<:check:1508253391762096218>',
@@ -65,6 +70,13 @@ const config = {
             code: '<:chat:1508987820960649309>',
             policy: '<:chat:1508988860430815473>',
             support: '<:support:1507977168490074173>',
+            pause: '<:pause:1511325616287383662>',
+            settings: '<:settings:1517300512100192266>',
+            close: '<:close:1517323584958369872>',
+            headphones: '<:headphones:1517641814121779333>',
+            search: '<:search:1517641814121779333>',
+            horizontal: '<:horizontal:1517706487529472071>',
+            timer: '<:timer:1510288052105379920>',
         },
         gif: {
             loading: '<a:loading:1507426304708968588>',

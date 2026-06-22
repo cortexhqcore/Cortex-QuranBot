@@ -2,7 +2,7 @@
 
 Cortex QuranBot is a production-grade, highly optimized Discord bot engineered to deliver a seamless, high-fidelity Quran listening experience. Built with a decentralized state-synchronized architecture, it supports live Islamic radio streams, automated Azkar reminders, precise localized prayer times, and advanced role-based controls.
 
-Developed by **mgv150** and powered by the team at **Cortex HQ**, this bot is designed to handle thousands of servers with ultra-low latency, automated crash recovery, and high-performance Redis caching.
+Developed by **mgv-hub** and powered by the team at **Cortex HQ**, this bot is designed to handle thousands of servers with ultra-low latency, automated crash recovery, and high-performance Redis caching.
 
 ---
 
@@ -110,7 +110,7 @@ NODE_ENV=development pnpm run dev
 
 ## 👥 Contributors & Support
 
-Cortex QuranBot is created and maintained by **mgv150** and is backed by the team at **Cortex HQ**.
+Cortex QuranBot is created and maintained by **mgv-hub** and is backed by the team at **Cortex HQ**.
 
 - **Official Support Server:** Join our Discord for assistance, feature suggestions, and status updates: [Discord Support](https://discord.gg/DwtAPzrbZS)
 - **Home Website:** Explore details and landing features: [Cortex Quran Portal](https://quran.cortexhq.net)

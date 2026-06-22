@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { wrapInteraction, safeReply } = require('@interactions/flow/responder');
 const { createStandardEmbed } = require('@ui/embedFactory');
 
@@ -32,19 +30,47 @@ module.exports = {
         await wrapInteraction(
             ix,
             async () => {
-                const embed = createStandardEmbed()
-                    .setTitle('مصادر معلومات البوت')
-                    .setDescription('البوت يستخدم المصادر الرسمية التالية لجلب البيانات')
-                    .addFields(
-                        ...msg.map((s) => ({
-                            // Map each source to an embed field
-                            name: s.title,
-                            value: s.value,
-                            inline: false,
-                        })),
-                    )
-                    .setFooter({ text: 'جميع المصادر رسمية وموثوقة' });
-                await safeReply(ix, { embeds: [embed], flags: 64 }, 'sources_cmd');
+                const sourcesText = msg.map((s) => `### ${s.title}\n${s.value}`).join('\n\n');
+                const components = [
+                    {
+                        type: 17,
+                        accent_color: 0xfefdfe,
+                        components: [
+                            {
+                                type: 10,
+                                content: '### مصادر معلومات البوت',
+                            },
+                            {
+                                type: 14,
+                                divider: true,
+                                spacing: 1,
+                            },
+                            {
+                                type: 10,
+                                content: 'البوت يستخدم المصادر الرسمية التالية لجلب البيانات',
+                            },
+                            {
+                                type: 14,
+                                divider: false,
+                                spacing: 2,
+                            },
+                            {
+                                type: 10,
+                                content: sourcesText,
+                            },
+                            {
+                                type: 14,
+                                divider: true,
+                                spacing: 1,
+                            },
+                            {
+                                type: 10,
+                                content: '*جميع المصادر رسمية وموثوقة*',
+                            },
+                        ],
+                    },
+                ];
+                await safeReply(ix, { components, flags: 32832 }, 'sources_cmd');
             },
             { ephemeral: true, label: 'sources_cmd' },
         );

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 // calc pagination bounds + indices

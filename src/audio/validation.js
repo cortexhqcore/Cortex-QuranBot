@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 // Actions that bypass voice check - support/complaint flows don't need audio
 const allowed_without_voice = [
     'join_vc',
@@ -22,6 +20,14 @@ function isBotConnected(gs) {
 
 // Check if action is exempt from voice requirement
 function isVoiceExempt(actionId) {
+    if (actionId && actionId.startsWith('tafseer_')) return true;
+    if (actionId && actionId.startsWith('search_')) return true;
+    if (actionId && actionId.startsWith('tasbih_')) return true;
+    if (actionId && actionId.startsWith('prayer_')) return true;
+    if (actionId === 'select_country_prayer' || actionId === 'select_city_prayer') return true;
+    if (actionId && actionId.startsWith('spread_bot')) return true;
+    if (actionId && actionId.startsWith('save_join_channel_')) return true;
+    if (actionId && actionId.startsWith('temp_join_channel_')) return true;
     return allowed_without_voice.includes(actionId);
 }
 

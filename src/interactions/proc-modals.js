@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const coreLoader = require('@bot/bootstrap');
 
 const MODAL_HANDLERS = {

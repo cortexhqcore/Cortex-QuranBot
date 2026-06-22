@@ -1,10 +1,6 @@
-// Centralized configuration constants for active core modules and UI builders
-require('pathlra-aliaser')();
-
 const time_constants = {
     // Azkar system timing
     azkar_interval_ms: 30 * 60 * 1000,
-    azkar_expiry_ms: 10 * 24 * 60 * 1000,
     azkar_max_retry_attempts: 5,
     azkar_retry_delay_ms: 2000,
 
@@ -52,9 +48,6 @@ const time_constants = {
 };
 
 const limits = {
-    // Voice connection limits
-    max_voice_connections_per_shard: 50,
-
     // Memory and state limits
     max_guild_states_in_memory: 1000,
     max_cache_entries: 5000,
@@ -145,7 +138,6 @@ const memory_config = {
 };
 
 const voice_config = {
-    max_connections_per_shard: 50,
     bitrate: 64000,
     user_limit: 0,
     self_deaf: true,
@@ -172,7 +164,7 @@ const logging_config = {
 const permissions_config = {
     admin_roles: ['admin', 'quran admin', 'islamic admin', 'quran', 'islamic', 'islam'],
     special_user_env: 'SPE_USER_ID',
-    required_setup_permissions: ['ManageChannels', 'ManageRoles', 'ViewChannel', 'Connect', 'Speak'],
+    required_setup_permissions: ['ManageChannels', 'ManageRoles', 'ViewChannel', 'Connect', 'Speak', 'ReadMessageHistory'],
 };
 
 const channel_names = {
@@ -180,6 +172,15 @@ const channel_names = {
     voice: '🕌︱بثّ القُرآن الكريم',
     text: '📖︱تحكم البوت القرآني',
     azkar: '🌙︱الأذكار',
+};
+
+const azkarSettings = {
+    role: {
+        name: 'الأذكار',
+        reason: 'Azkar mention role auto created by QuranBot',
+        colors: 0x000000,
+        mentionable: true,
+    },
 };
 
 const pagination = {
@@ -201,5 +202,6 @@ module.exports = {
     logging_config,
     permissions_config,
     channel_names,
+    azkarSettings,
     pagination,
 };

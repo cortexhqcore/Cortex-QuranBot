@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const coreLoader = require('@bot/bootstrap');
 const { handleInteractionError } = require('@interactions/interactionErrors');
 const { checkGlobalCooldown } = require('@interactions/interactionCooldown');
@@ -25,8 +23,13 @@ async function handleInteraction(interaction) {
         if (isBlocked) {
             return;
         }
-
-        if (!interaction.isCommand() && !interaction.isButton() && !interaction.isStringSelectMenu() && !interaction.isModalSubmit()) {
+        const isAnySelectMenu =
+            interaction.isStringSelectMenu() ||
+            interaction.isChannelSelectMenu() ||
+            interaction.isRoleSelectMenu() ||
+            interaction.isUserSelectMenu() ||
+            interaction.isMentionableSelectMenu();
+        if (!interaction.isCommand() && !interaction.isButton() && !isAnySelectMenu && !interaction.isModalSubmit()) {
             return;
         }
 
@@ -67,7 +70,7 @@ async function handleInteraction(interaction) {
 
         if (interaction.isButton()) {
             await handleButtonInteraction(interaction);
-        } else if (interaction.isStringSelectMenu()) {
+        } else if (isAnySelectMenu) {
             await handleMenuInteraction(interaction);
         }
     } catch (error) {

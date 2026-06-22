@@ -21,24 +21,36 @@ const labels = {
 // Converts milliseconds to a human-readable duration string in the specified language
 function formatTimeDuration(ms, lang = 'en') {
     const t = labels[lang] || labels.en;
-    // convert to seconds first
     let secs = Math.floor(ms / 1000);
-    if (secs < 60) return `${secs} ${t.seconds}`;
-    // to minutes
-    let mins = Math.floor(secs / 60);
-    if (mins < 60) return `${mins} ${t.minutes}`;
-    // to hours
-    let hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs} ${t.hours}`;
-    // to days (approx 30 days/month)
-    let days = Math.floor(hrs / 24);
-    if (days < 30) return `${days} ${t.days}`;
-    // to months
-    let months = Math.floor(days / 30);
-    if (months < 12) return `${months} ${t.months}`;
-    // to years
-    let years = Math.floor(months / 12);
-    return `${years} ${t.years}`;
+
+    const years = Math.floor(secs / (365 * 24 * 60 * 60));
+    secs -= years * (365 * 24 * 60 * 60);
+
+    const months = Math.floor(secs / (30 * 24 * 60 * 60));
+    secs -= months * (30 * 24 * 60 * 60);
+
+    const days = Math.floor(secs / (24 * 60 * 60));
+    secs -= days * (24 * 60 * 60);
+
+    const hrs = Math.floor(secs / (60 * 60));
+    secs -= hrs * (60 * 60);
+
+    const mins = Math.floor(secs / 60);
+    secs -= mins * 60;
+
+    const parts = [];
+
+    if (years > 0) parts.push(`${years} ${t.years}`);
+    if (months > 0) parts.push(`${months} ${t.months}`);
+
+    if (days > 0) parts.push(`${days} ${t.days}`);
+    if (hrs > 0) parts.push(`${hrs} ${t.hours}`);
+
+    if (mins > 0) parts.push(`${mins} ${t.minutes}`);
+
+    if (secs > 0 || parts.length === 0) parts.push(`${secs} ${t.seconds}`);
+
+    return parts.join(' ');
 }
 
 module.exports = formatTimeDuration;

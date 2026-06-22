@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 // Validate that cached data has the minimum required structure for surahs and reciters
 function isValidCacheData(data) {
     if (!data || typeof data !== 'object') return false;

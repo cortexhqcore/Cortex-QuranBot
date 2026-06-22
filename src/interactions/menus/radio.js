@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { getGuildState, isAuthorized } = require('../../state/GuildStateManager');
 const { createRadioResource, createSurahResource } = require('@audio');
 const { createControlEmbed } = require('@ui/embeds');
@@ -46,20 +44,21 @@ module.exports = {
                 }
             }
 
-            // Ensure radio selection is only processed in radio mode
-            if (guildState.playbackMode !== 'radio') {
-                logger.warn('Radio Menu Accessed In Surah Mode Guild ' + guildId + ' Mode ' + guildState.playbackMode);
-                return interaction.editReply({
-                    content: 'اختيار الراديو غير متاح في وضع السور',
-                    flags: 64,
-                });
-            }
+            // // Ensure radio selection is only processed in radio mode
+            // if (guildState.playbackMode !== 'radio') {
+            //     logger.warn('Radio Menu Accessed In Surah Mode Guild ' + guildId + ' Mode ' + guildState.playbackMode);
+            //     return interaction.editReply({
+            //         content: 'اختيار الراديو غير متاح في وضع السور',
+            //         flags: 64,
+            //     });
+            // }
 
             // Parse selected radio index from dropdown value
             const selectedValue = interaction.values[0];
             const radioIndex = parseInt(selectedValue);
 
             if (radioIndex >= 0 && radioIndex < global.quranRadios.length) {
+                guildState.playbackMode = 'radio';
                 guildState.currentRadioIndex = radioIndex;
                 guildState.currentRadioUrl = global.quranRadios[radioIndex].url;
 
@@ -89,7 +88,7 @@ module.exports = {
                             guildState.pauseReason = null;
                         }
                     } catch (radioErr) {
-                        logger.warn(`Radio Stream Failed Guild ${guildId}: ${radioErr.message}`);
+                        logger.warn(`Radio Stream Failed Guild: ${guildId} URL: ${radioUrl} Reason: ${radioErr.message}`);
                         const fallbackRadio = global.quranRadios.find((r) => r.url && r.url !== radioUrl);
                         if (fallbackRadio?.url) {
                             try {

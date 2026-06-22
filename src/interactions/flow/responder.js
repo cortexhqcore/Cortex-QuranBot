@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 async function deferIfPending(interaction, ephemeral = false) {
     if (interaction.deferred || interaction.replied) return;
@@ -21,27 +19,75 @@ async function deferIfPending(interaction, ephemeral = false) {
     }
 }
 
+function wrapContentInV2(content) {
+    return [
+        {
+            type: 17,
+            accent_color: 0xfefdfe,
+            components: [{ type: 10, content: content }],
+        },
+    ];
+}
+
 // reply chain: tries edit/followup first, falls back to channel.send if interaction expires (10062)
 async function safeReply(interaction, options, ctx = 'unknown') {
     let result = null;
+    const sendOptions = { ...options };
+
+    const hasComponentsV2 = sendOptions.components?.some((c) => c.type === 17 || c.type === 10 || c.type === 14 || c.type === 12);
+    const hasContent = !!sendOptions.content;
+    const hasEmbeds = !!sendOptions.embeds?.length;
+
+    if (hasContent && !hasComponentsV2 && !hasEmbeds) {
+        sendOptions.components = wrapContentInV2(sendOptions.content);
+        delete sendOptions.content;
+    }
+
+    if (sendOptions.components?.some((c) => c.type === 17)) {
+        if (!sendOptions.flags) {
+            sendOptions.flags = 32768;
+        } else if ((sendOptions.flags & 32768) === 0) {
+            sendOptions.flags = sendOptions.flags | 32768;
+        }
+    }
+
     try {
         if (interaction.replied) {
-            result = await interaction.followUp(options);
+            result = await interaction.followUp(sendOptions);
             if (result) return result;
         } else if (interaction.deferred) {
-            result = await interaction.editReply(options);
+            result = await interaction.editReply(sendOptions);
             if (result) return result;
         } else {
-            result = await interaction.reply(options);
+            result = await interaction.reply(sendOptions);
             if (result) return result;
         }
     } catch (primary) {
-        logger.debug('Primary reply failed in ' + ctx + ': ' + primary.message);
+        const errMsg = primary.message || '';
+        const isComponentsV2Error = errMsg.includes('IS_COMPONENTS_V2') || errMsg.includes('COMPONENTS_V2');
+        if (isComponentsV2Error && interaction.deferred && !interaction.replied) {
+            try {
+                result = await interaction.followUp(sendOptions);
+                if (result) return result;
+            } catch (followUpErr) {
+                // Fall through to channel.send
+            }
+        } else {
+            logger.debug('Primary reply failed in ' + ctx + ': ' + primary.message);
+        }
     }
     // If we got here, primary methods failed or returned null - try channel fallback
     if (interaction.channel) {
         try {
-            result = await interaction.channel.send(options);
+            const channelOptions = { ...sendOptions };
+            if (channelOptions.flags) {
+                channelOptions.flags = channelOptions.flags & ~64;
+                if (channelOptions.flags === 0) delete channelOptions.flags;
+            }
+            if (!channelOptions.components?.some((c) => c.type === 17) && channelOptions.flags) {
+                channelOptions.flags = channelOptions.flags | 32768;
+            }
+            result = await interaction.channel.send(channelOptions);
             if (result) return result;
         } catch (chanErr) {
             logger.error('Channel fallback failed in ' + ctx, chanErr);

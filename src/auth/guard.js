@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { getGuildState } = require('../state/GuildStateManager');
 const { authorizeInteraction } = require('@auth/auth-manager');
 const { safeError } = require('@interactions/flow/deferReply');

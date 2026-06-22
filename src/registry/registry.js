@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 // lazy-load audio to avoid circular deps
 let _audio;
 function getAudio() {

@@ -1,24 +1,35 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 
 const userCD = new Map();
 const serverCD = new Map();
 
 const COMMAND_COOLDOWNS = {
-    control: { duration: 25000, type: 'user' },
-    guide: { duration: 15000, type: 'user' },
-    join_channel: { duration: 15000, type: 'user' },
-    join: { duration: 15000, type: 'user' },
-    leave: { duration: 15000, type: 'user' },
+    control: { duration: 10000, type: 'user' },
+    guide: { duration: 5000, type: 'user' },
+    join_channel: { duration: 7000, type: 'user' },
+    join: { duration: 7000, type: 'user' },
+    leave: { duration: 10000, type: 'user' },
     ping: { duration: 30000, type: 'user' },
-    prayerTimes: { duration: 50000, type: 'user' },
-    prayerTimesButton: { duration: 15000, type: 'user' }, // Button
+    prayerTimes: { duration: 5000, type: 'user' },
+    prayerTimesButton: { duration: 5000, type: 'user' },
     setup: { duration: 60000, type: 'server' },
-    sources: { duration: 10000, type: 'user' },
+    sources: { duration: 5000, type: 'user' },
     changelog: { duration: 15000, type: 'user' },
     help: { duration: 3000, type: 'user' },
 };
+
+//  control: { duration: 1000, type: 'user' },
+//  guide: { duration: 1000, type: 'user' },
+//  join_channel: { duration: 1000, type: 'user' },
+//  join: { duration: 1000, type: 'user' },
+//  leave: { duration: 1000, type: 'user' },
+//  ping: { duration: 1000, type: 'user' },
+//  prayerTimes: { duration: 1000, type: 'user' },
+//  prayerTimesButton: { duration: 1000, type: 'user' },
+//  setup: { duration: 1000, type: 'server' },
+//  sources: { duration: 1000, type: 'user' },
+//  changelog: { duration: 1000, type: 'user' },
+//  help: { duration: 1000, type: 'user' },
 
 const CMD_MAP = {
     تحكم: 'control',

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { loadCachedData } = require('@data/data-cache');
 const logger = require('@logging/logger');
 

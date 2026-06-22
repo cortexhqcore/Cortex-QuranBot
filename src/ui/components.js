@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js');
 const { getCurrentDurations } = require('@audio');
 
@@ -166,10 +164,6 @@ function createNavigationRow(st, guildId) {
             .setLabel(truncateText('صفحة تالية قراء', 80))
             .setStyle(ButtonStyle.Secondary)
             .setDisabled(!(st.currentReciterPage < totalRec - 1 && isSurah)),
-        new ButtonBuilder()
-            .setCustomId('lavalink_status')
-            .setLabel(truncateText('حالة خادم الصوت (Lavalink)', 80))
-            .setStyle(ButtonStyle.Secondary),
     ];
     const nav = new ActionRowBuilder().addComponents(navComponents);
     const toggle = new ButtonBuilder()
@@ -181,7 +175,6 @@ function createNavigationRow(st, guildId) {
         new ButtonBuilder().setCustomId('join_vc').setLabel(truncateText('دخول', 80)).setStyle(ButtonStyle.Secondary),
         new ButtonBuilder().setCustomId('leave_vc').setLabel(truncateText('خروج', 80)).setStyle(ButtonStyle.Secondary),
         toggle,
-        new ButtonBuilder().setCustomId('submit_complaint').setLabel('تقديم شكوى او اقتراح').setStyle(ButtonStyle.Secondary),
         new ButtonBuilder().setCustomId('more_features').setLabel(truncateText('المزيد', 80)).setStyle(ButtonStyle.Secondary),
     );
 
@@ -201,10 +194,6 @@ function createNavigationRow(st, guildId) {
                 .setLabel(truncateText('صفحة تالية راديو', 80))
                 .setStyle(ButtonStyle.Secondary)
                 .setDisabled(!(curRadio < totalRadio - 1)),
-            new ButtonBuilder()
-                .setCustomId('lavalink_status')
-                .setLabel(truncateText('حالة خادم الصوت (Lavalink)', 80))
-                .setStyle(ButtonStyle.Secondary),
         );
         rows.push(radioNav);
     }

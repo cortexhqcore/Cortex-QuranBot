@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { GLOBAL_CONSTANTS } = require('@data/data-loader-constants');
 const { getCachedSurahData } = require('@data-loader-cache-core_data');

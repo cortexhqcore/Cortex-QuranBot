@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { AudioPlayerStatus } = require('@discordjs/voice');
 const logger = require('@logging/logger');
 const { createSurahResource } = require('@audio');

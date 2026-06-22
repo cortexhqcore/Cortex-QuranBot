@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { createControlEmbed } = require('@ui/embeds');
 const { createReciterRow, createRadioRow, createSelectRow, createButtonRow, createNavigationRow } = require('@ui/components');
 const logger = require('@logging/logger');

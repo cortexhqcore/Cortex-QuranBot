@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { wrapInteraction, safeReply } = require('@interactions/flow/responder');
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { createStandardEmbed } = require('@ui/embedFactory');
@@ -10,13 +8,28 @@ module.exports = {
         await wrapInteraction(
             interaction,
             async () => {
-                const featuresEmbed = createStandardEmbed()
-                    .setTitle('المزيد من الميزات')
-                    .setDescription('**الميزات الإضافية**\n' + 'سيتم إضافة خيارات جديدة في المستقبل. حالياً، يتوفر فقط زر مواقيت الصلاة.');
-                const featuresRow = new ActionRowBuilder().addComponents(
-                    new ButtonBuilder().setCustomId('prayer_times').setLabel('مواقيت الصلاة').setStyle(ButtonStyle.Secondary),
-                );
-                await safeReply(interaction, { embeds: [featuresEmbed], components: [featuresRow], flags: 64 }, 'more_features_button');
+                const components = [
+                    {
+                        type: 17,
+                        accent_color: 0xfefdfe,
+                        components: [
+                            { type: 10, content: '### المزيد من الميزات' },
+                            { type: 14, divider: true, spacing: 1 },
+                            { type: 10, content: 'يمكنك الوصول إلى الميزات الإضافية من الأزرار أدناه.' },
+                            {
+                                type: 1,
+                                components: [
+                                    { type: 2, custom_id: 'assign_channels', label: 'تعيين القنوات', style: 2 },
+                                    { type: 2, custom_id: 'prayer_times', label: 'مواقيت الصلاة', style: 2 },
+                                    { type: 2, custom_id: 'lavalink_status', label: 'حالة خادم الصوت (Lavalink)', style: 2 },
+                                    { type: 2, custom_id: 'submit_complaint', label: 'تقديم شكوى او اقتراح', style: 2 },
+                                    { type: 2, custom_id: 'spread_bot', label: 'ساعدنا في انتشار البوت', style: 2 },
+                                ],
+                            },
+                        ],
+                    },
+                ];
+                await safeReply(interaction, { components, flags: 32832 }, 'more_features_button');
             },
             { ephemeral: true, label: 'more_features_button' },
         );

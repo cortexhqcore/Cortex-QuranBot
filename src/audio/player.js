@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 // const { createAudioPlayer, AudioPlayerStatus } = require('@discordjs/voice');
 const logger = require('@logging/logger');
 const voiceLogger = require('@logging/voiceLogger');
@@ -103,6 +101,8 @@ function attachManagerEvents(manager) {
             if (!state.isPaused && (state.playbackMode === 'surah' || (state.playbackMode === 'radio' && state.currentRadioUrl))) {
                 queueNextTrack(player, state);
             }
+            const { updateVoiceStatus } = require('./voiceStatus');
+            updateVoiceStatus(guildId, state, require('@startup/botSetup').client);
         }
     });
 
@@ -131,6 +131,16 @@ function attachManagerEvents(manager) {
             const queued = await queueNextTrack(player, state);
             if (queued) {
                 await player.play();
+            } else {
+                try {
+                    const fallbackTrack = await global.createSurahResource(state, 0);
+                    if (fallbackTrack) {
+                        await player.queue.add(fallbackTrack);
+                        await player.play();
+                    }
+                } catch (e) {
+                    logger.error(`Empty queue fallback failed for guild ${player.guildId}`);
+                }
             }
         }
 

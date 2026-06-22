@@ -1,16 +1,28 @@
-require('pathlra-aliaser')();
-
 const coreLoader = require('@bot/bootstrap');
+
 const MENU_HANDLERS = {
     select_reciter: 'reciterMenu',
     select_surah: 'surahMenu',
     select_radio: 'radioMenu',
     admin_select_guild: 'adminSelectGuildMenu',
     select_lavalink_node: 'lavalinkNodesMenu',
+    tafseer_surah_select: 'tafseerSurahSelectMenu',
+    tafseer_verse_select: 'tafseerVerseSelectMenu',
+    spread_bot_channel: 'spreadBotChannelMenu',
+    assign_select_category: 'assignChannelsSelectMenu',
+    assign_select_text: 'assignChannelsSelectMenu',
+    assign_select_azkar: 'assignChannelsSelectMenu',
+    assign_select_voice: 'assignChannelsSelectMenu',
 };
 
 function isMenuInteraction(interaction) {
-    return interaction.isStringSelectMenu();
+    return (
+        interaction.isStringSelectMenu() ||
+        interaction.isChannelSelectMenu() ||
+        interaction.isRoleSelectMenu() ||
+        interaction.isUserSelectMenu() ||
+        interaction.isMentionableSelectMenu()
+    );
 }
 
 function getMenuHandler(customId) {

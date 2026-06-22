@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { ref, set, get, serverTimestamp, increment, update } = require('firebase/database');
 const { db, isFirebaseReady } = require('@database/firebase');

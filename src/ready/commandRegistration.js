@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { registerCommands, applyCommandPermissions } = require('@registry/commandregistry');
 

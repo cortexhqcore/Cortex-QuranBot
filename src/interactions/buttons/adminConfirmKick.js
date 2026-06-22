@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { EmbedBuilder } = require('discord.js');
 const logger = require('@logging/logger');
 // Replaced inline global.SPE_USER_IDS check with centralized isSpecialUser helper
@@ -11,7 +9,7 @@ module.exports = {
     async execute(interaction) {
         if (!isSpecialUser(interaction.user.id)) {
             return interaction.reply({
-                content: 'This feature is available for the developer only',
+                content: 'This feature is available for the developers only',
                 flags: 64,
             });
         }
@@ -29,7 +27,7 @@ module.exports = {
             await retentiondb.clearGuildData(targetGuildId);
             logger.info(`Admin ${interaction.user.tag} kicked bot from guild ${targetGuild.name} (${targetGuildId})`);
             const confirmationEmbed = new EmbedBuilder()
-                .setColor(0x1e1f22)
+                .setColor(0xfefdfe)
                 .setTitle('Bot Left Successfully')
                 .setDescription(
                     `**Bot removed from server:**\n${targetGuild.name}\n${targetGuild.memberCount} members\n\`${targetGuildId}\``,

@@ -10,7 +10,7 @@
 //     async execute(interaction) {
 //         if (!isSpecialUser(interaction.user.id)) {
 //             return interaction.reply({
-//                 content: 'This feature is available for the developer only',
+//                 content: 'This feature is available for the developers only',
 //                 flags: 64,
 //             });
 //         }

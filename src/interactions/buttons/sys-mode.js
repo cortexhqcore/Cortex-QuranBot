@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const persistentState = require('@state/PersistentStateManager');
 
 // Toggle control mode between 'everyone' and 'admins' and persist the change

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 // Base CDN path for azkar image assets
 const azkar_images_base = 'https://hub-mgv.github.io/QuranBotData/azkar-images/';
 

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { isAuthorized } = require('../../state/GuildStateManager');
 const { ERRORS } = require('@interactions/buttons/sys-config');
 

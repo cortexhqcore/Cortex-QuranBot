@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { wrapInteraction } = require('@interactions/flow/deferReply');
 const { resolveGuildState } = require('@auth/guard');
 const { rebuildAndSendControlPanel } = require('@ui/controlPanelBuilder');

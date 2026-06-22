@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const voiceManager = require('@audio/voice-connection');
 const persistentState = require('@state/PersistentStateManager');
 

@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { GLOBAL_CONSTANTS } = require('@data/data-loader-constants');
 
 function formatReciterName(name) {

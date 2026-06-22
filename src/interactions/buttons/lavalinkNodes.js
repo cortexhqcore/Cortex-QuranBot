@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { wrapInteraction, safeError } = require('@interactions/flow/deferReply');
 const { resolveGuildState } = require('@auth/guard');
 const fetch = require('node-fetch').default;
@@ -65,17 +63,7 @@ module.exports = {
                         currentServerText = `${currentNode.flag} \`${currentNode.location}\``;
                     }
                 }
-                const des = `
-${emoji.exclamation} **ما هو Lavalink؟**
-هو نظام خارجي متخصص في معالجة وتشغيل الصوت، يستخدمه البوت لتحسين الأداء وتقليل الضغط على الموارد، مما يساعد على توفير تشغيل أكثر استقرارًا وجودة أفضل.
-${emoji.barChart} **إحصائيات البوت الحالية:**
-• **الخادم الحالي:** ${currentServerText}
-• العقد المتصلة: \`${onlineCount}/${validStats.length}\`
-**اختر الخادم الأنسب لك من القائمة أدناه**
-يمكنك اختيار الخادم ذو أقل زمن استجابة (Ping) للحصول على أفضل سرعة،
-أو اختيار أقرب منطقة إليك إذا كنت تفضل اتصالًا أكثر استقرارًا أثناء التشغيل.
-`;
-                const embed = createStandardEmbed().setTitle('حالة عقد Lavalink').setDescription(des);
+
                 const options = validStats.map((s) => {
                     const latText = s.status === 'online' ? `${s.latency}ms` : 'غير متصل';
                     const serversText = s.status === 'online' ? `${s.players}` : '0';
@@ -99,11 +87,44 @@ ${emoji.barChart} **إحصائيات البوت الحالية:**
                     .setPlaceholder('اختر عقدة Lavalink')
                     .addOptions(options);
                 const row = new ActionRowBuilder().addComponents(menu);
-                await interaction.followUp({
-                    embeds: [embed],
-                    components: [row],
-                    flags: 64,
-                });
+
+                const components = [
+                    {
+                        type: 17,
+                        accent_color: 0xfefdfe,
+                        components: [
+                            {
+                                type: 10,
+                                content: `### حالة عقد Lavalink\n\n${emoji.exclamation} **ما هو Lavalink؟**\nهو نظام خارجي متخصص في معالجة وتشغيل الصوت، يستخدمه البوت لتحسين الأداء وتقليل الضغط على الموارد، مما يساعد على توفير تشغيل أكثر استقرارًا وجودة أفضل.`,
+                            },
+                            {
+                                type: 14,
+                                divider: true,
+                                spacing: 1,
+                            },
+                            {
+                                type: 10,
+                                content: `${emoji.barChart} **إحصائيات البوت الحالية:**\n• **الخادم الحالي:** ${currentServerText}\n• العقد المتصلة: \`${onlineCount}/${validStats.length}\``,
+                            },
+                            {
+                                type: 14,
+                                divider: false,
+                                spacing: 2,
+                            },
+                            {
+                                type: 10,
+                                content: `**اختر الخادم الأنسب لك من القائمة أدناه**\nيمكنك اختيار الخادم ذو أقل زمن استجابة (Ping) للحصول على أفضل سرعة،\nأو اختيار أقرب منطقة إليك إذا كنت تفضل اتصالًا أكثر استقرارًا أثناء التشغيل.`,
+                            },
+                            {
+                                type: 14,
+                                divider: true,
+                                spacing: 1,
+                            },
+                            row.toJSON(),
+                        ],
+                    },
+                ];
+                await interaction.followUp({ components, flags: 32832 });
             },
             { context: { label: 'lavalink_status_button', logger } },
         );

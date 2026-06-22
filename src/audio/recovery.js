@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { getGuildStateById } = require('../state/guild-state-store');
 const persistentState = require('../state/PersistentStateManager');
 const { ChannelType } = require('discord.js');

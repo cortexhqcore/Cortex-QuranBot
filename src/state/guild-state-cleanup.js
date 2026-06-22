@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 const { getGuildStateById, deleteGuildState } = require('@state/guild-state-store');
 const { decrementVoiceConnections } = require('@state/guild-state-voice');

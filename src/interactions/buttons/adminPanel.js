@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const formatTimeDuration = require('@helpers/time/formatUptime');
 const logger = require('@logging/logger');
@@ -22,7 +20,7 @@ module.exports = {
     customId: 'admin_panel',
     async execute(interaction) {
         const { isSpecialUser } = require('@auth/auth-manager');
-        // Replaced inline global.SPE_USER_IDS check with centralized isSpecialUser helper
+
         if (!isSpecialUser(interaction.user.id)) {
             return interaction.reply({
                 content: 'This panel is available for the developer only',

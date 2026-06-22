@@ -1,14 +1,11 @@
-require('pathlra-aliaser')();
-
 const coreLoader = require('@bot/bootstrap');
 const { getErrorType } = require('@interactions/interactionErrors');
+
 // Categorize commands by access level and execution context
-const public_commands = ['مصادر', 'مواقيت_الصلاة', 'سرعة', 'دليل', 'تحديثات', 'مساعدة'];
-// const admin_commands = ['خروج', 'دخول', 'دخول_قناة', 'إعداد'];
-const admin_commands = ['خروج', 'دخول', 'إعداد'];
+const public_commands = ['مصادر', 'مواقيت_الصلاة', 'سرعة', 'دليل', 'تحديثات', 'مساعدة', 'تفسير', 'بحث', 'سورة', 'المسباح'];
+const admin_commands = ['خروج', 'دخول', 'دخول_قناة', 'إعداد', 'تعيين_القنوات'];
 const control_commands = ['تحكم'];
-// const guild_required_commands = ['تحكم', 'خروج', 'دخول', 'دخول_قناة', 'إعداد'];
-const guild_required_commands = ['تحكم', 'خروج', 'دخول', 'إعداد'];
+const guild_required_commands = ['تحكم', 'خروج', 'دخول', 'دخول_قناة', 'إعداد'];
 
 function isPublicCommand(commandName) {
     return public_commands.includes(commandName);
@@ -128,6 +125,16 @@ async function executeCommand(interaction, commandName) {
             return await coreLoader.changelogCommand.execute(interaction);
         case 'مساعدة':
             return await coreLoader.helpCommand.execute(interaction);
+        case 'تفسير':
+            return await coreLoader.tafseerCommand.execute(interaction);
+        // case 'بحث':
+        //     return await coreLoader.searchCommand.execute(interaction);
+        case 'سورة':
+            return await coreLoader.surahCommand.execute(interaction);
+        case 'المسباح':
+            return await coreLoader.tasbihCommand.execute(interaction);
+        case 'تعيين_القنوات':
+            return await coreLoader.assignChannelsCommand.execute(interaction);
         default:
             if (!interaction.replied && !interaction.deferred) {
                 await interaction.editReply({

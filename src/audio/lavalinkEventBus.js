@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 
 function registerLavalinkEvents(manager, lavalinkNodeConfig, selectBest) {
@@ -9,7 +7,7 @@ function registerLavalinkEvents(manager, lavalinkNodeConfig, selectBest) {
     });
 
     manager.nodeManager.on('disconnect', async (node, reason) => {
-        logger.error(`Node "${node.id}" disconnected`, reason?.message || reason);
+        logger.debug(`Node "${node.id}" disconnected`, reason?.message || reason);
         const playersToMigrate = Array.from(manager.players.values()).filter((p) => p.node?.id === node.id);
 
         if (playersToMigrate.length > 0) {
@@ -86,7 +84,12 @@ function registerLavalinkEvents(manager, lavalinkNodeConfig, selectBest) {
     });
 
     manager.nodeManager.on('error', (node, error) => {
-        logger.error(`Node "${node.id}" error`, error);
+        const msg = error?.message || '';
+        if (msg.includes('Hostname/IP does not match') || msg.includes('Unable to connect') || msg.includes('ECONNREFUSED')) {
+            logger.warn(`Node "${node.id}" connection issue: ${msg}`);
+        } else {
+            logger.error(`Node "${node.id}" error`, error);
+        }
     });
 
     manager.on('playerCreate', (player) => {

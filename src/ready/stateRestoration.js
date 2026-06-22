@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const logger = require('@logging/logger');
 // const { AudioPlayerStatus } = require('@discordjs/voice');
 const { ChannelType } = require('discord.js');
@@ -11,7 +9,23 @@ let restorationActive = false;
 
 async function restoreGuildStates(client, activeGuildIds) {
     const setups = global.setupGuilds || {};
-    const guildsToRestore = Object.keys(setups).filter((gid) => activeGuildIds.has(gid));
+    const guildsToRestoreSet = new Set();
+
+    for (const gid of activeGuildIds) {
+        if (setups[gid]?.voiceChannelId) {
+            guildsToRestoreSet.add(gid);
+        } else {
+            const stored = persistentStateManager.getGuildState(gid);
+
+            if (stored?.voiceChannelId) {
+                guildsToRestoreSet.add(gid);
+                if (!setups[gid]) setups[gid] = {};
+                setups[gid].voiceChannelId = stored.voiceChannelId;
+            }
+        }
+    }
+
+    const guildsToRestore = Array.from(guildsToRestoreSet);
     if (restorationActive) return;
     if (guildsToRestore.length === 0) {
         return;
@@ -99,6 +113,7 @@ async function restoreGuildStates(client, activeGuildIds) {
                 // guildState.playedOffset = storedState?.playedOffset || 0;
                 persistentStateManager.setManualDisconnect(guildId, false);
                 await syncVoiceState(guildId, guildState);
+                let radioFailed = false;
                 if (guildState.playbackMode === 'radio' && guildState.currentRadioUrl) {
                     try {
                         const audioResource = await createRadioResource(guildState.currentRadioUrl);
@@ -107,16 +122,16 @@ async function restoreGuildStates(client, activeGuildIds) {
                             guildState.isPaused = false;
                             guildState.playbackStartTime = Date.now();
                             logger.info(`Started Playback On Restore For Guild ${guildId}`);
+                        } else {
+                            radioFailed = true;
                         }
                     } catch (radioError) {
-                        logger.warn(`Failed To Play Radio On Restore For Guild ${guildId}`, radioError);
-                        guildState.isPaused = true;
-                        guildState.pauseReason = 'restoration_playback_failed';
+                        radioFailed = true;
                     }
-                } else {
+                }
+                if (guildState.playbackMode !== 'radio' || radioFailed) {
                     guildState.playbackMode = 'surah';
-                    // guildState.currentReciter = storedState?.currentReciter || 'reciter_1_ar';
-                    // guildState.currentSurah = (storedState?.currentSurahIndex || 0) + 1;
+
                     try {
                         const audioResource = await createSurahResource(guildState, guildState.currentSurah - 1);
                         if (audioResource) {

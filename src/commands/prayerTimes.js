@@ -1,10 +1,8 @@
-require('pathlra-aliaser')();
-
 const { wrapInteraction, safeReply } = require('@interactions/flow/responder');
 const bootstrap = require('@bot/bootstrap');
 const { createStandardEmbed } = require('@ui/embedFactory');
 
-const prayer_times_disclaimer =
+const msg =
     'هذه المعلومات يتم جلبها من https://aladhan.com وقد تختلف عن مواقيت الصلاة الرسمية في بلدك\n' +
     '**نوصي بالتحقق من الموقع الرسمي** للمواعيد الدقيقة: https://alaghan.com/prayer-times';
 module.exports = {
@@ -13,26 +11,60 @@ module.exports = {
         await wrapInteraction(
             ix,
             async () => {
-                const embed = createStandardEmbed()
-                    .setTitle('مواقيت الصلاة')
-                    .setDescription('اختر الدولة ثم المنطقة لعرض مواقيت الصلاة\n' + '**تحذير مهم**\n' + prayer_times_disclaimer)
-                    .addFields({
-                        name: 'طريقة الاستخدام',
-                        value: 'اضغط على زر مواقيت الصلاة لاختيار الدولة والمنطقة',
-                        inline: false,
-                    });
+                const actionRow = bootstrap?.createPrayerTimesButtonRow?.()?.toJSON?.() ?? {
+                    type: 1,
+                    components: [
+                        {
+                            type: 2,
+                            custom_id: 'prayer_times',
+                            label: 'مواقيت الصلاة',
+                            style: 2,
+                        },
+                    ],
+                };
 
-                const rows = [];
-                if (bootstrap?.createPrayerTimesButtonRow) {
-                    rows.push(bootstrap.createPrayerTimesButtonRow());
-                }
+                const components = [
+                    {
+                        type: 17,
+                        accent_color: 0xfefdfe,
+                        components: [
+                            {
+                                type: 10,
+                                content: '### مواقيت الصلاة',
+                            },
+                            {
+                                type: 14,
+                                divider: true,
+                                spacing: 1,
+                            },
+                            {
+                                type: 10,
+                                content: 'اختر الدولة ثم المنطقة لعرض مواقيت الصلاة\n**تحذير مهم**\n' + msg,
+                            },
+                            {
+                                type: 14,
+                                divider: false,
+                                spacing: 2,
+                            },
+                            {
+                                type: 10,
+                                content: '**طريقة الاستخدام**\nاضغط على زر مواقيت الصلاة لاختيار الدولة والمنطقة',
+                            },
+                            {
+                                type: 14,
+                                divider: true,
+                                spacing: 1,
+                            },
+                            actionRow,
+                        ],
+                    },
+                ];
 
                 await safeReply(
                     ix,
                     {
-                        embeds: [embed],
-                        components: rows,
-                        flags: 64,
+                        components,
+                        flags: 32832,
                     },
                     'prayer_times_cmd',
                 );

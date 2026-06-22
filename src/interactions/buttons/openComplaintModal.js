@@ -1,5 +1,3 @@
-require('pathlra-aliaser')();
-
 const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require('discord.js');
 const logger = require('@logging/logger');
 
