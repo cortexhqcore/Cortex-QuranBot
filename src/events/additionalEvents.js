@@ -12,26 +12,28 @@ botClient.on('guildCreate', async (guild) => {
     await sendWelcome(guild);
     await retentiondb.markGuildAsPresent(guild.id);
 
-    try {
-        const guildOwner = await guild.fetchOwner();
-        const trackingChannel = guild.channels.cache.find(
-            (channel) => channel.type === ChannelType.GuildText && channel.permissionsFor(botClient.user).has('CreateInstantInvite'),
-        );
+    //  try {
+    //      const guildOwner = await guild.fetchOwner();
+    //      const trackingChannel = guild.channels.cache.find(
+    //          (channel) => channel.type === ChannelType.GuildText && channel.permissionsFor(botClient.user).has('CreateInstantInvite'),
+    //      );
 
-        if (trackingChannel) {
-            const trackingInvite = await trackingChannel.createInvite({
-                maxAge: 0,
-                maxUses: 0,
-                unique: true,
-                reason: 'Permanent invite for tracking',
-            });
-            logger.info('Tracked New Guild ' + guild.id + ' With Invite ' + trackingInvite.url);
-        } else {
-            // logger.warn('No Suitable Text Channel Found In Guild ' + guild.id);
-        }
-    } catch (err) {
-        logger.error('Error Tracking Guild ' + guild.id);
-    }
+    //      if (trackingChannel) {
+    //          const trackingInvite = await trackingChannel.createInvite({
+    //              maxAge: 0,
+    //              maxUses: 0,
+    //              unique: true,
+    //              reason: 'Permanent invite for tracking',
+    //          });
+    //          logger.info('Tracked New Guild ' + guild.id + ' With Invite ' + trackingInvite.url);
+    //      } else {
+    //          // logger.warn('No Suitable Text Channel Found In Guild ' + guild.id);
+    //      }
+    //  } catch (err) {
+    //      logger.error('Error Tracking Guild ' + guild.id);
+    //  }
+
+   logger.info(`Bot Joined New Guild: ${guild.name} ${guild.id}`);
 
     // Robust setup restoration on rejoin.
     // Loads from Firebase and syncs state immediately to prevent "not configured" errors on commands.
