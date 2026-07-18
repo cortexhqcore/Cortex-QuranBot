@@ -33,7 +33,7 @@ botClient.on('guildCreate', async (guild) => {
     //      logger.error('Error Tracking Guild ' + guild.id);
     //  }
 
-   logger.info(`Bot Joined New Guild: ${guild.name} ${guild.id}`);
+    logger.info(`Bot Joined New Guild: ${guild.name} ${guild.id}`);
 
     // Robust setup restoration on rejoin.
     // Loads from Firebase and syncs state immediately to prevent "not configured" errors on commands.

@@ -77,12 +77,12 @@ module.exports = {
                 if (!radioUrl) {
                     guildState.playbackMode = 'surah';
                     const surahAudio = await createSurahResource(guildState, guildState.currentSurah - 1);
-                    if (surahAudio) guildState.player.play({ track: surahAudio });
+                    if (surahAudio && guildState.player && !guildState.player.destroyed) guildState.player.play({ track: surahAudio });
                 } else {
                     try {
-                        guildState.player.stopPlaying();
+                        if (guildState.player && !guildState.player.destroyed) guildState.player.stopPlaying();
                         const radioAudio = await createRadioResource(radioUrl);
-                        if (radioAudio) {
+                        if (radioAudio && guildState.player && !guildState.player.destroyed) {
                             guildState.player.play({ track: radioAudio });
                             guildState.isPaused = false;
                             guildState.pauseReason = null;
@@ -95,18 +95,20 @@ module.exports = {
                                 const fallbackAudio = await createRadioResource(fallbackRadio.url);
                                 guildState.currentRadioUrl = fallbackRadio.url;
                                 guildState.currentRadioIndex = global.quranRadios.indexOf(fallbackRadio);
-                                guildState.player.play({ track: fallbackAudio });
+                                if (guildState.player && !guildState.player.destroyed) guildState.player.play({ track: fallbackAudio });
                             } catch (fallbackErr) {
                                 logger.warn('Fallback Radio Also Failed Switching To Surah Mode');
                                 guildState.playbackMode = 'surah';
 
                                 const surahAudio = await createSurahResource(guildState, guildState.currentSurah - 1);
-                                if (surahAudio) guildState.player.play({ track: surahAudio });
+                                if (surahAudio && guildState.player && !guildState.player.destroyed)
+                                    guildState.player.play({ track: surahAudio });
                             }
                         } else {
                             guildState.playbackMode = 'surah';
                             const surahAudio = await createSurahResource(guildState, guildState.currentSurah - 1);
-                            if (surahAudio) guildState.player.play({ track: surahAudio });
+                            if (surahAudio && guildState.player && !guildState.player.destroyed)
+                                guildState.player.play({ track: surahAudio });
                         }
                     }
                 }

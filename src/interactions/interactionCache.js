@@ -22,7 +22,11 @@ function canPlayAudio(guildId) {
 }
 
 function setGuildPlaying(guildId, isPlaying) {
-    activeGuildPlays.set(guildId, isPlaying);
+    if (isPlaying) {
+        activeGuildPlays.set(guildId, Date.now());
+    } else {
+        activeGuildPlays.delete(guildId);
+    }
 }
 
 function setupMemoryManagement() {
@@ -56,6 +60,10 @@ function cleanupMemory() {
             embedCache.delete(cacheKey);
         }
     }
+    const now = Date.now();
+    for (const [gid, ts] of activeGuildPlays.entries()) {
+        if (now - ts > 3600000) activeGuildPlays.delete(gid);
+    }
 }
 
 function aggressiveMemoryCleanup() {
@@ -71,7 +79,7 @@ function aggressiveMemoryCleanup() {
         for (let i = 0; i < embedToRemove; i++) {
             embedCache.delete(embedEntries[i][0]);
         }
-
+        activeGuildPlays.clear();
         if (global.gc) {
             global.gc();
         }

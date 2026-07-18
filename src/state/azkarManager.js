@@ -28,12 +28,7 @@ const fallback_azkar_data = [
     },
 ];
 
-const firstMsg = new Map();
 const audioData = new Map();
-
-function setFirstMessage(gid, val) {
-    firstMsg.set(gid, val);
-}
 
 function setAudioData(id, data) {
     audioData.set(id, data);
@@ -69,17 +64,17 @@ async function sendWithRetry(ch, content, maxRetry, gid, cid) {
             const { getGuildState } = require('../state/GuildStateManager');
             const st = getGuildState(gid);
             if (st) {
-                if (st.azkarTimer) {
-                    clearInterval(st.azkarTimer);
-                    st.azkarTimer = null;
+                if (st.azkarChannelId === cid) {
+                    st.azkarChannelId = null;
+                    persistentStateManager.updateGuildState(gid, { azkarChannelId: null });
                 }
-                st.azkarChannelId = null;
-                persistentStateManager.updateGuildState(gid, { azkarChannelId: null });
             }
             if (global.setupGuilds && global.setupGuilds[gid]) {
-                global.setupGuilds[gid].azkarChannelId = null;
-                const { saveSetupGuildsToFirebase } = require('@database/firebase');
-                saveSetupGuildsToFirebase(global.setupGuilds).catch(() => {});
+                if (global.setupGuilds[gid].azkarChannelId === cid) {
+                    global.setupGuilds[gid].azkarChannelId = null;
+                    const { saveSetupGuildsToFirebase } = require('@database/firebase');
+                    saveSetupGuildsToFirebase(global.setupGuilds).catch(() => {});
+                }
             }
             return { success: false, error: err, type: errType, guildId: gid, channelId: cid };
         }
@@ -283,6 +278,20 @@ async function sendCategoryAudioAzkar(ch, cat, text, ts, gid, maxRetry, cid) {
     return result;
 }
 
+let globalTimer = null;
+
+function initTimer() {
+    if (globalTimer) return;
+    globalTimer = setInterval(() => {
+        if (!global.guildStates) return;
+        for (const [gid, st] of global.guildStates.entries()) {
+            if (st.azkarChannelId) {
+                queueAzkarSend(st.azkarChannelId, gid, 5, false);
+            }
+        }
+    }, azkar_interval_ms);
+}
+
 const azkarSendQueue = [];
 let isProcessingQueue = false;
 
@@ -310,6 +319,13 @@ function queueAzkarSend(cid, gid, maxRetry = 5, forceImg = false) {
 }
 
 async function executeAzkarSend(cid, gid, maxRetry = azkar_max_retry_attempts, forceImg = false) {
+    const { getGuildState } = require('../state/GuildStateManager');
+    const st = getGuildState(gid);
+
+    if (!st || st.azkarChannelId !== cid) {
+        return { success: false, reason: 'Channel ID changed or guild state not found' };
+    }
+
     let ch = global.client.channels.cache.get(cid);
     if (!ch) {
         try {
@@ -318,20 +334,18 @@ async function executeAzkarSend(cid, gid, maxRetry = azkar_max_retry_attempts, f
             const errType = categorizeDiscordError(err);
             if (errType === 'UNKNOWN_CHANNEL' || errType === 'MISSING_PERMISSIONS') {
                 logger.info(`Azkar ${errType === 'MISSING_PERMISSIONS' ? 'Missing Permissions' : 'Channel Not Found'} In Channel ${cid}`);
-                const { getGuildState } = require('../state/GuildStateManager');
-                const st = getGuildState(gid);
                 if (st) {
-                    if (st.azkarTimer) {
-                        clearInterval(st.azkarTimer);
-                        st.azkarTimer = null;
+                    if (st.azkarChannelId === cid) {
+                        st.azkarChannelId = null;
+                        persistentStateManager.updateGuildState(gid, { azkarChannelId: null });
                     }
-                    st.azkarChannelId = null;
-                    persistentStateManager.updateGuildState(gid, { azkarChannelId: null });
                 }
                 if (global.setupGuilds && global.setupGuilds[gid]) {
-                    global.setupGuilds[gid].azkarChannelId = null;
-                    const { saveSetupGuildsToFirebase } = require('@database/firebase');
-                    saveSetupGuildsToFirebase(global.setupGuilds).catch(() => {});
+                    if (global.setupGuilds[gid].azkarChannelId === cid) {
+                        global.setupGuilds[gid].azkarChannelId = null;
+                        const { saveSetupGuildsToFirebase } = require('@database/firebase');
+                        saveSetupGuildsToFirebase(global.setupGuilds).catch(() => {});
+                    }
                 }
             }
             return { success: false, reason: 'Channel fetch failed' };
@@ -385,17 +399,16 @@ function startAzkarTimerForGuild(gid, cid, isFirst = true) {
         return { success: false, reason: 'Guild state not found' };
     }
 
-    if (st.azkarTimer) {
-        clearInterval(st.azkarTimer);
-        st.azkarTimer = null;
-    }
+    //  if (st.azkarTimer) {
+    //      clearInterval(st.azkarTimer);
+    //      st.azkarTimer = null;
+    //  }
 
     st.azkarChannelId = cid;
-    if (isFirst) setFirstMessage(gid, true);
 
     queueAzkarSend(cid, gid, 5, isFirst);
 
-    st.azkarTimer = setInterval(() => queueAzkarSend(cid, gid, 5, false), azkar_interval_ms);
+    initTimer();
     const intervalMinutes = azkar_interval_ms / 60000;
     return { success: true, channelId: cid };
 }

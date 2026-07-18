@@ -69,22 +69,30 @@ module.exports = {
                                 interaction.guild.voiceAdapterCreator,
                             );
                             if (joinResult.success) {
-                                actualNodeId = guildState.player.node?.id || selectedNodeId;
-                                let track = null;
-                                if (mode === 'surah') {
-                                    track = await createSurahResource(guildState, guildState.currentSurah - 1);
-                                } else if (mode === 'radio' && guildState.currentRadioUrl) {
-                                    track = await createRadioResource(guildState.currentRadioUrl);
-                                }
-                                if (track) {
-                                    await guildState.player.play({ track });
-                                    if (mode === 'surah' && currentPosition > 0) {
-                                        await guildState.player.seek(currentPosition).catch(() => {});
+                                if (!guildState.player || guildState.player.destroyed) {
+                                    migrationFailed = true;
+                                } else {
+                                    actualNodeId = guildState.player.node?.id || selectedNodeId;
+                                    let track = null;
+                                    if (mode === 'surah') {
+                                        track = await createSurahResource(guildState, guildState.currentSurah - 1);
+                                    } else if (mode === 'radio' && guildState.currentRadioUrl) {
+                                        track = await createRadioResource(guildState.currentRadioUrl);
                                     }
-                                    if (wasPaused) await guildState.player.pause(true);
+                                    if (track) {
+                                        if (!guildState.player || guildState.player.destroyed) {
+                                            migrationFailed = true;
+                                        } else {
+                                            await guildState.player.play({ track });
+                                            if (mode === 'surah' && currentPosition > 0) {
+                                                await guildState.player.seek(currentPosition).catch(() => {});
+                                            }
+                                            if (wasPaused) await guildState.player.pause(true).catch(() => {});
+                                        }
+                                    }
+                                    await syncVoiceState(guildId, guildState);
+                                    if (typeof global.saveRuntimeStates === 'function') await global.saveRuntimeStates();
                                 }
-                                await syncVoiceState(guildId, guildState);
-                                if (typeof global.saveRuntimeStates === 'function') await global.saveRuntimeStates();
                             } else {
                                 migrationFailed = true;
                             }

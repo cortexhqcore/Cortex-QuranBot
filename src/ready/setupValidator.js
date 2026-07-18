@@ -8,12 +8,25 @@ async function validateAndFixSetupData(guild, setupData) {
     let requiresUpdate = false;
     let correctedData = { ...setupData };
 
-    // Validate adhkar channel ID
-    if (setupData.categoryId) {
-        let category = guild.channels.cache.get(setupData.categoryId);
-        if (!category) {
-            category = await guild.channels.fetch(setupData.categoryId).catch(() => null);
+    const fetchChannelSafe = async (id) => {
+        if (!id) return null;
+        const cached = guild.channels.cache.get(id);
+        if (cached) return cached;
+        try {
+            return await guild.channels.fetch(id);
+        } catch (err) {
+            if (err.code === 10003 || err.code === 10004) {
+                return null;
+            }
+            // For rate limits, network errors, etc., return 'FETCH_FAILED' to prevent accidental data loss
+            return 'FETCH_FAILED';
         }
+    };
+
+    // Validate category ID
+    if (setupData.categoryId) {
+        const category = await fetchChannelSafe(setupData.categoryId);
+        if (category === 'FETCH_FAILED') return setupData; // Abort validation if fetch fails to prevent data loss
         if (!category || category.type !== ChannelType.GuildCategory) {
             const fallbackCategory = guild.channels.cache.find(
                 (c) => c.name === '🕋︱القُرآن الكريم' && c.type === ChannelType.GuildCategory,
@@ -31,10 +44,8 @@ async function validateAndFixSetupData(guild, setupData) {
     }
 
     if (setupData.azkarChannelId) {
-        let adhkarChannel = guild.channels.cache.get(setupData.azkarChannelId);
-        if (!adhkarChannel) {
-            adhkarChannel = await guild.channels.fetch(setupData.azkarChannelId).catch(() => null);
-        }
+        const adhkarChannel = await fetchChannelSafe(setupData.azkarChannelId);
+        if (adhkarChannel === 'FETCH_FAILED') return setupData;
         if (!adhkarChannel || !adhkarChannel.isTextBased()) {
             const fallbackChannel =
                 guild.channels.cache.find((c) => c.name === '🌙︱الأذكار' && c.type === ChannelType.GuildText) ||
@@ -53,10 +64,8 @@ async function validateAndFixSetupData(guild, setupData) {
 
     // Validate voice channel ID
     if (setupData.voiceChannelId) {
-        let voiceChannel = guild.channels.cache.get(setupData.voiceChannelId);
-        if (!voiceChannel) {
-            voiceChannel = await guild.channels.fetch(setupData.voiceChannelId).catch(() => null);
-        }
+        const voiceChannel = await fetchChannelSafe(setupData.voiceChannelId);
+        if (voiceChannel === 'FETCH_FAILED') return setupData;
         if (!voiceChannel || voiceChannel.type !== ChannelType.GuildVoice) {
             const fallbackVoice = guild.channels.cache.find(
                 (c) => c.name === '🕌︱بثّ القُرآن الكريم' && c.type === ChannelType.GuildVoice,
@@ -75,10 +84,8 @@ async function validateAndFixSetupData(guild, setupData) {
 
     // Validate text channel ID for control panel
     if (setupData.textChannelId) {
-        let textChannel = guild.channels.cache.get(setupData.textChannelId);
-        if (!textChannel) {
-            textChannel = await guild.channels.fetch(setupData.textChannelId).catch(() => null);
-        }
+        const textChannel = await fetchChannelSafe(setupData.textChannelId);
+        if (textChannel === 'FETCH_FAILED') return setupData;
         if (!textChannel || !textChannel.isTextBased()) {
             const fallbackText = guild.channels.cache.find((c) => c.name === '📖︱تحكم البوت القرآني' && c.type === ChannelType.GuildText);
             if (fallbackText) {

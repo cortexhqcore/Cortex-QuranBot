@@ -201,16 +201,28 @@ async function cleanupInvalidSetupGuilds(client) {
                     removed++;
                     continue;
                 }
-                let changed = false;
 
-                const fixedData = {
-                    ...guildData,
+                const ChannelSafe = async (id) => {
+                    if (!id) return null;
+                    const cached = guild.channels.cache.get(id);
+                    if (cached) return cached;
+                    try {
+                        return await guild.channels.fetch(id);
+                    } catch (err) {
+                        if (err.code === 10003 || err.code === 10004) return null;
+                        return 'FETCH_FAILED';
+                    }
                 };
 
+                let changed = false;
+                const fixedData = { ...guildData };
+
                 if (guildData.categoryId) {
-                    let category =
-                        guild.channels.cache.get(guildData.categoryId) ||
-                        (await guild.channels.fetch(guildData.categoryId).catch(() => null));
+                    const category = await ChannelSafe(guildData.categoryId);
+                    if (category === 'FETCH_FAILED') {
+                        validGuilds[guildId] = guildData;
+                        continue;
+                    }
                     if (!category || category.type !== ChannelType.GuildCategory) {
                         const fallbackCategory = guild.channels.cache.find(
                             (channel) => channel.name === channel_names.category && channel.type === ChannelType.GuildCategory,
@@ -226,12 +238,9 @@ async function cleanupInvalidSetupGuilds(client) {
                 }
 
                 const validateChannel = async (fieldName, channelKey, expectedType) => {
-                    if (!guildData[fieldName]) {
-                        return;
-                    }
-                    let channel =
-                        guild.channels.cache.get(guildData[fieldName]) ||
-                        (await guild.channels.fetch(guildData[fieldName]).catch(() => null));
+                    if (!guildData[fieldName]) return;
+                    const channel = await ChannelSafe(guildData[fieldName]);
+                    if (channel === 'FETCH_FAILED') return 'FETCH_FAILED';
 
                     const invalidVoice = expectedType === ChannelType.GuildVoice && channel?.type !== expectedType;
 
@@ -252,9 +261,18 @@ async function cleanupInvalidSetupGuilds(client) {
                     }
                 };
 
-                await validateChannel('voiceChannelId', 'voice', ChannelType.GuildVoice);
-                await validateChannel('textChannelId', 'text', ChannelType.GuildText);
-                await validateChannel('azkarChannelId', 'azkar', ChannelType.GuildText);
+                if ((await validateChannel('voiceChannelId', 'voice', ChannelType.GuildVoice)) === 'FETCH_FAILED') {
+                    validGuilds[guildId] = guildData;
+                    continue;
+                }
+                if ((await validateChannel('textChannelId', 'text', ChannelType.GuildText)) === 'FETCH_FAILED') {
+                    validGuilds[guildId] = guildData;
+                    continue;
+                }
+                if ((await validateChannel('azkarChannelId', 'azkar', ChannelType.GuildText)) === 'FETCH_FAILED') {
+                    validGuilds[guildId] = guildData;
+                    continue;
+                }
 
                 if (guildData.guildName === 'Unknown' || !guildData.guildName) {
                     fixedData.guildName = guild.name;
@@ -327,16 +345,24 @@ async function cleanupInvalidGuildStates(client) {
                 if (state.voiceChannelId) {
                     let voiceChannel =
                         guild.channels.cache.get(state.voiceChannelId) ||
-                        (await guild.channels.fetch(state.voiceChannelId).catch(() => null));
+                        (await guild.channels.fetch(state.voiceChannelId).catch((err) => {
+                            if (err.code === 10003 || err.code === 10004) return null;
+                            return 'FETCH_FAILED';
+                        }));
 
-                    if (!voiceChannel) {
+                    if (voiceChannel === 'FETCH_FAILED') {
+                        validStates[guildId] = state;
+                    } else if (!voiceChannel) {
                         state.voiceChannelId = null;
 
                         state.connectionStatus = false;
+                        validStates[guildId] = state;
+                    } else {
+                        validStates[guildId] = state;
                     }
+                } else {
+                    validStates[guildId] = state;
                 }
-
-                validStates[guildId] = state;
             } else {
                 const keepState = await isWithinRetentionGracePeriod(guildId);
                 if (keepState) {

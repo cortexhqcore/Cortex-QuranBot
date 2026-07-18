@@ -7,6 +7,14 @@ const rateLimits = new Map();
 const statusCache = new Map();
 let processing = false;
 
+setInterval(() => {
+    const now = Date.now();
+    for (const [channelId, limit] of rateLimits.entries()) {
+        if (now > limit) rateLimits.delete(channelId);
+    }
+    statusCache.clear();
+}, 3600000);
+
 async function procesqueue() {
     if (processing || queue.size === 0) return;
     processing = true;

@@ -5,7 +5,7 @@ const persistentStateManager = require('@state/PersistentStateManager');
 const { loadSetupGuildsFromFirebase, loadGuildStatesFromFirebase } = require('@database/firebase');
 const { validateAndFixSetupData } = require('@ready/setupValidator');
 const { recoverAzkarTimers } = require('@ready/azkarRecovery');
-const { recoverVoiceConnection } = require('@ready/voiceRecovery');
+// const { recoverVoiceConnection } = require('@ready/voiceRecovery');
 const { restoreGuildStates } = require('@ready/stateRestoration');
 const { registerAllCommands, startMemoryCleanup } = require('@ready/commandRegistration');
 const { initializeStats, startStatsTracker } = require('@statistics/StatisticsTracker');
@@ -67,14 +67,13 @@ loadData()
                     }
                     const fixedSetupData = await validateAndFixSetupData(guild, setupData);
                     await recoverAzkarTimers(guild, fixedSetupData, guildId);
-                    await recoverVoiceConnection(guild, fixedSetupData, guildId);
+                    // await recoverVoiceConnection(guild, fixedSetupData, guildId);
                 }, i * 1000);
             }
-
-            //const staleGuildIds = allSetupGuildIds.filter((gid) => !actualBotGuilds.has(gid));
-            //if (staleGuildIds.length > 0) {
-            //}
-            //await restoreGuildStates(client, actualBotGuilds);
+            const staleGuildIds = allSetupGuildIds.filter((gid) => !actualBotGuilds.has(gid));
+            if (staleGuildIds.length > 0) {
+            }
+            await restoreGuildStates(client, actualBotGuilds);
             await registerAllCommands(client);
             startMemoryCleanup();
             logger.info('Serving ' + client.guilds.cache.size + ' Guilds');

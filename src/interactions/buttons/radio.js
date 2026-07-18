@@ -110,7 +110,11 @@ module.exports = {
                                         flags: 64,
                                     })
                                     .catch(() => {});
+                                await rebuildAndSendControlPanel(interaction, guildState, guildId);
+                                return;
+                            }
 
+                            if (!guildState.player || guildState.player.destroyed) {
                                 await rebuildAndSendControlPanel(interaction, guildState, guildId);
                                 return;
                             }
@@ -142,6 +146,10 @@ module.exports = {
                             }
                             const surahTrack = await createSurahResource(guildState, guildState.currentSurah - 1);
                             if (!surahTrack) throw new Error('Failed to fetch surah track');
+                            if (!guildState.player || guildState.player.destroyed) {
+                                await rebuildAndSendControlPanel(interaction, guildState, guildId);
+                                return;
+                            }
                             guildState.player.play({ track: surahTrack });
                             if (guildState.playedOffset > 0 && guildState.player && !guildState.player.destroyed) {
                                 setTimeout(() => {

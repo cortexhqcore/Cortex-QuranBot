@@ -8,6 +8,18 @@ const { voiceIdle } = require('@state/voice-idle');
 botClient.on('voiceStateUpdate', async (previousState, currentState) => {
     // Only process events related to the bot itself
     if (previousState.id !== botClient.user.id && currentState.id !== botClient.user.id) {
+        const guildId = currentState.guild.id;
+
+        const guildState = global.guildStates.get(guildId);
+        if (!guildState?.channelId) return;
+
+        const userJoinedBotChannel = currentState.channelId === guildState.channelId;
+        const userLeftBotChannel = previousState.channelId === guildState.channelId;
+
+        if (userJoinedBotChannel || userLeftBotChannel) {
+            await voiceIdle(guildId, botClient);
+        }
+
         return;
     }
     const guildId = previousState.guild.id || currentState.guild.id;
@@ -28,13 +40,27 @@ botClient.on('voiceStateUpdate', async (previousState, currentState) => {
     // Detect when bot gets kicked/disconnected from voice channel externally
     if (wasConnected && !isCurrentlyConnected) {
         // Prevent false positives during Lavalink queue transitions or internal state updates
-        if (guildState.player && !guildState.player.destroyed && guildState.channelId === previousState.channelId) {
+        if (guildState.player && !guildState.player.destroyed) {
             voiceLogger.connection(guildId, 'Ignored temporary voice state change - Lavalink player still active');
             return;
         }
+
+        if (!guildState.channelId && (!guildState.player || guildState.player.destroyed)) {
+            return;
+        }
+
         voiceLogger.connection(guildId, 'Bot externally disconnected from voice channel');
+        // Destroy the Lavalink player to prevent state desync where the player is alive in memory but dead in Discord
+        if (guildState.player && !guildState.player.destroyed) {
+            try {
+                await guildState.player.destroy().catch(() => {});
+            } catch (e) {
+                voiceLogger.debug(guildId, 'Failed to destroy player on external disconnect', { error: e.message });
+            }
+        }
         // Reset connection state locally
         guildState.connection = null;
+        guildState.player = null;
         guildState.channelId = null;
         guildState.isPaused = true;
         guildState.pauseReason = 'external_disconnect';
@@ -74,21 +100,6 @@ botClient.on('voiceStateUpdate', async (previousState, currentState) => {
         }
     }
     await voiceIdle(guildId, botClient);
-});
-
-botClient.on('voiceStateUpdate', async (previousState, currentState) => {
-    if (currentState.id === botClient.user.id) return;
-    const guildId = currentState.guild.id;
-    const guildState = global.guildStates.get(guildId);
-
-    if (!guildState?.channelId) return;
-
-    const userJoinedBotChannel = currentState.channelId === guildState.channelId;
-    const userLeftBotChannel = previousState.channelId === guildState.channelId;
-
-    if (userJoinedBotChannel || userLeftBotChannel) {
-        await voiceIdle(guildId, botClient);
-    }
 });
 
 module.exports = {};

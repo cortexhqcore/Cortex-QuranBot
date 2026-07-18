@@ -9,8 +9,9 @@ require('@startup/readyHandler');
 require('@events/additionalEvents');
 require('@commands/ping');
 require('@database/trackers/guild-tracker');
-require('@web/top');
+require('@web/top.gg');
 require('@global/globalAll');
+const formatCompactNumber = require('@helpers/number/formatCompactNumber');
 
 const { ActivityType } = require('discord.js');
 const { client, logger } = global;
@@ -124,6 +125,7 @@ async function updateStatus() {
     const voiceCount = getConnectedVoiceCount();
     const listenerCount = getTotalListeners();
     const totalUsers = AllUsers();
+    const formattedUsers = formatCompactNumber(totalUsers);
     const azkarRooms = allAzkarRooms();
     const statsFirebase = await pullFirebase();
     const sentAzkar = statsFirebase?.azkarSent;
@@ -138,7 +140,7 @@ async function updateStatus() {
         };
     } else if (activityIndex % 5 === 1) {
         activity = {
-            name: `${guildCount} Servers | ${totalUsers} Users`,
+            name: `${guildCount} Servers | ${formattedUsers} Users`,
             type: ActivityType.Watching,
         };
     } else if (activityIndex % 5 === 2) {
@@ -168,7 +170,7 @@ client.once('clientReady', () => {
     logger.info(`Serving ${guildCount} servers`);
     logger.info(`Connected to ${voiceCount} voice channels`);
     updateStatus();
-    setInterval(updateStatus, 30000);
+    setInterval(updateStatus, 10000);
 });
 
 logger.info('Bot initialized');

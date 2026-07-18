@@ -57,12 +57,7 @@ global.clientId = clientId;
 logger.info('Current Date In Cairo ' + new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Cairo' }));
 
 const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.GuildVoiceStates,
-    ],
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 });
 
 const nodeConfigs = new Map();
@@ -125,7 +120,8 @@ const manager = new LavalinkManager({
             destroyPlayer: false,
         },
         onEmptyQueue: {
-            destroyAfterMs: 6690000,
+            // ~24 days
+            destroyAfterMs: 2147483647,
         },
         useUnresolvedData: true,
     },
